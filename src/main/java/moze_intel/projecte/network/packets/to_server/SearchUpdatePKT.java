@@ -2,13 +2,13 @@ package moze_intel.projecte.network.packets.to_server;
 
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.gameObjs.container.TransmutationContainer;
+import moze_intel.projecte.network.PEPacketContext;
 import moze_intel.projecte.network.packets.IPEPacket;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record SearchUpdatePKT(int slot, ItemStack itemStack) implements IPEPacket {
@@ -31,7 +31,7 @@ public record SearchUpdatePKT(int slot, ItemStack itemStack) implements IPEPacke
 	}
 
 	@Override
-	public void handle(IPayloadContext context) {
+	public void handle(PEPacketContext context) {
 		if (context.player().containerMenu instanceof TransmutationContainer container) {
 			container.transmutationInventory.writeIntoOutputSlot(slot, itemStack);
 		}

@@ -9,8 +9,11 @@ import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.gameObjs.entity.EntityFireProjectile;
 import moze_intel.projecte.gameObjs.items.ICapabilityAware;
 import moze_intel.projecte.gameObjs.items.IFireProtector;
+import moze_intel.projecte.gameObjs.items.IItemAbilityProvider;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
 import moze_intel.projecte.integration.IntegrationHelper;
+import moze_intel.projecte.utils.ItemAbilities;
+import moze_intel.projecte.utils.ItemAbility;
 import moze_intel.projecte.utils.MathUtils;
 import moze_intel.projecte.utils.WorldHelper;
 import moze_intel.projecte.utils.text.PELang;
@@ -27,12 +30,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.common.ItemAbilities;
-import net.neoforged.neoforge.common.ItemAbility;
 import org.jetbrains.annotations.NotNull;
 
-public class Ignition extends PEToggleItem implements IPedestalItem, IFireProtector, IProjectileShooter, ICapabilityAware {
+public class Ignition extends PEToggleItem implements IPedestalItem, IFireProtector, IProjectileShooter, ICapabilityAware, IItemAbilityProvider {
 
 	public Ignition(Properties props) {
 		super(props.component(PEDataComponentTypes.STORED_EMC, 0L)
@@ -111,7 +111,7 @@ public class Ignition extends PEToggleItem implements IPedestalItem, IFireProtec
 	}
 
 	@Override
-	public void attachCapabilities(RegisterCapabilitiesEvent event) {
+	public void attachCapabilities() {
 		IntegrationHelper.registerAccessoryCapability(this);
 	}
 }

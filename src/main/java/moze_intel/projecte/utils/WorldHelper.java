@@ -15,7 +15,9 @@ import moze_intel.projecte.api.inventory.IItemHandler;
 import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.gameObjs.PETags;
 import moze_intel.projecte.gameObjs.registries.PESoundEvents;
+import moze_intel.projecte.network.PEPackets;
 import moze_intel.projecte.network.packets.to_client.NovaExplosionSyncPKT;
+import moze_intel.projecte.utils.ItemAbilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
@@ -81,10 +83,8 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.BlockCapability;
-import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.util.ItemStackMap;
 import net.neoforged.neoforge.event.EventHooks;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -180,7 +180,7 @@ public final class WorldHelper {
 				for (ServerPlayer player : serverLevel.players()) {
 					//Based on ServerLevel#explode's range check
 					if (player.distanceToSqr(x, y, z) < 4_096.0) {
-						PacketDistributor.sendToPlayer(player, packet);
+						PEPackets.sendTo(player, packet);
 					}
 				}
 			}
@@ -698,9 +698,9 @@ public final class WorldHelper {
 			}
 		} else {
 			BlockState state = level.getBlockState(pos);
-			if (state.getToolModifiedState(ctx, ItemAbilities.FIRESTARTER_LIGHT, true) != null) {
+			if (ToolActions.getModifiedState(state, ctx, ItemAbilities.FIRESTARTER_LIGHT, true) != null) {
 				if (!level.isClientSide && PlayerHelper.hasBreakPermission((ServerPlayer) player, level, pos)) {
-					BlockState modifiedState = state.getToolModifiedState(ctx, ItemAbilities.FIRESTARTER_LIGHT, false);
+					BlockState modifiedState = ToolActions.getModifiedState(state, ctx, ItemAbilities.FIRESTARTER_LIGHT, false);
 					if (modifiedState != null) {//Theoretically should not be null as we just simulated, but validate it just in case
 						level.setBlockAndUpdate(pos, modifiedState);
 						level.playSound(null, player.getX(), player.getY(), player.getZ(), PESoundEvents.POWER.get(), SoundSource.PLAYERS, 1.0F, 1.0F);

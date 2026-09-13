@@ -54,7 +54,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.MutableDataComponentHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -343,8 +342,8 @@ public class MercurialEye extends ItemMode<MercurialEyeMode> implements IExtraFu
 	}
 
 	@Override
-	public void attachCapabilities(RegisterCapabilitiesEvent event) {
-		event.registerItem(ItemHandler.ITEM, (stack, context) -> new EyeItemHandler(stack), this);
+	public void attachCapabilities() {
+		ItemHandler.ITEM.registerForItems((stack, context) -> new EyeItemHandler(stack), this);
 	}
 
 	@Override

@@ -38,7 +38,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -171,7 +170,7 @@ public class SWRG extends ItemPE implements IPedestalItem, IProjectileShooter, I
 	}
 
 	@Override
-	public void attachCapabilities(RegisterCapabilitiesEvent event) {
+	public void attachCapabilities() {
 		IntegrationHelper.registerAccessoryCapability(this);
 	}
 

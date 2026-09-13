@@ -33,7 +33,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.ServerLevelData;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -128,7 +127,7 @@ public class VolcaniteAmulet extends ItemPE implements IProjectileShooter, IPede
 	}
 
 	@Override
-	public void attachCapabilities(RegisterCapabilitiesEvent event) {
+	public void attachCapabilities() {
 		IntegrationHelper.registerAccessoryCapability(this);
 	}
 }

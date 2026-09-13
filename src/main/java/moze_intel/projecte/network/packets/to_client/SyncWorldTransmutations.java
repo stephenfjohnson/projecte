@@ -9,6 +9,7 @@ import moze_intel.projecte.PECore;
 import moze_intel.projecte.api.world_transmutation.IWorldTransmutation;
 import moze_intel.projecte.api.world_transmutation.SimpleWorldTransmutation;
 import moze_intel.projecte.api.world_transmutation.WorldTransmutation;
+import moze_intel.projecte.network.PEPacketContext;
 import moze_intel.projecte.network.packets.IPEPacket;
 import moze_intel.projecte.world_transmutation.WorldTransmutationManager;
 import net.minecraft.core.registries.Registries;
@@ -17,7 +18,6 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record SyncWorldTransmutations(Reference2ObjectMap<Block, SequencedSet<IWorldTransmutation>> transmutations) implements IPEPacket {
@@ -60,7 +60,7 @@ public record SyncWorldTransmutations(Reference2ObjectMap<Block, SequencedSet<IW
 	}
 
 	@Override
-	public void handle(IPayloadContext context) {
+	public void handle(PEPacketContext context) {
 		PECore.debugLog("Receiving World Transmutation data from server.");
 		WorldTransmutationManager.INSTANCE.setEntries(transmutations);
 	}

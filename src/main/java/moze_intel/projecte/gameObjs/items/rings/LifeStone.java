@@ -23,7 +23,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class LifeStone extends PEToggleItem implements IPedestalItem, ICapabilityAware {
@@ -93,7 +92,7 @@ public class LifeStone extends PEToggleItem implements IPedestalItem, ICapabilit
 	}
 
 	@Override
-	public void attachCapabilities(RegisterCapabilitiesEvent event) {
+	public void attachCapabilities() {
 		IntegrationHelper.registerAccessoryCapability(this);
 	}
 }

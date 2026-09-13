@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.emc.EMCMappingHandler;
+import moze_intel.projecte.network.PEPacketContext;
 import moze_intel.projecte.network.packets.IPEPacket;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -13,7 +14,6 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.connection.ConnectionType;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record SyncEmcPKT(Object2LongMap<ItemInfo> data) implements IPEPacket {
@@ -32,7 +32,7 @@ public record SyncEmcPKT(Object2LongMap<ItemInfo> data) implements IPEPacket {
 	}
 
 	@Override
-	public void handle(IPayloadContext context) {
+	public void handle(PEPacketContext context) {
 		PECore.debugLog("Receiving EMC data from server.");
 		EMCMappingHandler.updateEmcValues(data);
 	}

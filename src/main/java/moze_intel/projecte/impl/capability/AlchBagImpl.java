@@ -10,6 +10,7 @@ import moze_intel.projecte.api.inventory.IItemHandler;
 import moze_intel.projecte.gameObjs.registries.PEAttachmentTypes;
 import moze_intel.projecte.impl.codec.PECodecHelper;
 import moze_intel.projecte.inventory.ItemStackHandler;
+import moze_intel.projecte.network.PEPackets;
 import moze_intel.projecte.network.PEStreamCodecs;
 import moze_intel.projecte.network.packets.to_client.alch_bag.SyncAllBagDataPKT;
 import moze_intel.projecte.network.packets.to_client.alch_bag.SyncBagsDataPKT;
@@ -21,7 +22,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,13 +51,13 @@ public final class AlchBagImpl implements IAlchBagProvider {
 			for (DyeColor color : colors) {
 				handlers.put(color, attachment.getBag(color));
 			}
-			PacketDistributor.sendToPlayer(player, new SyncBagsDataPKT(handlers));
+			PEPackets.sendTo(player, new SyncBagsDataPKT(handlers));
 		}
 	}
 
 	@Override
 	public void syncAllBags(@NotNull ServerPlayer player) {
-		PacketDistributor.sendToPlayer(player, new SyncAllBagDataPKT(attachment()));
+		PEPackets.sendTo(player, new SyncAllBagDataPKT(attachment()));
 	}
 
 	public static class AlchemicalBagAttachment {

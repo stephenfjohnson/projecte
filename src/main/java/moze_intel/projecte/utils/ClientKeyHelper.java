@@ -2,6 +2,7 @@ package moze_intel.projecte.utils;
 
 import com.google.common.collect.ImmutableBiMap;
 import com.mojang.blaze3d.platform.InputConstants;
+import moze_intel.projecte.network.PEPackets;
 import moze_intel.projecte.network.packets.to_server.KeyPressPKT;
 import moze_intel.projecte.utils.text.PELang;
 import moze_intel.projecte.utils.text.TextComponentUtil;
@@ -10,7 +11,6 @@ import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyModifier;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 public class ClientKeyHelper {
@@ -61,7 +61,7 @@ public class ClientKeyHelper {
 			boolean state = isDown();
 			if (state != lastState) {
 				if (state) {
-					PacketDistributor.sendToServer(new KeyPressPKT(keybind));
+					PEPackets.sendToServer(new KeyPressPKT(keybind));
 				}
 				lastState = state;
 			}

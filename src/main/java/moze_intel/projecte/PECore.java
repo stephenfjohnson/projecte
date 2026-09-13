@@ -33,6 +33,7 @@ import moze_intel.projecte.impl.TransmutationOffline;
 import moze_intel.projecte.impl.capability.AlchBagImpl;
 import moze_intel.projecte.impl.capability.KnowledgeImpl;
 import moze_intel.projecte.integration.IntegrationHelper;
+import moze_intel.projecte.network.PEPackets;
 import moze_intel.projecte.network.PacketHandler;
 import moze_intel.projecte.network.ThreadCheckUUID;
 import moze_intel.projecte.network.ThreadCheckUpdate;
@@ -45,6 +46,7 @@ import moze_intel.projecte.network.commands.ShowBagCMD;
 import moze_intel.projecte.network.packets.to_client.SyncEmcPKT;
 import moze_intel.projecte.network.packets.to_client.SyncFuelMapperPKT;
 import moze_intel.projecte.network.packets.to_client.SyncWorldTransmutations;
+import moze_intel.projecte.utils.ItemAbilities;
 import moze_intel.projecte.utils.WorldHelper;
 import moze_intel.projecte.world_transmutation.WorldTransmutationManager;
 import net.minecraft.commands.CommandBuildContext;
@@ -83,7 +85,6 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -94,7 +95,6 @@ import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.registries.ModifyRegistriesEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.callback.ClearCallback;
@@ -197,7 +197,7 @@ public class PECore {
 				@Override
 				protected ItemStack execute(@NotNull BlockSource source, @NotNull ItemStack stack) {
 					//[VanillaCopy] Based off the flint and steel dispense behavior
-					if (!stack.canPerformAction(ItemAbilities.FIRESTARTER_LIGHT)) {
+					if (!ToolActions.canPerformAction(stack, ItemAbilities.FIRESTARTER_LIGHT)) {
 						//Only allow using the arcana ring to ignite things when on ignition mode
 						setSuccess(false);
 						return super.execute(source, stack);
@@ -214,7 +214,7 @@ public class PECore {
 						Direction opposite = direction.getOpposite();
 						BlockHitResult hitResult = new BlockHitResult(pos.getCenter(), opposite, pos, false);
 						UseOnContext context = new UseOnContext(level, null, InteractionHand.MAIN_HAND, stack, hitResult);
-						BlockState modifiedState = state.getToolModifiedState(context, ItemAbilities.FIRESTARTER_LIGHT, false);
+						BlockState modifiedState = ToolActions.getModifiedState(state, context, ItemAbilities.FIRESTARTER_LIGHT, false);
 						if (modifiedState != null) {
 							level.setBlockAndUpdate(pos, modifiedState);
 							level.gameEvent(null, GameEvent.BLOCK_CHANGE, pos);
@@ -282,15 +282,15 @@ public class PECore {
 			SyncWorldTransmutations transmutationPkt = WorldTransmutationManager.getSyncPacket();
 			for (ServerPlayer player : players) {
 				if (!player.connection.getConnection().isMemoryConnection()) {
-					PacketDistributor.sendToPlayer(player, pkt, fuelPkt);
-					PacketDistributor.sendToPlayer(player, transmutationPkt);
+					PEPackets.sendTo(player, pkt, fuelPkt);
+					PEPackets.sendTo(player, transmutationPkt);
 				}
 			}
 		} else {
 			ServerPlayer player = event.getPlayer();
 			if (!player.connection.getConnection().isMemoryConnection()) {
-				PacketDistributor.sendToPlayer(player, SyncEmcPKT.serializeEmcData(player.registryAccess()), FuelMapper.getSyncPacket());
-				PacketDistributor.sendToPlayer(player, WorldTransmutationManager.getSyncPacket());
+				PEPackets.sendTo(player, SyncEmcPKT.serializeEmcData(player.registryAccess()), FuelMapper.getSyncPacket());
+				PEPackets.sendTo(player, WorldTransmutationManager.getSyncPacket());
 			}
 		}
 	}

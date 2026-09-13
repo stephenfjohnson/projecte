@@ -21,10 +21,12 @@ import moze_intel.projecte.gameObjs.items.ItemPE;
 import moze_intel.projecte.gameObjs.items.tools.PEPickaxe.PickaxeMode;
 import moze_intel.projecte.gameObjs.registries.PEDamageTypes;
 import moze_intel.projecte.gameObjs.registries.PESoundEvents;
+import moze_intel.projecte.utils.ItemAbilities;
+import moze_intel.projecte.utils.ItemAbility;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -43,8 +45,8 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.monster.Enemy;
@@ -65,8 +67,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.neoforged.neoforge.common.IShearable;
-import net.neoforged.neoforge.common.ItemAbilities;
-import net.neoforged.neoforge.common.ItemAbility;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -236,7 +236,7 @@ public class ToolHelper {
 			//Skip modifying the blocks if there is something we think is invalid about the position in the world in general
 			return InteractionResult.PASS;
 		}
-		BlockState modifiedState = clickedState.getToolModifiedState(context, action, false);
+		BlockState modifiedState = ToolActions.getModifiedState(clickedState, context, action, false);
 		if (modifiedState == null) {
 			//Skip modifying the blocks if the one we clicked cannot be modified
 			return InteractionResult.PASS;
@@ -268,14 +268,14 @@ public class ToolHelper {
 				UseOnContext adjustedContext = new UseOnContext(level, context.getPlayer(), context.getHand(), context.getItemInHand(), new BlockHitResult(
 						context.getClickLocation().add(newPos.getX() - pos.getX(), newPos.getY() - pos.getY(), newPos.getZ() - pos.getZ()),
 						context.getClickedFace(), newPos, context.isInside()));
-				if (toolAOEData.isValid(level, newPos, state) && modifiedState == state.getToolModifiedState(adjustedContext, action, true)) {
+				if (toolAOEData.isValid(level, newPos, state) && modifiedState == ToolActions.getModifiedState(state, adjustedContext, action, true)) {
 					if (ItemPE.consumeFuel(player, stack, emcCost, true)) {
 						//Some of the below methods don't behave properly when the BlockPos is mutable, so now that we are onto ones where it may actually
 						// matter we make sure to get an immutable instance of newPos
 						newPos = newPos.immutable();
 						CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger((ServerPlayer) player, newPos, context.getItemInHand());
 						//Run it without simulation in case there are any side effects
-						state.getToolModifiedState(adjustedContext, action, false);
+						ToolActions.getModifiedState(state, adjustedContext, action, false);
 						//Replace the block. Note it just directly sets it (in the same way the normal tools do), rather than using our
 						// checkedReplaceBlock to make the blocks not "blink" when getting changed. We don't bother using checkedReplaceBlock
 						// as we already fired all the events/checks for seeing if we are allowed to use this item in this location and were

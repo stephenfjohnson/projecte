@@ -1,31 +1,23 @@
 package moze_intel.projecte;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 import java.util.function.Predicate;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.server.permission.PermissionAPI;
-import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
-import net.neoforged.neoforge.server.permission.nodes.PermissionDynamicContext;
-import net.neoforged.neoforge.server.permission.nodes.PermissionDynamicContextKey;
-import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
-import net.neoforged.neoforge.server.permission.nodes.PermissionNode.PermissionResolver;
-import net.neoforged.neoforge.server.permission.nodes.PermissionType;
-import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
-import org.jetbrains.annotations.Nullable;
 
+/**
+ * Who may run ProjectE's commands.
+ * <p>
+ * NeoForge had a permission node system that server owners could point at a permissions mod to grant commands
+ * per player or group. Fabric has no equivalent in either the loader or Fabric API, so this falls back to
+ * vanilla operator levels, which is what NeoForge's own defaults resolved to anyway. The practical loss is that
+ * a server owner can no longer hand out individual ProjectE commands without opping someone.
+ * <p>
+ * The node names are kept so the permission strings stay stable if a permissions API is wired up later.
+ */
 public class PEPermissions {
 
-	private static final List<PermissionNode<?>> NODES_TO_REGISTER = new ArrayList<>();
-	private static final PermissionResolver<Boolean> PLAYER_IS_OP = (player, uuid, context) -> player != null && player.hasPermissions(Commands.LEVEL_GAMEMASTERS);
-	private static final PermissionResolver<Boolean> ALWAYS_TRUE = (player, uuid, context) -> true;
-
 	//Commands
-	public static final CommandPermissionNode COMMAND = new CommandPermissionNode(node("command", PermissionTypes.BOOLEAN,
-			(player, uuid, contexts) -> player != null && player.hasPermissions(Commands.LEVEL_ALL)), Commands.LEVEL_ALL);
+	public static final CommandPermissionNode COMMAND = node("command", Commands.LEVEL_ALL);
 
 	public static final CommandPermissionNode COMMAND_REMOVE_EMC = nodeOpCommand("remove_emc");
 	public static final CommandPermissionNode COMMAND_RESET_EMC = nodeOpCommand("reset_emc");
@@ -43,70 +35,33 @@ public class PEPermissions {
 	public static final CommandPermissionNode COMMAND_KNOWLEDGE_UNLEARN = nodeSubCommand(COMMAND_KNOWLEDGE, "unlearn");
 	public static final CommandPermissionNode COMMAND_KNOWLEDGE_TEST = nodeSubCommand(COMMAND_KNOWLEDGE, "test");
 
-	private static CommandPermissionNode nodeOpCommand(String nodeName) {
-		PermissionNode<Boolean> node = node("command." + nodeName, PermissionTypes.BOOLEAN, PLAYER_IS_OP);
-		return new CommandPermissionNode(node, Commands.LEVEL_GAMEMASTERS);
+	private PEPermissions() {
 	}
 
-	private static CommandPermissionNode nodeSubCommand(CommandPermissionNode parent, String nodeName) {
-		//Because sub commands can assume that the parent was checked before getting to them, we can have a default resolver of always true
-		// The main benefit for them to have their own node is just in case someone wants to do more restricting
-		PermissionNode<Boolean> node = subNode(parent.node, nodeName, ALWAYS_TRUE);
-		return new CommandPermissionNode(node, parent.fallbackLevel);
+	private static CommandPermissionNode node(String nodeName, int requiredLevel) {
+		return new CommandPermissionNode(PECore.MODID + "." + nodeName, requiredLevel);
+	}
+
+	private static CommandPermissionNode nodeOpCommand(String nodeName) {
+		return node("command." + nodeName, Commands.LEVEL_GAMEMASTERS);
 	}
 
 	/**
-	 * @apiNote For use in sub nodes that don't know if there parent has been checked yet.
+	 * A sub command is only reached once its parent has already been allowed, so it inherits the parent's level.
 	 */
-	private static <T> PermissionNode<T> subNode(PermissionNode<T> parent, String nodeName) {
-		return subNode(parent, nodeName, (player, uuid, context) -> getPermission(player, uuid, parent, context));
+	private static CommandPermissionNode nodeSubCommand(CommandPermissionNode parent, String nodeName) {
+		return new CommandPermissionNode(parent.nodeName() + "." + nodeName, parent.requiredLevel());
 	}
 
-	private static <T> PermissionNode<T> subNode(PermissionNode<T> parent, String nodeName, ResultTransformer<T> defaultRestrictionIncrease) {
-		return subNode(parent, nodeName, (player, uuid, context) -> {
-			T result = getPermission(player, uuid, parent, context);
-			return defaultRestrictionIncrease.transform(player, uuid, result, context);
-		});
-	}
-
-	private static <T> PermissionNode<T> subNode(PermissionNode<T> parent, String nodeName, PermissionResolver<T> defaultResolver) {
-		String fullParentName = parent.getNodeName();
-		//Strip the modid from the parent's node name
-		String parentName = fullParentName.substring(fullParentName.indexOf('.') + 1);
-		return node(parentName + "." + nodeName, parent.getType(), defaultResolver);
-	}
-
-	@SafeVarargs
-	private static <T> PermissionNode<T> node(String nodeName, PermissionType<T> type, PermissionResolver<T> defaultResolver, PermissionDynamicContextKey<T>... dynamics) {
-		PermissionNode<T> node = new PermissionNode<>(PECore.MODID, nodeName, type, defaultResolver, dynamics);
-		NODES_TO_REGISTER.add(node);
-		return node;
-	}
-
-	public static void registerPermissionNodes(PermissionGatherEvent.Nodes event) {
-		event.addNodes(NODES_TO_REGISTER);
-	}
-
-	private static <T> T getPermission(@Nullable ServerPlayer player, UUID playerUUID, PermissionNode<T> node, PermissionDynamicContext<?>... context) {
-		if (player == null) {
-			return PermissionAPI.getOfflinePermission(playerUUID, node, context);
-		}
-		return PermissionAPI.getPermission(player, node, context);
-	}
-
-	public record CommandPermissionNode(PermissionNode<Boolean> node, int fallbackLevel) implements Predicate<CommandSourceStack> {
+	/**
+	 * @param nodeName      The permission this command would be gated on, were a permissions API available.
+	 * @param requiredLevel The operator level required to run it.
+	 */
+	public record CommandPermissionNode(String nodeName, int requiredLevel) implements Predicate<CommandSourceStack> {
 
 		@Override
 		public boolean test(CommandSourceStack source) {
-			//See https://github.com/MinecraftForge/MinecraftForge/commit/f7eea35cb9b043aae0a3866a9578724aa7560585 for details on why
-			// has permission is checked first and the implications
-			return source.hasPermission(fallbackLevel) || source.source instanceof ServerPlayer player && PermissionAPI.getPermission(player, node);
+			return source.hasPermission(requiredLevel);
 		}
-	}
-
-	@FunctionalInterface
-	private interface ResultTransformer<T> {
-
-		T transform(@Nullable ServerPlayer player, UUID playerUUID, T resolved, PermissionDynamicContext<?>... context);
 	}
 }

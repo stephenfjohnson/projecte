@@ -19,6 +19,7 @@ import moze_intel.projecte.gameObjs.items.armor.GemHelmet;
 import moze_intel.projecte.gameObjs.registries.PEAttachmentTypes;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import moze_intel.projecte.integration.curios.TransmutationTableCurios;
+import moze_intel.projecte.network.PEPacketContext;
 import moze_intel.projecte.network.packets.IPEPacket;
 import moze_intel.projecte.utils.PEKeybind;
 import moze_intel.projecte.utils.PlayerHelper;
@@ -36,7 +37,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.ItemCapability;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record KeyPressPKT(PEKeybind key) implements IPEPacket {
@@ -51,7 +51,7 @@ public record KeyPressPKT(PEKeybind key) implements IPEPacket {
 	}
 
 	@Override
-	public void handle(IPayloadContext context) {
+	public void handle(PEPacketContext context) {
 		Player player = context.player();
 		if (player.isSpectator()) {
 			return;

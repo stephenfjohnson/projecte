@@ -26,6 +26,7 @@ import moze_intel.projecte.gameObjs.registries.PEAttachmentTypes;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import moze_intel.projecte.impl.codec.PECodecHelper;
 import moze_intel.projecte.inventory.ItemStackHandler;
+import moze_intel.projecte.network.PEPackets;
 import moze_intel.projecte.network.PEStreamCodecs;
 import moze_intel.projecte.network.packets.to_client.knowledge.KnowledgeSyncChangePKT;
 import moze_intel.projecte.network.packets.to_client.knowledge.KnowledgeSyncEmcPKT;
@@ -40,7 +41,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -222,17 +222,17 @@ public class KnowledgeImpl implements IKnowledgeProvider {
 
 	@Override
 	public void sync(@NotNull ServerPlayer player) {
-		PacketDistributor.sendToPlayer(player, new KnowledgeSyncPKT(attachment()));
+		PEPackets.sendTo(player, new KnowledgeSyncPKT(attachment()));
 	}
 
 	@Override
 	public void syncEmc(@NotNull ServerPlayer player) {
-		PacketDistributor.sendToPlayer(player, new KnowledgeSyncEmcPKT(getEmc()));
+		PEPackets.sendTo(player, new KnowledgeSyncEmcPKT(getEmc()));
 	}
 
 	@Override
 	public void syncKnowledgeChange(@NotNull ServerPlayer player, ItemInfo change, boolean learned) {
-		PacketDistributor.sendToPlayer(player, new KnowledgeSyncChangePKT(change, learned));
+		PEPackets.sendTo(player, new KnowledgeSyncChangePKT(change, learned));
 	}
 
 	@Override
@@ -249,7 +249,7 @@ public class KnowledgeImpl implements IKnowledgeProvider {
 			}
 			if (!stacksToSync.isEmpty()) {
 				//Validate it is not empty in case we were fed bad indices
-				PacketDistributor.sendToPlayer(player, new KnowledgeSyncInputsAndLocksPKT(stacksToSync, updateTargets));
+				PEPackets.sendTo(player, new KnowledgeSyncInputsAndLocksPKT(stacksToSync, updateTargets));
 			}
 		}
 	}

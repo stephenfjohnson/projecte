@@ -40,3 +40,9 @@ accessible	class	net/minecraft/world/level/chunk/LevelChunk$RebindableTickingBlo
 accessible	field	net/minecraft/world/level/chunk/LevelChunk$RebindableTickingBlockEntityWrapper	ticker	Lnet/minecraft/world/level/block/entity/TickingBlockEntity;
 accessible	field	net/minecraft/data/models/ItemModelGenerators	GENERATED_TRIM_MODELS	Ljava/util/List;
 accessible	class	net/minecraft/data/models/ItemModelGenerators$TrimModelData
+
+# Vanilla's tool transformation tables. NeoForge exposed these through
+# BlockState#getToolModifiedState, which Fabric has no counterpart for, so ProjectE reads
+# them directly to work out what a block becomes when stripped or flattened.
+accessible	field	net/minecraft/world/item/AxeItem	STRIPPABLES	Ljava/util/Map;
+accessible	field	net/minecraft/world/item/ShovelItem	FLATTENABLES	Ljava/util/Map;

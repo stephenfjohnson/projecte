@@ -6,6 +6,7 @@ import moze_intel.projecte.api.capabilities.item.IItemEmcHolder;
 import moze_intel.projecte.api.inventory.IItemHandler;
 import moze_intel.projecte.api.inventory.IItemHandlerModifiable;
 import moze_intel.projecte.api.proxy.IEMCProxy;
+import moze_intel.projecte.capability.ICapabilityProvider;
 import moze_intel.projecte.gameObjs.EnumRelayTier;
 import moze_intel.projecte.gameObjs.container.RelayMK1Container;
 import moze_intel.projecte.gameObjs.container.slots.SlotPredicates;
@@ -26,7 +27,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -3,11 +3,11 @@ package moze_intel.projecte.network.packets.to_client.container;
 import io.netty.buffer.ByteBuf;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.gameObjs.container.PEContainer;
+import moze_intel.projecte.network.PEPacketContext;
 import moze_intel.projecte.network.packets.IPEPacket;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 // Version of SWindowPropertyPacket that supports long values
@@ -28,7 +28,7 @@ public record UpdateWindowLongPKT(short windowId, short propId, long propVal) im
 	}
 
 	@Override
-	public void handle(IPayloadContext context) {
+	public void handle(PEPacketContext context) {
 		if (context.player().containerMenu instanceof PEContainer container && container.containerId == windowId) {
 			container.updateProgressBarLong(propId, propVal);
 		}
