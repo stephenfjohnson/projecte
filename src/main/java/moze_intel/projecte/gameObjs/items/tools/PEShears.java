@@ -34,8 +34,8 @@ public class PEShears extends ShearsItem implements IItemCharge, IBarHelper {
 	private final int numCharges;
 
 	public PEShears(IMatterType matterType, int numCharges, Properties props) {
-		super(props.component(PEDataComponentTypes.CHARGE, 0)
-						.component(PEDataComponentTypes.STORED_EMC, 0L)
+		super(props.component(PEDataComponentTypes.CHARGE.get(), 0)
+						.component(PEDataComponentTypes.STORED_EMC.get(), 0L)
 						.component(DataComponents.TOOL, new Tool(List.of(
 								Tool.Rule.minesAndDrops(PETags.Blocks.MINEABLE_WITH_PE_SHEARS, matterType.getSpeed()),
 								Tool.Rule.overrideSpeed(BlockTags.LEAVES, 15.0F),

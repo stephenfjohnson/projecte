@@ -57,7 +57,7 @@ public class PEKatar extends PETool implements IItemMode<KatarMode>, IExtraFunct
 
 	public PEKatar(IMatterType matterType, int numCharges, Properties props) {
 		super(matterType, PETags.Blocks.MINEABLE_WITH_PE_KATAR, numCharges, props.attributes(createAttributes(matterType, 19, -2.4F))
-				.component(PEDataComponentTypes.KATAR_MODE, KatarMode.SLAY_HOSTILE)
+				.component(PEDataComponentTypes.KATAR_MODE.get(), KatarMode.SLAY_HOSTILE)
 		);
 	}
 

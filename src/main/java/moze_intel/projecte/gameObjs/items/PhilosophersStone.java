@@ -60,7 +60,7 @@ import org.jetbrains.annotations.NotNull;
 public class PhilosophersStone extends ItemMode<PhilosophersStoneMode> implements IProjectileShooter, IExtraFunction {
 
 	public PhilosophersStone(Properties props) {
-		super(props.component(PEDataComponentTypes.PHILOSOPHERS_STONE_MODE, PhilosophersStoneMode.CUBE), 4);
+		super(props.component(PEDataComponentTypes.PHILOSOPHERS_STONE_MODE.get(), PhilosophersStoneMode.CUBE), 4);
 	}
 
 	@Override

@@ -43,7 +43,7 @@ public class RecipeShapelessKleinStar extends WrappedShapelessRecipe {
 					}
 				}
 			}
-			result.set(PEDataComponentTypes.STORED_EMC, storedEMC);
+			result.set(PEDataComponentTypes.STORED_EMC.get(), storedEMC);
 		}
 		return result;
 	}

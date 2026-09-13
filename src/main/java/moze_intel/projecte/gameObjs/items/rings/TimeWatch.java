@@ -42,9 +42,9 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunk.BoundTickingBlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk.RebindableTickingBlockEntityWrapper;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
@@ -54,9 +54,9 @@ public class TimeWatch extends PEToggleItem implements IPedestalItem, IItemCharg
 	private static final Predicate<BlockEntity> VALID_TARGET = be -> !be.isRemoved() && be.hasLevel() && !RegistryUtils.getBEHolder(be.getType()).is(BlockEntities.BLACKLIST_TIME_WATCH);
 
 	public TimeWatch(Properties props) {
-		super(props.component(PEDataComponentTypes.CHARGE, 0)
-				.component(PEDataComponentTypes.STORED_EMC, 0L)
-				.component(PEDataComponentTypes.UNPROCESSED_EMC, 0.0)
+		super(props.component(PEDataComponentTypes.CHARGE.get(), 0)
+				.component(PEDataComponentTypes.STORED_EMC.get(), 0L)
+				.component(PEDataComponentTypes.UNPROCESSED_EMC.get(), 0.0)
 		);
 	}
 
@@ -69,7 +69,7 @@ public class TimeWatch extends PEToggleItem implements IPedestalItem, IItemCharg
 				player.sendSystemMessage(PELang.TIME_WATCH_DISABLED.translate());
 				return InteractionResultHolder.fail(stack);
 			}
-			stack.update(PEDataComponentTypes.TIME_WATCH_MODE, TimeWatchMode.OFF, TimeWatchMode::next);
+			stack.update(PEDataComponentTypes.TIME_WATCH_MODE.get(), TimeWatchMode.OFF, TimeWatchMode::next);
 			player.sendSystemMessage(PELang.TIME_WATCH_MODE_SWITCH.translate(getTimeName(stack)));
 		}
 		return InteractionResultHolder.success(stack);
@@ -81,7 +81,7 @@ public class TimeWatch extends PEToggleItem implements IPedestalItem, IItemCharg
 		if (!(entity instanceof Player player) || !hotBarOrOffHand(slot) || !ProjectEConfig.server.items.enableTimeWatch.get()) {
 			return;
 		}
-		TimeWatchMode timeControl = stack.getOrDefault(PEDataComponentTypes.TIME_WATCH_MODE, TimeWatchMode.OFF);
+		TimeWatchMode timeControl = stack.getOrDefault(PEDataComponentTypes.TIME_WATCH_MODE.get(), TimeWatchMode.OFF);
 		if (timeControl != TimeWatchMode.OFF && !level.isClientSide && level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
 			ServerLevel serverWorld = (ServerLevel) level;
 			long scaledCharge = 4L * (getCharge(stack) + 1);
@@ -93,7 +93,7 @@ public class TimeWatch extends PEToggleItem implements IPedestalItem, IItemCharg
 				serverWorld.setDayTime(level.getDayTime() + scaledCharge);
 			}
 		}
-		if (level.isClientSide || !stack.getOrDefault(PEDataComponentTypes.ACTIVE, false)) {
+		if (level.isClientSide || !stack.getOrDefault(PEDataComponentTypes.ACTIVE.get(), false)) {
 			return;
 		}
 		int charge = getCharge(stack);
@@ -197,7 +197,7 @@ public class TimeWatch extends PEToggleItem implements IPedestalItem, IItemCharg
 	}
 
 	private ILangEntry getTimeName(ItemStack stack) {
-		return stack.getOrDefault(PEDataComponentTypes.TIME_WATCH_MODE, TimeWatchMode.OFF).name;
+		return stack.getOrDefault(PEDataComponentTypes.TIME_WATCH_MODE.get(), TimeWatchMode.OFF).name;
 	}
 
 	public double getEmcPerTick(int charge) {

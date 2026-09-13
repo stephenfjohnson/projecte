@@ -545,7 +545,7 @@ public class ToolHelper {
 	}
 
 	private static int getCharge(ItemStack stack) {
-		IItemCharge charge = stack.getCapability(PECapabilities.CHARGE_ITEM_CAPABILITY);
+		IItemCharge charge = PECapabilities.CHARGE_ITEM_CAPABILITY.find(stack, null);
 		return charge == null ? 0 : charge.getCharge(stack);
 	}
 

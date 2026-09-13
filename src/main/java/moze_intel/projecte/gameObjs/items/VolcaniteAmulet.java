@@ -38,7 +38,7 @@ import org.jetbrains.annotations.NotNull;
 public class VolcaniteAmulet extends ItemPE implements IProjectileShooter, IPedestalItem, IFireProtector, ICapabilityAware {
 
 	public VolcaniteAmulet(Properties props) {
-		super(props.component(PEDataComponentTypes.STORED_EMC, 0L));
+		super(props.component(PEDataComponentTypes.STORED_EMC.get(), 0L));
 	}
 
 	@Override

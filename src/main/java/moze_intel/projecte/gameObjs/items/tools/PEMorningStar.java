@@ -40,7 +40,7 @@ public class PEMorningStar extends PETool implements IItemMode<PickaxeMode>, IHa
 
 	public PEMorningStar(IMatterType matterType, int numCharges, Properties props) {
 		super(matterType, PETags.Blocks.MINEABLE_WITH_PE_MORNING_STAR, numCharges, props.attributes(createAttributes(matterType, 16, -3))
-				.component(PEDataComponentTypes.PICKAXE_MODE, PickaxeMode.STANDARD)
+				.component(PEDataComponentTypes.PICKAXE_MODE.get(), PickaxeMode.STANDARD)
 		);
 	}
 

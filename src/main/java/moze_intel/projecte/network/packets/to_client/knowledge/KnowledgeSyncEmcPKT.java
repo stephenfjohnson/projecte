@@ -30,7 +30,7 @@ public record KnowledgeSyncEmcPKT(BigInteger emc) implements IPEPacket {
 	@Override
 	public void handle(PEPacketContext context) {
 		Player player = context.player();
-		IKnowledgeProvider knowledge = player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY);
+		IKnowledgeProvider knowledge = PECapabilities.KNOWLEDGE_CAPABILITY.find(player, null);
 		if (knowledge != null) {
 			knowledge.setEmc(emc);
 			if (player.containerMenu instanceof TransmutationContainer container) {

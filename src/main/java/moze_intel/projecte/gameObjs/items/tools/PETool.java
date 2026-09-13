@@ -23,8 +23,8 @@ public abstract class PETool extends DiggerItem implements IItemCharge, IBarHelp
 	private final int numCharges;
 
 	public PETool(IMatterType matterType, TagKey<Block> blocks, int numCharges, Properties props) {
-		super(matterType, blocks, props.component(PEDataComponentTypes.CHARGE, 0)
-				.component(PEDataComponentTypes.STORED_EMC, 0L)
+		super(matterType, blocks, props.component(PEDataComponentTypes.CHARGE.get(), 0)
+				.component(PEDataComponentTypes.STORED_EMC.get(), 0L)
 		);
 		this.matterType = matterType;
 		this.numCharges = numCharges;

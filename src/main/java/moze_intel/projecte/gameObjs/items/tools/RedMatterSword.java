@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class RedMatterSword extends PESword implements IItemMode<KatarMode> {
 
 	public RedMatterSword(Properties props) {
-		super(EnumMatterType.RED_MATTER, 3, 12, props.component(PEDataComponentTypes.KATAR_MODE, KatarMode.SLAY_HOSTILE));
+		super(EnumMatterType.RED_MATTER, 3, 12, props.component(PEDataComponentTypes.KATAR_MODE.get(), KatarMode.SLAY_HOSTILE));
 	}
 
 	@Override

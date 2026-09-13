@@ -35,16 +35,13 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.neoforge.common.SpecialPlantable;
-import net.neoforged.neoforge.event.EventHooks;
-import net.neoforged.neoforge.event.entity.player.BonemealEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class HarvestGoddess extends PEToggleItem implements IPedestalItem {
 
 	public HarvestGoddess(Properties props) {
-		super(props.component(PEDataComponentTypes.STORED_EMC, 0L)
-				.component(PEDataComponentTypes.UNPROCESSED_EMC, 0.0)
+		super(props.component(PEDataComponentTypes.STORED_EMC.get(), 0L)
+				.component(PEDataComponentTypes.UNPROCESSED_EMC.get(), 0.0)
 		);
 	}
 
@@ -54,9 +51,9 @@ public class HarvestGoddess extends PEToggleItem implements IPedestalItem {
 		if (level.isClientSide || !hotBarOrOffHand(slot) || !(entity instanceof Player player)) {
 			return;
 		}
-		if (stack.getOrDefault(PEDataComponentTypes.ACTIVE, false)) {
+		if (stack.getOrDefault(PEDataComponentTypes.ACTIVE.get(), false)) {
 			if (!hasEmc(player, stack, 64, true)) {
-				stack.set(PEDataComponentTypes.ACTIVE, false);
+				stack.set(PEDataComponentTypes.ACTIVE.get(), false);
 			} else {
 				WorldHelper.growNearbyRandomly(true, level, player);
 				removeEmc(stack, 0.32F);
@@ -100,11 +97,10 @@ public class HarvestGoddess extends PEToggleItem implements IPedestalItem {
 		for (BlockPos currentPos : WorldHelper.horizontalPositionsAround(pos, 15)) {
 			boolean wasSuccessful = false;
 			BlockState state = level.getBlockState(currentPos);
-			//TODO: Do we want to fire this with a different stack if we have already used the four that we accounted?
-			BonemealEvent event = EventHooks.fireBonemealEvent(player, level, currentPos, state, stack);
-			if (event.isCanceled()) {
-				wasSuccessful = event.isSuccessful();
-			} else if (event.isValidBonemealTarget()) {
+			//NeoForge fired an event here so other mods could define their own bonemeal behaviour; with no Fabric
+			// counterpart this goes by vanilla's own test for what bone meal works on
+			if (state.getBlock() instanceof BonemealableBlock bonemealable
+				&& bonemealable.isValidBonemealTarget(level, currentPos, state)) {
 				wasSuccessful = true;
 				if (level instanceof ServerLevel serverLevel) {
 					//Note: We mirror vanilla only checking isBonemealSuccess on the server side
@@ -161,12 +157,9 @@ public class HarvestGoddess extends PEToggleItem implements IPedestalItem {
 				ItemStack stack = iterator.next();
 				boolean planted = false;
 				//Note: Unlike the patched in check in HarvestFarmland, we check special plantable before falling back to the item as a block item
-				if (stack.getItem() instanceof SpecialPlantable plantable) {
-					if (plantable.canPlacePlantAtPosition(stack, level, plantPos, Direction.DOWN)) {
-						plantable.spawnPlantAtPosition(stack, level, plantPos, Direction.DOWN);
-						planted = true;
-					}
-				} else if (stack.is(PETags.Items.PLANTABLE_SEEDS) && stack.getItem() instanceof BlockItem blockItem) {
+				//NeoForge had an interface for items that plant something other than the block they represent;
+				// nothing provides it on Fabric, so only ordinary block items get planted here
+				if (stack.is(PETags.Items.PLANTABLE_SEEDS) && stack.getItem() instanceof BlockItem blockItem) {
 					if (placeContext == null) {
 						placeContext = new BlockPlaceContext(level, player, InteractionHand.MAIN_HAND, stack, new BlockHitResult(
 								currentPos.getCenter().relative(Direction.UP, 0.5), Direction.UP, currentPos, false
@@ -212,7 +205,7 @@ public class HarvestGoddess extends PEToggleItem implements IPedestalItem {
 		for (ItemStack stack : inv) {
 			if (!stack.isEmpty()) {
 				Item item = stack.getItem();
-				if (item instanceof SpecialPlantable || stack.is(PETags.Items.PLANTABLE_SEEDS) && item instanceof BlockItem) {
+				if (stack.is(PETags.Items.PLANTABLE_SEEDS) && item instanceof BlockItem) {
 					result.add(stack);
 				}
 			}

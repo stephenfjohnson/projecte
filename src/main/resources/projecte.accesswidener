@@ -46,3 +46,8 @@ accessible	class	net/minecraft/data/models/ItemModelGenerators$TrimModelData
 # them directly to work out what a block becomes when stripped or flattened.
 accessible	field	net/minecraft/world/item/AxeItem	STRIPPABLES	Ljava/util/Map;
 accessible	field	net/minecraft/world/item/ShovelItem	FLATTENABLES	Ljava/util/Map;
+
+# Registering a screen for a menu. Vanilla keeps this private and Fabric API has no helper for it.
+accessible	method	net/minecraft/client/gui/screens/MenuScreens	register	(Lnet/minecraft/world/inventory/MenuType;Lnet/minecraft/client/gui/screens/MenuScreens$ScreenConstructor;)V
+# Which fluid a liquid block is, for drawing the transmutation preview
+accessible	field	net/minecraft/world/level/block/LiquidBlock	fluid	Lnet/minecraft/world/level/material/FlowingFluid;

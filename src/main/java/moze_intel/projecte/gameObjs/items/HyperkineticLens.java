@@ -18,8 +18,8 @@ import org.jetbrains.annotations.NotNull;
 public class HyperkineticLens extends ItemPE implements IProjectileShooter, IItemCharge, IBarHelper {
 
 	public HyperkineticLens(Properties props) {
-		super(props.component(PEDataComponentTypes.CHARGE, 0)
-				.component(PEDataComponentTypes.STORED_EMC, 0L)
+		super(props.component(PEDataComponentTypes.CHARGE.get(), 0)
+				.component(PEDataComponentTypes.STORED_EMC.get(), 0L)
 		);
 	}
 

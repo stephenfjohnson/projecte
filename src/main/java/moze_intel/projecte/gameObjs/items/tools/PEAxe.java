@@ -27,8 +27,8 @@ public class PEAxe extends AxeItem implements IItemCharge, IBarHelper {
 
 	public PEAxe(IMatterType matterType, int numCharges, Properties props) {
 		super(matterType, props.attributes(createAttributes(matterType, 5, -3))
-				.component(PEDataComponentTypes.CHARGE, 0)
-				.component(PEDataComponentTypes.STORED_EMC, 0L)
+				.component(PEDataComponentTypes.CHARGE.get(), 0)
+				.component(PEDataComponentTypes.STORED_EMC.get(), 0L)
 		);
 		this.matterType = matterType;
 		this.numCharges = numCharges;

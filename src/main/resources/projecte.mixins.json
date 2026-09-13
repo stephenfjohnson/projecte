@@ -4,8 +4,14 @@
   "package": "moze_intel.projecte.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "EntityInvulnerabilityMixin",
+    "ItemEntityPickupMixin",
     "ItemStackAttributesMixin",
-    "PlayerAttachmentsMixin"
+    "LivingEntityArmorMixin",
+    "LivingEntityJumpMixin",
+    "PlayerAttachmentsMixin",
+    "PlayerOfflineCacheMixin",
+    "PlayerTickMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -42,7 +42,7 @@ public class DiviningRod extends ItemPE implements IItemMode<DiviningMode> {
 	private final int maxModes;
 
 	public DiviningRod(Properties props, int maxModes) {
-		super(props.component(PEDataComponentTypes.DIVINING_ROD_MODE, DiviningMode.LOW));
+		super(props.component(PEDataComponentTypes.DIVINING_ROD_MODE.get(), DiviningMode.LOW));
 		this.maxModes = maxModes;
 	}
 

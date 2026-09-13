@@ -130,7 +130,7 @@ public class Pedestal extends Block implements SimpleWaterloggedBlock, PEEntityB
 			}
 			ItemStack item = pedestal.getInventory().getStackInSlot(0);
 			if (stack.isEmpty() && !item.isEmpty()) {
-				IPedestalItem pedestalItem = item.getCapability(PECapabilities.PEDESTAL_ITEM_CAPABILITY);
+				IPedestalItem pedestalItem = PECapabilities.PEDESTAL_ITEM_CAPABILITY.find(item, null);
 				if (pedestalItem != null) {
 					pedestal.setActive(level, pos, !pedestal.getActive());
 					level.sendBlockUpdated(pos, state, state, Block.UPDATE_IMMEDIATE);
@@ -152,7 +152,7 @@ public class Pedestal extends Block implements SimpleWaterloggedBlock, PEEntityB
 			if (hasSignal) {
 				ItemStack stack = ped.getInventory().getStackInSlot(0);
 				//Note: Checking the capability is present will validate that the stack is not empty
-				if (stack.getCapability(PECapabilities.PEDESTAL_ITEM_CAPABILITY) != null) {
+				if (PECapabilities.PEDESTAL_ITEM_CAPABILITY.find(stack, null) != null) {
 					ped.setActive(level, pos, !ped.getActive());
 					level.sendBlockUpdated(pos, state, state, Block.UPDATE_ALL_IMMEDIATE);
 				}
@@ -175,7 +175,7 @@ public class Pedestal extends Block implements SimpleWaterloggedBlock, PEEntityB
 		if (pedestal != null) {
 			ItemStack stack = pedestal.getInventory().getStackInSlot(0);
 			if (!stack.isEmpty()) {
-				if (stack.getCapability(PECapabilities.PEDESTAL_ITEM_CAPABILITY) != null) {
+				if (PECapabilities.PEDESTAL_ITEM_CAPABILITY.find(stack, null) != null) {
 					return pedestal.getActive() ? 15 : 10;
 				}
 				return 5;

@@ -17,7 +17,9 @@ import moze_intel.projecte.config.CustomEMCParser;
 import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.emc.EMCMappingHandler;
 import moze_intel.projecte.emc.FuelMapper;
+import moze_intel.projecte.events.PlayerEvents;
 import moze_intel.projecte.gameObjs.items.IHasConditionalAttributes;
+import moze_intel.projecte.gameObjs.items.rings.ArchangelSmite;
 import moze_intel.projecte.gameObjs.registries.PEArmorMaterials;
 import moze_intel.projecte.gameObjs.registries.PEAttachmentTypes;
 import moze_intel.projecte.gameObjs.registries.PEBlockEntityTypes;
@@ -161,6 +163,9 @@ public class PECore implements ModInitializer {
 		ServerLifecycleEvents.SERVER_STARTING.register(this::serverStarting);
 		ServerLifecycleEvents.SERVER_STOPPED.register(this::serverQuit);
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> registerCommands(dispatcher, registryAccess));
+
+		PlayerEvents.register();
+		ArchangelSmite.registerEvents();
 
 		commonSetup();
 	}

@@ -4,10 +4,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceMap;
 import moze_intel.projecte.config.ProjectEConfig;
-import moze_intel.projecte.gameObjs.items.PhilosophersStone;
 import moze_intel.projecte.gameObjs.items.PhilosophersStone.PhilosophersStoneMode;
+import moze_intel.projecte.gameObjs.items.PhilosophersStone;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import moze_intel.projecte.utils.Constants;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -29,9 +33,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.client.event.RenderHighlightEvent;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,20 +44,25 @@ public class TransmutationRenderingOverlay implements LayeredDraw.Layer {
 	private long lastGameTime;
 
 	public TransmutationRenderingOverlay() {
-		NeoForge.EVENT_BUS.addListener(this::onOverlay);
+		//Fabric's block outline event is where NeoForge's highlight event was; returning true lets vanilla draw
+		// its own outline as before
+		WorldRenderEvents.BLOCK_OUTLINE.register((context, outlineContext) -> {
+			onOverlay(context);
+			return true;
+		});
 	}
 
 	@Override
 	public void render(@NotNull GuiGraphics graphics, @NotNull DeltaTracker delta) {
 		if (!mc.options.hideGui && transmutationResult != null) {
 			if (transmutationResult instanceof LiquidBlock liquidBlock) {
-				IClientFluidTypeExtensions properties = IClientFluidTypeExtensions.of(liquidBlock.fluid);
-				int color = properties.getTintColor();
+				FluidVariant variant = FluidVariant.of(liquidBlock.fluid);
+				int color = FluidVariantRendering.getColor(variant);
 				float red = (color >> 16 & 0xFF) / 255.0F;
 				float green = (color >> 8 & 0xFF) / 255.0F;
 				float blue = (color & 0xFF) / 255.0F;
 				float alpha = (color >> 24 & 0xFF) / 255.0F;
-				TextureAtlasSprite sprite = mc.getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(properties.getStillTexture());
+				TextureAtlasSprite sprite = FluidVariantRendering.getSprite(variant);
 				graphics.blit(1, 1, 0, 16, 16, sprite, red, green, blue, alpha);
 			} else {
 				//Just render it normally instead of with the given model as some block's don't render properly then as an item
@@ -74,8 +80,8 @@ public class TransmutationRenderingOverlay implements LayeredDraw.Layer {
 		}
 	}
 
-	private void onOverlay(RenderHighlightEvent.Block event) {
-		Camera activeRenderInfo = event.getCamera();
+	private void onOverlay(WorldRenderContext context) {
+		Camera activeRenderInfo = context.camera();
 		if (!(activeRenderInfo.getEntity() instanceof Player player)) {
 			return;
 		}
@@ -105,8 +111,8 @@ public class TransmutationRenderingOverlay implements LayeredDraw.Layer {
 				transmutationResult = changes.values().iterator().next().getBlock();
 				Vec3 viewPosition = activeRenderInfo.getPosition();
 				float alpha = ProjectEConfig.client.pulsatingOverlay.get() ? getPulseProportion() * 0.60F : 0.35F;
-				VertexConsumer builder = event.getMultiBufferSource().getBuffer(PERenderType.TRANSMUTATION_OVERLAY);
-				PoseStack matrix = event.getPoseStack();
+				VertexConsumer builder = context.consumers().getBuffer(PERenderType.TRANSMUTATION_OVERLAY);
+				PoseStack matrix = context.matrixStack();
 				CollisionContext selectionContext = CollisionContext.of(player);
 				for (BlockPos pos : changes.keySet()) {
 					BlockState state = level.getBlockState(pos);

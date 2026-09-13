@@ -73,7 +73,7 @@ public class EMCCMD {
 	private static int handle(CommandContext<CommandSourceStack> ctx, ActionType action) throws CommandSyntaxException {
 		CommandSourceStack source = ctx.getSource();
 		ServerPlayer player = EntityArgument.getPlayer(ctx, "player");
-		IKnowledgeProvider provider = player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY);
+		IKnowledgeProvider provider = PECapabilities.KNOWLEDGE_CAPABILITY.find(player, null);
 		if (provider == null) {
 			source.sendFailure(PELang.COMMAND_PROVIDER_FAIL.translate(player.getDisplayName()));
 			return 0;

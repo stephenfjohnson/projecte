@@ -32,13 +32,13 @@ import org.jetbrains.annotations.Nullable;
 public class RepairTalisman extends ItemPE implements IAlchBagItem, IAlchChestItem, IPedestalItem, ICapabilityAware {
 
 	private static final BiPredicate<ItemStack, Void> CAN_REPAIR_ITEM = (stack, ignored) -> !stack.isEmpty() &&
-																							stack.getCapability(PECapabilities.MODE_CHANGER_ITEM_CAPABILITY) == null &&
+																							PECapabilities.MODE_CHANGER_ITEM_CAPABILITY.find(stack, null) == null &&
 																							ItemHelper.isRepairableDamagedItem(stack);
 	private static final BiPredicate<ItemStack, Player> CAN_REPAIR_PLAYER_ITEM =
 			(stack, player) -> CAN_REPAIR_ITEM.test(stack, null) && (stack != player.getMainHandItem() || !player.swinging);
 
 	public RepairTalisman(Properties props) {
-		super(props.component(PEDataComponentTypes.COOLDOWN, (byte) 0));
+		super(props.component(PEDataComponentTypes.COOLDOWN.get(), (byte) 0));
 	}
 
 	@Override
@@ -91,12 +91,12 @@ public class RepairTalisman extends ItemPE implements IAlchBagItem, IAlchChestIt
 	}
 
 	private boolean updateInHandler(@NotNull IItemHandler inv, @NotNull ItemStack stack) {
-		byte coolDown = stack.getOrDefault(PEDataComponentTypes.COOLDOWN, (byte) 0);
+		byte coolDown = stack.getOrDefault(PEDataComponentTypes.COOLDOWN.get(), (byte) 0);
 		if (coolDown > 0) {
-			stack.set(PEDataComponentTypes.COOLDOWN, (byte) (coolDown - 1));
+			stack.set(PEDataComponentTypes.COOLDOWN.get(), (byte) (coolDown - 1));
 			return true;
 		} else if (repairAllItems(inv, null, CAN_REPAIR_ITEM)) {
-			stack.set(PEDataComponentTypes.COOLDOWN, (byte) 19);
+			stack.set(PEDataComponentTypes.COOLDOWN.get(), (byte) 19);
 			return true;
 		}
 		return false;
@@ -108,8 +108,8 @@ public class RepairTalisman extends ItemPE implements IAlchBagItem, IAlchChestIt
 	}
 
 	private static void repairAllItems(Player player) {
-		repairAllItems(player.getCapability(ItemHandler.ENTITY), player, CAN_REPAIR_PLAYER_ITEM);
-		repairAllItems(player.getCapability(IntegrationHelper.ACCESSORY_ITEM_HANDLER), player, CAN_REPAIR_PLAYER_ITEM);
+		repairAllItems(ItemHandler.ENTITY.find(player, null), player, CAN_REPAIR_PLAYER_ITEM);
+		repairAllItems(IntegrationHelper.ACCESSORY_ITEM_HANDLER.find(player, null), player, CAN_REPAIR_PLAYER_ITEM);
 	}
 
 	private static <DATA> boolean repairAllItems(@Nullable IItemHandler inv, DATA data, BiPredicate<ItemStack, DATA> canRepairStack) {

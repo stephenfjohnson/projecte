@@ -18,7 +18,7 @@ public class KleinStar extends ItemPE implements IItemEmcHolder, IBarHelper, ICa
 	public final KleinTier tier;
 
 	public KleinStar(Properties props, KleinTier tier) {
-		super(props.component(PEDataComponentTypes.STORED_EMC, 0L));
+		super(props.component(PEDataComponentTypes.STORED_EMC.get(), 0L));
 		this.tier = tier;
 	}
 
@@ -51,7 +51,7 @@ public class KleinStar extends ItemPE implements IItemEmcHolder, IBarHelper, ICa
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, @NotNull InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 		if (!level.isClientSide && PEPlatform.isDevelopment() && player.isCreative()) {
-			stack.set(PEDataComponentTypes.STORED_EMC, getMaximumEmc(stack));
+			stack.set(PEDataComponentTypes.STORED_EMC.get(), getMaximumEmc(stack));
 			return InteractionResultHolder.success(stack);
 		}
 		return InteractionResultHolder.pass(stack);
@@ -88,7 +88,7 @@ public class KleinStar extends ItemPE implements IItemEmcHolder, IBarHelper, ICa
 		}
 		long toAdd = Math.min(maxEmc - storedEmc, toInsert);
 		if (action.execute()) {
-			stack.set(PEDataComponentTypes.STORED_EMC, storedEmc + toAdd);
+			stack.set(PEDataComponentTypes.STORED_EMC.get(), storedEmc + toAdd);
 		}
 		return toAdd;
 	}
@@ -101,7 +101,7 @@ public class KleinStar extends ItemPE implements IItemEmcHolder, IBarHelper, ICa
 		long storedEmc = getStoredEmc(stack);
 		long toRemove = Math.min(storedEmc, toExtract);
 		if (action.execute()) {
-			stack.set(PEDataComponentTypes.STORED_EMC, storedEmc - toRemove);
+			stack.set(PEDataComponentTypes.STORED_EMC.get(), storedEmc - toRemove);
 		}
 		return toRemove;
 	}
@@ -109,7 +109,7 @@ public class KleinStar extends ItemPE implements IItemEmcHolder, IBarHelper, ICa
 	@Override
 	@Range(from = 0, to = Long.MAX_VALUE)
 	public long getStoredEmc(@NotNull ItemStack stack) {
-		return stack.getOrDefault(PEDataComponentTypes.STORED_EMC, 0L);
+		return stack.getOrDefault(PEDataComponentTypes.STORED_EMC.get(), 0L);
 	}
 
 	@Override

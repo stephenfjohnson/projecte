@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 public class BodyStone extends PEToggleItem implements IPedestalItem, ICapabilityAware {
 
 	public BodyStone(Properties props) {
-		super(props.component(PEDataComponentTypes.STORED_EMC, 0L));
+		super(props.component(PEDataComponentTypes.STORED_EMC.get(), 0L));
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class BodyStone extends PEToggleItem implements IPedestalItem, ICapabilit
 		if (level.isClientSide || !hotBarOrOffHand(slot) || !(entity instanceof Player player)) {
 			return;
 		}
-		if (stack.getOrDefault(PEDataComponentTypes.ACTIVE, false)) {
+		if (stack.getOrDefault(PEDataComponentTypes.ACTIVE.get(), false)) {
 			if (consumeFuel(player, stack, 64, false)) {
 				if (PlayerHelper.checkFeedCooldown(player)) {
 					level.playSound(null, player.getX(), player.getY(), player.getZ(), PESoundEvents.HEAL.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
@@ -46,7 +46,7 @@ public class BodyStone extends PEToggleItem implements IPedestalItem, ICapabilit
 					removeEmc(stack, 64);
 				}
 			} else {
-				stack.set(PEDataComponentTypes.ACTIVE, false);
+				stack.set(PEDataComponentTypes.ACTIVE.get(), false);
 			}
 		}
 	}

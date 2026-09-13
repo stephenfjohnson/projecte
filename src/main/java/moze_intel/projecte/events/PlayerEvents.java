@@ -12,6 +12,9 @@ import moze_intel.projecte.impl.TransmutationOffline;
 import moze_intel.projecte.inventory.ItemHandlerHelper;
 import moze_intel.projecte.utils.PlayerHelper;
 import moze_intel.projecte.utils.text.PELang;
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -22,63 +25,52 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.util.thread.EffectiveSide;
-import net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction;
-import net.neoforged.neoforge.common.damagesource.DamageContainer;
-import net.neoforged.neoforge.common.util.FakePlayer;
-import net.neoforged.neoforge.event.entity.EntityEvent;
-import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
-import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
-@EventBusSubscriber(modid = PECore.MODID)
+/**
+ * ProjectE's reactions to what players do.
+ * <p>
+ * Where Fabric has an event of its own these are registered in {@link #register()}; the rest are called from
+ * mixins, since NeoForge's equivalents have no Fabric counterpart.
+ */
 public class PlayerEvents {
 
+	private PlayerEvents() {
+	}
+
+	public static void register() {
+		ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> syncToClient(newPlayer));
+		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, origin, destination) -> playerChangeDimension(player));
+		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+			playerConnect(handler.getPlayer());
+			announceHighAlchemist(handler.getPlayer());
+		});
+	}
+
 	// On death or return from end, sync to the client
-	@SubscribeEvent
-	public static void respawnEvent(PlayerEvent.PlayerRespawnEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) {
-			IKnowledgeProvider knowledge = player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY);
-			if (knowledge != null) {
-				knowledge.sync(player);
-			}
-			IAlchBagProvider bagProvider = player.getCapability(PECapabilities.ALCH_BAG_CAPABILITY);
-			if (bagProvider != null) {
-				bagProvider.syncAllBags(player);
-			}
+	private static void syncToClient(ServerPlayer player) {
+		IKnowledgeProvider knowledge = PECapabilities.KNOWLEDGE_CAPABILITY.find(player, null);
+		if (knowledge != null) {
+			knowledge.sync(player);
+		}
+		IAlchBagProvider bagProvider = PECapabilities.ALCH_BAG_CAPABILITY.find(player, null);
+		if (bagProvider != null) {
+			bagProvider.syncAllBags(player);
 		}
 	}
 
-	@SubscribeEvent
-	public static void playerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-		Player player = event.getEntity();
-		if (player instanceof ServerPlayer serverPlayer) {
-			// Sync to the client for "normal" interdimensional teleports (nether portal, etc.)
-			IKnowledgeProvider knowledge = serverPlayer.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY);
-			if (knowledge != null) {
-				knowledge.sync(serverPlayer);
-			}
-			IAlchBagProvider bagProvider = serverPlayer.getCapability(PECapabilities.ALCH_BAG_CAPABILITY);
-			if (bagProvider != null) {
-				bagProvider.syncAllBags(serverPlayer);
-			}
-		}
+	private static void playerChangeDimension(ServerPlayer player) {
+		// Sync to the client for "normal" interdimensional teleports (nether portal, etc.)
+		syncToClient(player);
 	}
 
-	@SubscribeEvent
-	public static void playerConnect(PlayerEvent.PlayerLoggedInEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getEntity();
-		IKnowledgeProvider knowledge = player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY);
+	private static void playerConnect(ServerPlayer player) {
+		IKnowledgeProvider knowledge = PECapabilities.KNOWLEDGE_CAPABILITY.find(player, null);
 		if (knowledge != null) {
 			knowledge.sync(player);
 			PlayerHelper.updateScore(player, PlayerHelper.SCOREBOARD_EMC, knowledge.getEmc());
 		}
 
-		IAlchBagProvider alchBagProvider = player.getCapability(PECapabilities.ALCH_BAG_CAPABILITY);
+		IAlchBagProvider alchBagProvider = PECapabilities.ALCH_BAG_CAPABILITY.find(player, null);
 		if (alchBagProvider != null) {
 			alchBagProvider.syncAllBags(player);
 		}
@@ -86,36 +78,28 @@ public class PlayerEvents {
 		PECore.debugLog("Sent knowledge and bag data to {}", player.getName());
 	}
 
-	@SubscribeEvent
-	public static void onConstruct(EntityEvent.EntityConstructing evt) {
-		if (EffectiveSide.get().isServer() // No world to check yet
-			&& evt.getEntity() instanceof Player && !(evt.getEntity() instanceof FakePlayer)) {
-			TransmutationOffline.clear(evt.getEntity().getUUID());
-			PECore.debugLog("Clearing offline data cache in preparation to load online data");
-		}
-	}
-
-	@SubscribeEvent
-	public static void onHighAlchemistJoin(PlayerEvent.PlayerLoggedInEvent evt) {
-		if (PECore.uuids.contains(evt.getEntity().getUUID().toString())) {
-			MinecraftServer server = evt.getEntity().getServer();
+	private static void announceHighAlchemist(ServerPlayer player) {
+		if (PECore.uuids.contains(player.getUUID().toString())) {
+			MinecraftServer server = player.getServer();
 			if (server != null) {
-				Component joinMessage = PELang.HIGH_ALCHEMIST.translateColored(ChatFormatting.BLUE, ChatFormatting.GOLD, evt.getEntity().getDisplayName());
+				Component joinMessage = PELang.HIGH_ALCHEMIST.translateColored(ChatFormatting.BLUE, ChatFormatting.GOLD, player.getDisplayName());
 				server.getPlayerList().broadcastSystemMessage(joinMessage, false);
 			}
 		}
 	}
 
-	@SubscribeEvent(priority = EventPriority.LOW)
-	public static void pickupItem(ItemEntityPickupEvent.Pre event) {
-		ItemEntity itemEntity = event.getItemEntity();
-		Player player = event.getPlayer();
+	/**
+	 * Offers an item on the ground to an alchemical bag holding a black hole band before the player picks it up.
+	 *
+	 * @return {@code true} if the bag took some of it, in which case the normal pickup must not also happen.
+	 */
+	public static boolean pickupItem(ItemEntity itemEntity, Player player) {
 		if (itemEntity.level().isClientSide || itemEntity.hasPickUpDelay() || itemEntity.getTarget() != null && !player.getUUID().equals(itemEntity.getTarget())) {
-			return;
+			return false;
 		}
 		ItemStack bag = AlchemicalBag.getFirstBagWithSuctionItem(player, player.getInventory().items);
 		if (!bag.isEmpty()) {
-			IAlchBagProvider bagProvider = player.getCapability(PECapabilities.ALCH_BAG_CAPABILITY);
+			IAlchBagProvider bagProvider = PECapabilities.ALCH_BAG_CAPABILITY.find(player, null);
 			if (bagProvider != null) {
 				ItemStack stack = itemEntity.getItem();
 				IItemHandler handler = bagProvider.getBag(((AlchemicalBag) bag.getItem()).color);
@@ -123,7 +107,6 @@ public class PlayerEvents {
 
 				int pickedUpCount = stack.getCount() - remainder.getCount();
 				if (pickedUpCount > 0) {
-					event.setCanPickup(TriState.FALSE);
 					player.take(itemEntity, pickedUpCount);
 					if (remainder.isEmpty()) {
 						itemEntity.discard();
@@ -132,40 +115,12 @@ public class PlayerEvents {
 					}
 					player.awardStat(Stats.ITEM_PICKED_UP.get(stack.getItem()), pickedUpCount);
 					player.onItemPickup(itemEntity);
+					return true;
 				}
 			}
 		}
+		return false;
 	}
 
-	@SubscribeEvent
-	public static void onInvulnerabilityChecked(EntityInvulnerabilityCheckEvent evt) {
-		if (evt.getEntity() instanceof ServerPlayer player && evt.getSource().is(DamageTypeTags.IS_FIRE) && TickEvents.shouldPlayerResistFire(player)) {
-			evt.setInvulnerable(true);
-		}
-	}
 
-	//This event gets called when calculating how much damage to do to the entity, even if it is canceled the entity will still get "hit"
-	@SubscribeEvent
-	public static void onLivingDamaged(LivingIncomingDamageEvent event) {
-		DamageContainer damageContainer = event.getContainer();
-		if (damageContainer.getNewDamage() > 0) {
-			ReductionInfo reductionInfo = ReductionInfo.ZERO;
-			for (ItemStack armorStack : event.getEntity().getArmorSlots()) {
-				if (armorStack.getItem() instanceof PEArmor armorItem) {
-					//We return the max of this piece's base reduction (in relation to the full set),
-					// and the max damage an item can absorb for a given source
-					reductionInfo = reductionInfo.add(armorItem.getReductionInfo(damageContainer.getSource()));
-				}
-			}
-			if (reductionInfo.percentReduced() >= 1) {
-				event.setCanceled(true);
-			} else if (reductionInfo.maxDamagedAbsorbed() > 0 && reductionInfo.percentReduced() > 0) {
-				ReductionInfo info = reductionInfo;
-				damageContainer.addModifier(Reduction.ARMOR, (container, reduction) -> {
-					float damageAbsorbed = container.getNewDamage() * info.percentReduced();
-					return reduction + Math.min(damageAbsorbed, info.maxDamagedAbsorbed());
-				});
-			}
-		}
-	}
 }

@@ -58,7 +58,7 @@ public class KnowledgeCMD {
 	}
 
 	private static @Nullable IKnowledgeProvider getProvider(ServerPlayer player) {
-		return player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY);
+		return PECapabilities.KNOWLEDGE_CAPABILITY.find(player, null);
 	}
 
 	private static ArgumentBuilder<CommandSourceStack, ?> subCommandClear() {

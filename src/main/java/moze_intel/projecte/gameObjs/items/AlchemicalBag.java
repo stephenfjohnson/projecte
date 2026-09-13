@@ -50,7 +50,7 @@ public class AlchemicalBag extends ItemPE {
 		for (ItemStack stack : inventory) {
 			if (!stack.isEmpty() && stack.getItem() instanceof AlchemicalBag bag) {
 				if (alchBagProvider == null) {
-					alchBagProvider = player.getCapability(PECapabilities.ALCH_BAG_CAPABILITY);
+					alchBagProvider = PECapabilities.ALCH_BAG_CAPABILITY.find(player, null);
 					if (alchBagProvider == null) {
 						//If the player really doesn't have the capability, and it isn't just not loaded yet, exit
 						break;
@@ -60,7 +60,7 @@ public class AlchemicalBag extends ItemPE {
 				for (int i = 0; i < inv.getSlots(); i++) {
 					ItemStack ring = inv.getStackInSlot(i);
 					if (!ring.isEmpty() && (ring.is(PEItems.BLACK_HOLE_BAND) || ring.is(PEItems.VOID_RING))) {
-						if (ring.getOrDefault(PEDataComponentTypes.ACTIVE, false)) {
+						if (ring.getOrDefault(PEDataComponentTypes.ACTIVE.get(), false)) {
 							return stack;
 						}
 					}
@@ -83,7 +83,7 @@ public class AlchemicalBag extends ItemPE {
 		@NotNull
 		@Override
 		public AbstractContainerMenu createMenu(int windowId, @NotNull Inventory playerInventory, @NotNull Player player) {
-			IItemHandlerModifiable inv = (IItemHandlerModifiable) Objects.requireNonNull(player.getCapability(PECapabilities.ALCH_BAG_CAPABILITY)).getBag(color);
+			IItemHandlerModifiable inv = (IItemHandlerModifiable) Objects.requireNonNull(PECapabilities.ALCH_BAG_CAPABILITY.find(player, null)).getBag(color);
 			return new AlchBagContainer(windowId, playerInventory, hand, inv, playerInventory.selected, false);
 		}
 

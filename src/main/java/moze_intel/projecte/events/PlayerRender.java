@@ -1,21 +1,31 @@
 package moze_intel.projecte.events;
 
-import moze_intel.projecte.PECore;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ComputeFovModifierEvent;
+import net.minecraft.world.entity.player.Player;
 
-@EventBusSubscriber(modid = PECore.MODID, value = Dist.CLIENT)
+/**
+ * Adjusts what the player sees based on the ProjectE gear they are wearing.
+ */
 public class PlayerRender {
 
-	@SubscribeEvent
-	public static void onFOVUpdateEvent(ComputeFovModifierEvent evt) {
-		if (!evt.getPlayer().getItemBySlot(EquipmentSlot.FEET).isEmpty() && evt.getPlayer().getItemBySlot(EquipmentSlot.FEET).is(PEItems.GEM_BOOTS)) {
-			evt.setNewFovModifier(evt.getNewFovModifier() - 0.5F * Minecraft.getInstance().options.fovEffectScale().get().floatValue());
+	private PlayerRender() {
+	}
+
+	/**
+	 * Narrows the field of view while the gem boots are worn, matching how sprinting does.
+	 * <p>
+	 * Called from {@code AbstractClientPlayerFovMixin}, in place of NeoForge's field of view event.
+	 *
+	 * @param modifier What vanilla worked out.
+	 *
+	 * @return The modifier to actually use.
+	 */
+	public static float adjustFovModifier(Player player, float modifier) {
+		if (player.getItemBySlot(EquipmentSlot.FEET).is(PEItems.GEM_BOOTS)) {
+			return modifier - 0.5F * Minecraft.getInstance().options.fovEffectScale().get().floatValue();
 		}
+		return modifier;
 	}
 }

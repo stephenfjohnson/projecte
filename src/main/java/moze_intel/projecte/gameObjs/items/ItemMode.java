@@ -14,7 +14,7 @@ public abstract class ItemMode<MODE extends Enum<MODE> & IModeEnum<MODE>> extend
 	private final int numCharge;
 
 	public ItemMode(Properties props, int numCharge) {
-		super(props.component(PEDataComponentTypes.CHARGE, 0));
+		super(props.component(PEDataComponentTypes.CHARGE.get(), 0));
 		this.numCharge = numCharge;
 	}
 

@@ -49,8 +49,8 @@ public class PEPickaxe extends PickaxeItem implements IItemCharge, IItemMode<Pic
 
 	public PEPickaxe(IMatterType matterType, int numCharges, Properties props) {
 		super(matterType, props.attributes(createAttributes(matterType, 4, -2.8F))
-				.component(PEDataComponentTypes.PICKAXE_MODE, PickaxeMode.STANDARD)
-				.component(PEDataComponentTypes.CHARGE, 0)
+				.component(PEDataComponentTypes.PICKAXE_MODE.get(), PickaxeMode.STANDARD)
+				.component(PEDataComponentTypes.CHARGE.get(), 0)
 		);
 		this.matterType = matterType;
 		this.numCharges = numCharges;

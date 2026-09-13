@@ -28,8 +28,8 @@ public class PEShovel extends ShovelItem implements IItemCharge, IBarHelper {
 
 	public PEShovel(IMatterType matterType, int numCharges, Properties props) {
 		super(matterType, props.attributes(createAttributes(matterType, 2, -3))
-				.component(PEDataComponentTypes.CHARGE, 0)
-				.component(PEDataComponentTypes.STORED_EMC, 0L)
+				.component(PEDataComponentTypes.CHARGE.get(), 0)
+				.component(PEDataComponentTypes.STORED_EMC.get(), 0L)
 		);
 		this.matterType = matterType;
 		this.numCharges = numCharges;

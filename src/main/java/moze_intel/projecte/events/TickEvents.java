@@ -17,24 +17,24 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-@EventBusSubscriber(modid = PECore.MODID)
+/**
+ * ProjectE's per-tick player upkeep, called from {@code PlayerTickMixin} in place of NeoForge's player tick event.
+ */
 public class TickEvents {
 
-	@SubscribeEvent
-	public static void playerTick(PlayerTickEvent.Post event) {
-		Player player = event.getEntity();
-		IAlchBagProvider provider = player.getCapability(PECapabilities.ALCH_BAG_CAPABILITY);
+	private TickEvents() {
+	}
+
+	public static void playerTick(Player player) {
+		IAlchBagProvider provider = PECapabilities.ALCH_BAG_CAPABILITY.find(player, null);
 		if (provider != null) {
 			Set<DyeColor> colorsChanged = EnumSet.noneOf(DyeColor.class);
 			for (DyeColor color : getBagColorsPresent(player)) {
 				IItemHandler inv = provider.getBag(color);
 				for (int i = 0, slots = inv.getSlots(); i < slots; i++) {
 					ItemStack current = inv.getStackInSlot(i);
-					IAlchBagItem alchBagItem = current.getCapability(PECapabilities.ALCH_BAG_ITEM_CAPABILITY);
+					IAlchBagItem alchBagItem = PECapabilities.ALCH_BAG_ITEM_CAPABILITY.find(current, null);
 					if (alchBagItem != null && alchBagItem.updateInAlchBag(inv, player, current)) {
 						colorsChanged.add(color);
 					}
@@ -70,7 +70,7 @@ public class TickEvents {
 
 	private static Set<DyeColor> getBagColorsPresent(Player player) {
 		Set<DyeColor> bagsPresent = EnumSet.noneOf(DyeColor.class);
-		IItemHandler inv = player.getCapability(ItemHandler.ENTITY);
+		IItemHandler inv = ItemHandler.ENTITY.find(player, null);
 		if (inv != null) {
 			for (int i = 0, slots = inv.getSlots(); i < slots; i++) {
 				ItemStack stack = inv.getStackInSlot(i);

@@ -36,7 +36,7 @@ public class GemFeet extends GemArmorBase {
 	private final Supplier<ItemAttributeModifiers> defaultWithStepAssistModifiers;
 
 	public GemFeet(Properties props) {
-		super(ArmorItem.Type.BOOTS, props.component(PEDataComponentTypes.STEP_ASSIST, STEP_ASSIST_DEFAULT));
+		super(ArmorItem.Type.BOOTS, props.component(PEDataComponentTypes.STEP_ASSIST.get(), STEP_ASSIST_DEFAULT));
 		this.defaultModifiers = Suppliers.memoize(() -> super.getDefaultAttributeModifiers().withModifierAdded(
 				Attributes.MOVEMENT_SPEED,
 				new AttributeModifier(PECore.rl("armor"), 1.0, Operation.ADD_MULTIPLIED_TOTAL),
@@ -63,7 +63,7 @@ public class GemFeet extends GemArmorBase {
 
 	public static void toggleStepAssist(ItemStack boots, Player player) {
 		boolean oldValue = isStepAssist(boots);
-		boots.set(PEDataComponentTypes.STEP_ASSIST, !oldValue);
+		boots.set(PEDataComponentTypes.STEP_ASSIST.get(), !oldValue);
 		player.sendSystemMessage(getComponent(!oldValue));
 	}
 
@@ -113,7 +113,7 @@ public class GemFeet extends GemArmorBase {
 	}
 
 	private static boolean isStepAssist(ItemStack stack) {
-		return stack.getOrDefault(PEDataComponentTypes.STEP_ASSIST, STEP_ASSIST_DEFAULT);
+		return stack.getOrDefault(PEDataComponentTypes.STEP_ASSIST.get(), STEP_ASSIST_DEFAULT);
 	}
 
 	private static Component getComponent(boolean enabled) {

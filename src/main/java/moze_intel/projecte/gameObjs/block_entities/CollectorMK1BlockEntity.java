@@ -170,7 +170,7 @@ public class CollectorMK1BlockEntity extends EmcBlockEntity implements MenuProvi
 	private void checkFuelOrKlein() {
 		ItemStack upgrading = getUpgrading();
 		if (!upgrading.isEmpty()) {
-			IItemEmcHolder emcHolder = upgrading.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
+			IItemEmcHolder emcHolder = PECapabilities.EMC_HOLDER_ITEM_CAPABILITY.find(upgrading, null);
 			if (emcHolder != null) {
 				if (emcHolder.getNeededEmc(upgrading) > 0) {
 					hasChargeableItem = true;
@@ -202,7 +202,7 @@ public class CollectorMK1BlockEntity extends EmcBlockEntity implements MenuProvi
 		if (this.getStoredEmc() > 0) {
 			ItemStack upgrading = getUpgrading();
 			if (hasChargeableItem) {
-				IItemEmcHolder emcHolder = upgrading.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
+				IItemEmcHolder emcHolder = PECapabilities.EMC_HOLDER_ITEM_CAPABILITY.find(upgrading, null);
 				if (emcHolder != null) {
 					long actualInserted = emcHolder.insertEmc(upgrading, Math.min(getStoredEmc(), emcGen), EmcAction.EXECUTE);
 					forceExtractEmc(actualInserted, EmcAction.EXECUTE);
@@ -255,7 +255,7 @@ public class CollectorMK1BlockEntity extends EmcBlockEntity implements MenuProvi
 
 	public long getItemCharge() {
 		ItemStack upgrading = getUpgrading();
-		IItemEmcHolder emcHolder = upgrading.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
+		IItemEmcHolder emcHolder = PECapabilities.EMC_HOLDER_ITEM_CAPABILITY.find(upgrading, null);
 		if (emcHolder != null) {
 			return emcHolder.getStoredEmc(upgrading);
 		}
@@ -268,7 +268,7 @@ public class CollectorMK1BlockEntity extends EmcBlockEntity implements MenuProvi
 			return -1;
 		}
 		ItemStack upgrading = getUpgrading();
-		IItemEmcHolder emcHolder = upgrading.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
+		IItemEmcHolder emcHolder = PECapabilities.EMC_HOLDER_ITEM_CAPABILITY.find(upgrading, null);
 		if (emcHolder == null) {
 			return -1;
 		}

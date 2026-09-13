@@ -133,7 +133,7 @@ public record KeyPressPKT(PEKeybind key) implements IPEPacket {
 
 	private static <CAPABILITY> boolean tryPerformCapability(Player player, ItemStack stack, InteractionHand hand, ItemApiLookup<CAPABILITY, Void> capability,
 			CapabilityProcessor<CAPABILITY> processor) {
-		CAPABILITY impl = stack.getCapability(capability);
+		CAPABILITY impl = capability.find(stack, null);
 		return impl != null && processor.process(impl, player, stack, hand);
 	}
 

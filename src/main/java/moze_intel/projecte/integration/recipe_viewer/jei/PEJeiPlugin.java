@@ -48,7 +48,7 @@ public class PEJeiPlugin implements IModPlugin {
 				if (stack.getItem() instanceof IModeChanger<?> modeChanger) {
 					mode = modeChanger.getMode(stack);
 				}
-				Long stored = stack.get(PEDataComponentTypes.STORED_EMC);
+				Long stored = stack.get(PEDataComponentTypes.STORED_EMC.get());
 				if (stored != null && stored > 0) {
 					return mode == null ? stored : List.of(mode, stored);
 				}
@@ -65,7 +65,7 @@ public class PEJeiPlugin implements IModPlugin {
 				if (stack.getItem() instanceof IModeChanger<?> modeChanger) {
 					mode = modeChanger.getMode(stack);
 				}
-				Long stored = stack.get(PEDataComponentTypes.STORED_EMC);
+				Long stored = stack.get(PEDataComponentTypes.STORED_EMC.get());
 				if (stored != null && stored > 0) {
 					return mode == null ? stored.toString() : mode + ";" + stored;
 				} else if (mode != null) {

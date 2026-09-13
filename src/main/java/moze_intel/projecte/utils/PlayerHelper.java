@@ -102,7 +102,7 @@ public final class PlayerHelper {
 		if (!offhand.isEmpty() && checker.test(player, offhand)) {
 			return true;
 		}
-		IItemHandler curios = player.getCapability(IntegrationHelper.ACCESSORY_ITEM_HANDLER);
+		IItemHandler curios = IntegrationHelper.ACCESSORY_ITEM_HANDLER.find(player, null);
 		if (curios != null) {
 			for (int i = 0, slots = curios.getSlots(); i < slots; i++) {
 				ItemStack stack = curios.getStackInSlot(i);

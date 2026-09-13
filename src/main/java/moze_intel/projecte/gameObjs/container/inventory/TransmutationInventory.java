@@ -50,10 +50,10 @@ public class TransmutationInventory extends CombinedInvWrapper {
 	private long lastAvailableEmc;
 
 	public TransmutationInventory(Player player) {
-		super((IItemHandlerModifiable) Objects.requireNonNull(player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY)).getInputAndLocks(),
+		super((IItemHandlerModifiable) Objects.requireNonNull(PECapabilities.KNOWLEDGE_CAPABILITY.find(player, null)).getInputAndLocks(),
 				new ItemStackHandler(2), new ItemStackHandler(16));
 		this.player = player;
-		this.provider = Objects.requireNonNull(player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY));
+		this.provider = Objects.requireNonNull(PECapabilities.KNOWLEDGE_CAPABILITY.find(player, null));
 		this.inputLocks = itemHandler[0];
 		this.learning = itemHandler[1];
 		this.outputs = itemHandler[2];
@@ -438,7 +438,7 @@ public class TransmutationInventory extends CombinedInvWrapper {
 				continue;
 			}
 			ItemStack stack = inputLocks.getStackInSlot(slotIndex);
-			IItemEmcHolder emcHolder = stack.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
+			IItemEmcHolder emcHolder = PECapabilities.EMC_HOLDER_ITEM_CAPABILITY.find(stack, null);
 			if (emcHolder != null) {
 				long shrunkenValue = MathUtils.clampToLong(value);
 				long actualInserted = emcHolder.insertEmc(stack, shrunkenValue, EmcAction.EXECUTE);
@@ -486,7 +486,7 @@ public class TransmutationInventory extends CombinedInvWrapper {
 					continue;
 				}
 				ItemStack stack = inputLocks.getStackInSlot(slotIndex);
-				IItemEmcHolder emcHolder = stack.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
+				IItemEmcHolder emcHolder = PECapabilities.EMC_HOLDER_ITEM_CAPABILITY.find(stack, null);
 				if (emcHolder != null) {
 					long shrunkenToRemove = MathUtils.clampToLong(toRemove);
 					long actualExtracted = emcHolder.extractEmc(stack, shrunkenToRemove, EmcAction.EXECUTE);
@@ -561,7 +561,7 @@ public class TransmutationInventory extends CombinedInvWrapper {
 				continue;
 			}
 			ItemStack stack = inputLocks.getStackInSlot(i);
-			IItemEmcHolder emcHolder = stack.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
+			IItemEmcHolder emcHolder = PECapabilities.EMC_HOLDER_ITEM_CAPABILITY.find(stack, null);
 			if (emcHolder != null) {
 				long storedEmc = emcHolder.getStoredEmc(stack);
 				if (storedEmc >= emcToMax) {
@@ -585,7 +585,7 @@ public class TransmutationInventory extends CombinedInvWrapper {
 				continue;
 			}
 			ItemStack stack = inputLocks.getStackInSlot(i);
-			IItemEmcHolder emcHolder = stack.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
+			IItemEmcHolder emcHolder = PECapabilities.EMC_HOLDER_ITEM_CAPABILITY.find(stack, null);
 			if (emcHolder != null) {
 				emc = emc.add(BigInteger.valueOf(emcHolder.getStoredEmc(stack)));
 			}

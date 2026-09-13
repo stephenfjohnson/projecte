@@ -52,7 +52,7 @@ public class DMPedestalBlockEntity extends EmcBlockEntity implements IDMPedestal
 	public static void tickClient(Level level, BlockPos pos, BlockState state, DMPedestalBlockEntity pedestal) {
 		if (pedestal.getActive()) {
 			ItemStack stack = pedestal.inventory.getStackInSlot(0);
-			IPedestalItem pedestalItem = stack.getCapability(PECapabilities.PEDESTAL_ITEM_CAPABILITY);
+			IPedestalItem pedestalItem = PECapabilities.PEDESTAL_ITEM_CAPABILITY.find(stack, null);
 			if (pedestalItem == null) {
 				pedestal.setActive(level, pos, false);
 			} else {
@@ -70,7 +70,7 @@ public class DMPedestalBlockEntity extends EmcBlockEntity implements IDMPedestal
 	public static void tickServer(Level level, BlockPos pos, BlockState state, DMPedestalBlockEntity pedestal) {
 		if (pedestal.getActive()) {
 			ItemStack stack = pedestal.inventory.getStackInSlot(0);
-			IPedestalItem pedestalItem = stack.getCapability(PECapabilities.PEDESTAL_ITEM_CAPABILITY);
+			IPedestalItem pedestalItem = PECapabilities.PEDESTAL_ITEM_CAPABILITY.find(stack, null);
 			if (pedestalItem == null) {
 				pedestal.setActive(level, pos, false);
 			} else if (pedestalItem.updateInPedestal(stack, level, pos, pedestal)) {

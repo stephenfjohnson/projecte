@@ -6,33 +6,40 @@ import moze_intel.projecte.network.PEPackets;
 import moze_intel.projecte.network.packets.to_server.KeyPressPKT;
 import moze_intel.projecte.utils.text.PELang;
 import moze_intel.projecte.utils.text.TextComponentUtil;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
-import net.neoforged.neoforge.client.settings.KeyConflictContext;
-import net.neoforged.neoforge.client.settings.KeyModifier;
 import org.lwjgl.glfw.GLFW;
 
 public class ClientKeyHelper {
 
 	private static ImmutableBiMap<PEKeybind, KeyMapping> peToMc = ImmutableBiMap.of();
 
-	public static void registerKeyBindings(RegisterKeyMappingsEvent event) {
+	/**
+	 * Registers ProjectE's keybinds.
+	 * <p>
+	 * The helmet and boots toggles both sit on X, told apart by whether shift is held, which is how NeoForge's key
+	 * modifiers expressed it. Fabric and vanilla have no notion of a modifier on a binding, so the shift state is
+	 * checked when the key is pressed instead. The controls screen will show the two as conflicting, which is
+	 * cosmetic - they still do the right thing.
+	 */
+	public static void registerKeyBindings() {
 		ImmutableBiMap.Builder<PEKeybind, KeyMapping> builder = ImmutableBiMap.builder();
-		addKeyBinding(event, builder, PEKeybind.HELMET_TOGGLE, KeyModifier.SHIFT, GLFW.GLFW_KEY_X);
-		addKeyBinding(event, builder, PEKeybind.BOOTS_TOGGLE, KeyModifier.NONE, GLFW.GLFW_KEY_X);
-		addKeyBinding(event, builder, PEKeybind.CHARGE, KeyModifier.NONE, GLFW.GLFW_KEY_V);
-		addKeyBinding(event, builder, PEKeybind.EXTRA_FUNCTION, KeyModifier.NONE, GLFW.GLFW_KEY_C);
-		addKeyBinding(event, builder, PEKeybind.FIRE_PROJECTILE, KeyModifier.NONE, GLFW.GLFW_KEY_R);
-		addKeyBinding(event, builder, PEKeybind.MODE, KeyModifier.NONE, GLFW.GLFW_KEY_G);
-		addKeyBinding(event, builder, PEKeybind.TRANSMUTATION_TABLET, KeyModifier.NONE, GLFW.GLFW_KEY_K);
+		addKeyBinding(builder, PEKeybind.HELMET_TOGGLE, true, GLFW.GLFW_KEY_X);
+		addKeyBinding(builder, PEKeybind.BOOTS_TOGGLE, false, GLFW.GLFW_KEY_X);
+		addKeyBinding(builder, PEKeybind.CHARGE, false, GLFW.GLFW_KEY_V);
+		addKeyBinding(builder, PEKeybind.EXTRA_FUNCTION, false, GLFW.GLFW_KEY_C);
+		addKeyBinding(builder, PEKeybind.FIRE_PROJECTILE, false, GLFW.GLFW_KEY_R);
+		addKeyBinding(builder, PEKeybind.MODE, false, GLFW.GLFW_KEY_G);
+		addKeyBinding(builder, PEKeybind.TRANSMUTATION_TABLET, false, GLFW.GLFW_KEY_K);
 		peToMc = builder.build();
 	}
 
-	private static void addKeyBinding(RegisterKeyMappingsEvent event, ImmutableBiMap.Builder<PEKeybind, KeyMapping> builder, PEKeybind keyBind, KeyModifier modifier, int keyCode) {
-		KeyMapping keyMapping = new PEKeyMapping(keyBind, modifier, keyCode);
+	private static void addKeyBinding(ImmutableBiMap.Builder<PEKeybind, KeyMapping> builder, PEKeybind keyBind, boolean requiresShift, int keyCode) {
+		KeyMapping keyMapping = new PEKeyMapping(keyBind, requiresShift, keyCode);
 		builder.put(keyBind, keyMapping);
-		event.register(keyMapping);
+		KeyBindingHelper.registerKeyBinding(keyMapping);
 	}
 
 	public static Component getKeyName(PEKeybind k) {
@@ -47,18 +54,20 @@ public class ClientKeyHelper {
 	private static class PEKeyMapping extends KeyMapping {
 
 		private final PEKeybind keybind;
+		private final boolean requiresShift;
 		private boolean lastState;
 
-		PEKeyMapping(PEKeybind keybind, KeyModifier keyModifier, int keyCode) {
-			super(keybind.getTranslationKey(), KeyConflictContext.IN_GAME, keyModifier, InputConstants.Type.KEYSYM, keyCode, PELang.PROJECTE.getTranslationKey());
+		PEKeyMapping(PEKeybind keybind, boolean requiresShift, int keyCode) {
+			super(keybind.getTranslationKey(), InputConstants.Type.KEYSYM, keyCode, PELang.PROJECTE.getTranslationKey());
 			this.keybind = keybind;
+			this.requiresShift = requiresShift;
 		}
 
 		@Override
 		public void setDown(boolean value) {
 			super.setDown(value);
 			//Note: We check the state based on isDown instead of value, as the value may be wrong depending on the conflict context
-			boolean state = isDown();
+			boolean state = isDown() && Screen.hasShiftDown() == requiresShift;
 			if (state != lastState) {
 				if (state) {
 					PEPackets.sendToServer(new KeyPressPKT(keybind));

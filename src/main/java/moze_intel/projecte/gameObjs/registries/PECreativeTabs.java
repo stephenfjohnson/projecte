@@ -89,7 +89,7 @@ public class PECreativeTabs {
 
 				for (ArcanaMode value : ArcanaMode.values()) {
 					ItemStack stack = PEItems.ARCANA_RING.asStack();
-					stack.set(PEDataComponentTypes.ARCANA_MODE, value);
+					stack.set(PEDataComponentTypes.ARCANA_MODE.get(), value);
 					output.accept(stack);
 				}
 
@@ -260,7 +260,7 @@ public class PECreativeTabs {
 
 			for (ArcanaMode value : ArcanaMode.values()) {
 				ItemStack stack = PEItems.ARCANA_RING.asStack();
-				stack.set(PEDataComponentTypes.ARCANA_MODE, value);
+				stack.set(PEDataComponentTypes.ARCANA_MODE.get(), value);
 				event.accept(stack);
 			}
 

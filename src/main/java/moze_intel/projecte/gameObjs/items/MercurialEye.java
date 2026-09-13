@@ -61,8 +61,8 @@ import org.jetbrains.annotations.Nullable;
 public class MercurialEye extends ItemMode<MercurialEyeMode> implements IExtraFunction, ICapabilityAware {
 
 	public MercurialEye(Properties props) {
-		super(props.component(PEDataComponentTypes.MERCURIAL_EYE_MODE, MercurialEyeMode.CREATION)
-						.component(PEDataComponentTypes.EYE_INVENTORY, ItemContainerContents.EMPTY),
+		super(props.component(PEDataComponentTypes.MERCURIAL_EYE_MODE.get(), MercurialEyeMode.CREATION)
+						.component(PEDataComponentTypes.EYE_INVENTORY.get(), ItemContainerContents.EMPTY),
 				4
 		);
 	}
@@ -106,12 +106,12 @@ public class MercurialEye extends ItemMode<MercurialEyeMode> implements IExtraFu
 	}
 
 	private InteractionResult formBlocks(ItemStack eye, Player player, InteractionHand hand, Level level, BlockPos startingPos, @Nullable Direction facing) {
-		IItemHandler inventory = eye.getCapability(ItemHandler.ITEM);
+		IItemHandler inventory = ItemHandler.ITEM.find(eye, null);
 		if (inventory == null) {
 			return InteractionResult.FAIL;
 		}
 		ItemStack klein = inventory.getStackInSlot(0);
-		if (klein.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY) == null) {
+		if (PECapabilities.EMC_HOLDER_ITEM_CAPABILITY.find(klein, null) == null) {
 			playNoEMCSound(player);
 			return InteractionResult.FAIL;
 		}
@@ -271,12 +271,12 @@ public class MercurialEye extends ItemMode<MercurialEyeMode> implements IExtraFu
 		if (oldState == newState || oldState.hasBlockEntity()) {
 			return false;
 		}
-		IItemHandler inventory = eye.getCapability(ItemHandler.ITEM);
+		IItemHandler inventory = ItemHandler.ITEM.find(eye, null);
 		if (inventory == null) {
 			return false;
 		}
 		ItemStack klein = inventory.getStackInSlot(0);
-		IItemEmcHolder emcHolder = klein.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
+		IItemEmcHolder emcHolder = PECapabilities.EMC_HOLDER_ITEM_CAPABILITY.find(klein, null);
 		if (emcHolder == null || emcHolder.getStoredEmc(klein) < newEMC - oldEMC) {
 			playNoEMCSound(player);
 			return false;

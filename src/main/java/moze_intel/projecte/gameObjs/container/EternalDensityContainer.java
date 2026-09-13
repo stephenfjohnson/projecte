@@ -41,7 +41,7 @@ public class EternalDensityContainer extends PEHandContainer {
 	}
 
 	public boolean isWhitelistMode() {
-		return getStack().getOrDefault(PEDataComponentTypes.GEM_DATA, GemData.EMPTY).isWhitelist();
+		return getStack().getOrDefault(PEDataComponentTypes.GEM_DATA.get(), GemData.EMPTY).isWhitelist();
 	}
 
 	@NotNull

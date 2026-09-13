@@ -36,7 +36,7 @@ public record KnowledgeSyncInputsAndLocksPKT(Int2ObjectMap<ItemStack> stacksToSy
 	@Override
 	public void handle(PEPacketContext context) {
 		Player player = context.player();
-		IKnowledgeProvider knowledge = player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY);
+		IKnowledgeProvider knowledge = PECapabilities.KNOWLEDGE_CAPABILITY.find(player, null);
 		if (knowledge != null) {
 			knowledge.receiveInputsAndLocks(stacksToSync);
 			if (updateTargets != TargetUpdateType.NONE && player.containerMenu instanceof TransmutationContainer container) {

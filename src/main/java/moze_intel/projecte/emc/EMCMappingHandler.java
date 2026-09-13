@@ -128,7 +128,7 @@ public final class EMCMappingHandler {
 		MinecraftServer server = PEPlatform.getCurrentServer();
 		if (server != null) {
 			for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-				IKnowledgeProvider knowledge = player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY);
+				IKnowledgeProvider knowledge = PECapabilities.KNOWLEDGE_CAPABILITY.find(player, null);
 				if (knowledge != null) {
 					if (knowledge instanceof KnowledgeImpl impl && impl.pruneStaleKnowledge()) {
 						knowledge.sync(player);

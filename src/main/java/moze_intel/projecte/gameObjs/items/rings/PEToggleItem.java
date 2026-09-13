@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class PEToggleItem extends ItemPE implements IModeChanger<Boolean> {
 
 	public PEToggleItem(Properties props) {
-		super(props.component(PEDataComponentTypes.ACTIVE, false));
+		super(props.component(PEDataComponentTypes.ACTIVE.get(), false));
 	}
 
 	@Override
@@ -23,14 +23,14 @@ public abstract class PEToggleItem extends ItemPE implements IModeChanger<Boolea
 
 	@Override
 	public Boolean getMode(@NotNull ItemStack stack) {
-		return stack.getOrDefault(PEDataComponentTypes.ACTIVE, false);
+		return stack.getOrDefault(PEDataComponentTypes.ACTIVE.get(), false);
 	}
 
 	@Override
 	public boolean changeMode(@NotNull Player player, @NotNull ItemStack stack, InteractionHand hand) {
 		boolean isActive = getMode(stack);
 		player.level().playSound(null, player.getX(), player.getY(), player.getZ(), isActive ? PESoundEvents.UNCHARGE.get() : PESoundEvents.HEAL.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
-		stack.set(PEDataComponentTypes.ACTIVE, !isActive);
+		stack.set(PEDataComponentTypes.ACTIVE.get(), !isActive);
 		return true;
 	}
 }

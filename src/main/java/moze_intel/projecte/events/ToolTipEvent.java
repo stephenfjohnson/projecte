@@ -11,31 +11,37 @@ import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
 import moze_intel.projecte.utils.EMCHelper;
 import moze_intel.projecte.utils.text.PELang;
+import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.minecraft.world.item.TooltipFlag;
 
-@EventBusSubscriber(modid = PECore.MODID, value = Dist.CLIENT)
+/**
+ * Adds ProjectE's EMC lines to item tooltips. Registered by the client entrypoint.
+ */
 public class ToolTipEvent {
 
-	@SubscribeEvent
-	public static void tTipEvent(ItemTooltipEvent event) {
-		ItemStack current = event.getItemStack();
+	private ToolTipEvent() {
+	}
+
+	public static void register() {
+		ItemTooltipCallback.EVENT.register(ToolTipEvent::tTipEvent);
+	}
+
+	private static void tTipEvent(ItemStack current, Item.TooltipContext tooltipContext, TooltipFlag flag, List<Component> tooltip) {
 		if (current.isEmpty()) {
 			return;
 		}
-		List<Component> tooltip = event.getToolTip();
 		if (ProjectEConfig.client.pedestalToolTips.get()) {
-			IPedestalItem pedestalItem = current.getCapability(PECapabilities.PEDESTAL_ITEM_CAPABILITY);
+			IPedestalItem pedestalItem = PECapabilities.PEDESTAL_ITEM_CAPABILITY.find(current, null);
 			if (pedestalItem != null) {
 				tooltip.add(PELang.PEDESTAL_ON.translateColored(ChatFormatting.DARK_PURPLE));
-				List<Component> description = pedestalItem.getPedestalDescription(event.getContext().tickRate());
+				List<Component> description = pedestalItem.getPedestalDescription(tooltipContext.tickRate());
 				if (description.isEmpty()) {
 					tooltip.add(PELang.PEDESTAL_DISABLED.translateColored(ChatFormatting.RED));
 				} else {
@@ -55,9 +61,9 @@ public class ToolTipEvent {
 				if (current.getCount() > 1) {
 					tooltip.add(EMCHelper.getEmcTextComponent(value, current.getCount()));
 				}
-				Player player = event.getEntity();
+				Player player = Minecraft.getInstance().player;
 				if (player != null && (!ProjectEConfig.client.shiftLearnedToolTips.get() || Screen.hasShiftDown())) {
-					IKnowledgeProvider knowledgeProvider = player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY);
+					IKnowledgeProvider knowledgeProvider = PECapabilities.KNOWLEDGE_CAPABILITY.find(player, null);
 					if (knowledgeProvider != null && knowledgeProvider.hasKnowledge(current)) {
 						tooltip.add(PELang.EMC_HAS_KNOWLEDGE.translateColored(ChatFormatting.YELLOW));
 					} else {
@@ -67,9 +73,9 @@ public class ToolTipEvent {
 			}
 		}
 
-		long value = current.getOrDefault(PEDataComponentTypes.STORED_EMC, 0L);
+		long value = current.getOrDefault(PEDataComponentTypes.STORED_EMC.get(), 0L);
 		if (value == 0) {
-			IItemEmcHolder emcHolder = current.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
+			IItemEmcHolder emcHolder = PECapabilities.EMC_HOLDER_ITEM_CAPABILITY.find(current, null);
 			if (emcHolder != null) {
 				value = emcHolder.getStoredEmc(current);
 			}

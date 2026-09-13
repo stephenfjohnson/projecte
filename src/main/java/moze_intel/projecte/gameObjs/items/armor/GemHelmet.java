@@ -32,12 +32,12 @@ public class GemHelmet extends GemArmorBase {
 	private static final boolean NIGHT_VISION_DEFAULT = false;
 
 	public GemHelmet(Properties props) {
-		super(ArmorItem.Type.HELMET, props.component(PEDataComponentTypes.NIGHT_VISION, NIGHT_VISION_DEFAULT));
+		super(ArmorItem.Type.HELMET, props.component(PEDataComponentTypes.NIGHT_VISION.get(), NIGHT_VISION_DEFAULT));
 	}
 
 	public static void toggleNightVision(ItemStack helm, Player player) {
 		boolean oldValue = hasNightVision(helm);
-		helm.set(PEDataComponentTypes.NIGHT_VISION, !oldValue);
+		helm.set(PEDataComponentTypes.NIGHT_VISION.get(), !oldValue);
 		player.sendSystemMessage(getComponent(!oldValue));
 	}
 
@@ -50,7 +50,7 @@ public class GemHelmet extends GemArmorBase {
 	}
 
 	private static boolean hasNightVision(ItemStack stack) {
-		return stack.getOrDefault(PEDataComponentTypes.NIGHT_VISION, NIGHT_VISION_DEFAULT);
+		return stack.getOrDefault(PEDataComponentTypes.NIGHT_VISION.get(), NIGHT_VISION_DEFAULT);
 	}
 
 	private static Component getComponent(boolean nightVision) {

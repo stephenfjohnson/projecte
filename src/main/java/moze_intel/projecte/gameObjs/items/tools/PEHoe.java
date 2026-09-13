@@ -24,8 +24,8 @@ public class PEHoe extends HoeItem implements IItemCharge, IBarHelper {
 
 	public PEHoe(IMatterType matterType, int numCharges, Properties props) {
 		super(matterType, props.attributes(createAttributes(matterType, -matterType.getAttackDamageBonus(), matterType.getMatterTier()))
-				.component(PEDataComponentTypes.CHARGE, 0)
-				.component(PEDataComponentTypes.STORED_EMC, 0L)
+				.component(PEDataComponentTypes.CHARGE.get(), 0)
+				.component(PEDataComponentTypes.STORED_EMC.get(), 0L)
 		);
 		this.matterType = matterType;
 		this.numCharges = numCharges;

@@ -37,8 +37,8 @@ public class PESword extends SwordItem implements IExtraFunction, IItemCharge, I
 
 	public PESword(IMatterType matterType, int numCharges, int damage, Properties props) {
 		super(matterType, props.attributes(createAttributes(matterType, damage, -2.4F))
-				.component(PEDataComponentTypes.CHARGE, 0)
-				.component(PEDataComponentTypes.STORED_EMC, 0L),
+				.component(PEDataComponentTypes.CHARGE.get(), 0)
+				.component(PEDataComponentTypes.STORED_EMC.get(), 0L),
 				new Tool(List.of(
 						Tool.Rule.deniesDrops(matterType.getIncorrectBlocksForDrops()),
 						Tool.Rule.minesAndDrops(PETags.Blocks.MINEABLE_WITH_PE_SWORD, matterType.getSpeed()),

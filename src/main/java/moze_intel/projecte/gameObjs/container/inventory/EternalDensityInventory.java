@@ -18,7 +18,7 @@ public class EternalDensityInventory extends ItemStackHandler {
 		this.invItem = stack;
 		this.remote = remote;
 		int slot = 0;
-		for (ItemStack whitelisted : invItem.getOrDefault(PEDataComponentTypes.GEM_DATA, GemData.EMPTY).whitelist()) {
+		for (ItemStack whitelisted : invItem.getOrDefault(PEDataComponentTypes.GEM_DATA.get(), GemData.EMPTY).whitelist()) {
 			if (!whitelisted.isEmpty()) {
 				//Note: We copy it so that it doesn't mutate our gem data's stack
 				stacks.set(slot++, whitelisted.copy());
@@ -72,6 +72,6 @@ public class EternalDensityInventory extends ItemStackHandler {
 				targets.add(stackInSlot.copyWithCount(1));
 			}
 		}
-		invItem.update(PEDataComponentTypes.GEM_DATA, GemData.EMPTY, targets, GemData::withWhitelistSafe);
+		invItem.update(PEDataComponentTypes.GEM_DATA.get(), GemData.EMPTY, targets, GemData::withWhitelistSafe);
 	}
 }

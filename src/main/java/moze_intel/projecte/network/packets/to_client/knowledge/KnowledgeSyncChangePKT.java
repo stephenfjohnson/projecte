@@ -32,7 +32,7 @@ public record KnowledgeSyncChangePKT(ItemInfo change, boolean learned) implement
 	@Override
 	public void handle(PEPacketContext context) {
 		Player player = context.player();
-		IKnowledgeProvider knowledge = player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY);
+		IKnowledgeProvider knowledge = PECapabilities.KNOWLEDGE_CAPABILITY.find(player, null);
 		if (knowledge != null) {
 			if (learned) {
 				if (!knowledge.hasKnowledge(change) && knowledge.addKnowledge(change) && player.containerMenu instanceof TransmutationContainer container) {

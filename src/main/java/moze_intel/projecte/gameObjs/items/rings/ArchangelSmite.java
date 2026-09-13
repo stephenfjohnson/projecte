@@ -9,8 +9,11 @@ import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.gameObjs.entity.EntityHomingArrow;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
+import moze_intel.projecte.gameObjs.registries.PEItems;
 import moze_intel.projecte.utils.MathUtils;
+import moze_intel.projecte.utils.PEFakePlayer;
 import moze_intel.projecte.utils.text.PELang;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -19,6 +22,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,32 +32,35 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.util.FakePlayerFactory;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class ArchangelSmite extends PEToggleItem implements IPedestalItem {
 
 	public ArchangelSmite(Properties props) {
-		super(props.component(PEDataComponentTypes.STORED_EMC, 0L));
-		NeoForge.EVENT_BUS.addListener(this::emptyLeftClick);
-		NeoForge.EVENT_BUS.addListener(this::leftClickBlock);
+		super(props.component(PEDataComponentTypes.STORED_EMC.get(), 0L));
+	}
+
+	/**
+	 * Fires a volley when the ring is used to hit a block.
+	 * <p>
+	 * NeoForge's left-click events have no single Fabric counterpart: hitting a block goes through Fabric's own
+	 * attack callback here, while swinging at nothing is client-only and is registered by the client entrypoint.
+	 */
+	public static void registerEvents() {
+		AttackBlockCallback.EVENT.register((player, level, hand, pos, direction) -> {
+			if (!level.isClientSide) {
+				ItemStack stack = player.getItemInHand(hand);
+				if (!stack.isEmpty() && stack.is(PEItems.ARCHANGEL_SMITE)) {
+					fireVolley(stack, player);
+				}
+			}
+			return InteractionResult.PASS;
+		});
 	}
 
 	public static void fireVolley(ItemStack stack, Player player) {
 		for (int i = 0; i < 10; i++) {
 			fireArrow(stack, player.level(), player, 4F);
-		}
-	}
-
-	private void emptyLeftClick(PlayerInteractEvent.LeftClickEmpty evt) {
-		PECore.packetHandler().activateArchangel();
-	}
-
-	private void leftClickBlock(PlayerInteractEvent.LeftClickBlock evt) {
-		if (!evt.getLevel().isClientSide && evt.getUseItem() != TriState.FALSE && !evt.getItemStack().isEmpty() && evt.getItemStack().is(this)) {
-			fireVolley(evt.getItemStack(), evt.getEntity());
 		}
 	}
 
@@ -101,7 +108,7 @@ public class ArchangelSmite extends PEToggleItem implements IPedestalItem {
 					double centeredY = pos.getY() + 0.5;
 					double centeredZ = pos.getZ() + 0.5;
 					for (int i = 0; i < 3; i++) {
-						EntityHomingArrow arrow = new EntityHomingArrow(level, FakePlayerFactory.get((ServerLevel) level, PECore.FAKEPLAYER_GAMEPROFILE), 2.0F);
+						EntityHomingArrow arrow = new EntityHomingArrow(level, PEFakePlayer.get((ServerLevel) level), 2.0F);
 						arrow.setPosRaw(centeredX, centeredY + 2, centeredZ);
 						arrow.setDeltaMovement(0, 1, 0);
 						arrow.playSound(SoundEvents.ARROW_SHOOT, 1.0F, 1.0F / (level.random.nextFloat() * 0.4F + 1.2F) + 0.5F);

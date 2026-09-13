@@ -27,14 +27,14 @@ public class MindStone extends PEToggleItem implements IPedestalItem {
 	private static final int TRANSFER_RATE = 50;
 
 	public MindStone(Properties props) {
-		super(props.component(PEDataComponentTypes.STORED_EXP, 0));
+		super(props.component(PEDataComponentTypes.STORED_EXP.get(), 0));
 	}
 
 	@Override
 	public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slot, boolean isHeld) {
 		super.inventoryTick(stack, level, entity, slot, isHeld);
 		if (!level.isClientSide && hotBarOrOffHand(slot) && entity instanceof Player player) {
-			if (stack.getOrDefault(PEDataComponentTypes.ACTIVE, false) && getXP(player) > 0) {
+			if (stack.getOrDefault(PEDataComponentTypes.ACTIVE.get(), false) && getXP(player) > 0) {
 				int toAdd = Math.min(getXP(player), TRANSFER_RATE);
 				addStoredXP(stack, toAdd);
 				removeXP(player, TRANSFER_RATE);
@@ -46,7 +46,7 @@ public class MindStone extends PEToggleItem implements IPedestalItem {
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, @NotNull InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
-		if (!level.isClientSide && !stack.getOrDefault(PEDataComponentTypes.ACTIVE, false) && getStoredXP(stack) != 0) {
+		if (!level.isClientSide && !stack.getOrDefault(PEDataComponentTypes.ACTIVE.get(), false) && getStoredXP(stack) != 0) {
 			int toAdd = removeStoredXP(stack, TRANSFER_RATE);
 			if (toAdd > 0) {
 				addXP(player, toAdd);
@@ -58,7 +58,7 @@ public class MindStone extends PEToggleItem implements IPedestalItem {
 	@Override
 	public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flags) {
 		super.appendHoverText(stack, context, tooltip, flags);
-		int storedXp = stack.getOrDefault(PEDataComponentTypes.STORED_EXP, 0);
+		int storedXp = stack.getOrDefault(PEDataComponentTypes.STORED_EXP.get(), 0);
 		tooltip.add(PELang.TOOLTIP_STORED_XP.translateColored(ChatFormatting.DARK_GREEN, ChatFormatting.GREEN, String.format("%,d", storedXp)));
 	}
 
@@ -115,11 +115,11 @@ public class MindStone extends PEToggleItem implements IPedestalItem {
 	}
 
 	private int getStoredXP(ItemStack stack) {
-		return stack.getOrDefault(PEDataComponentTypes.STORED_EXP, 0);
+		return stack.getOrDefault(PEDataComponentTypes.STORED_EXP.get(), 0);
 	}
 
 	private void setStoredXP(ItemStack stack, int XP) {
-		stack.set(PEDataComponentTypes.STORED_EXP, XP);
+		stack.set(PEDataComponentTypes.STORED_EXP.get(), XP);
 	}
 
 	private void addStoredXP(ItemStack stack, int XP) {

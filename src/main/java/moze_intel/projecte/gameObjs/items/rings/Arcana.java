@@ -70,9 +70,9 @@ public class Arcana extends ItemPE implements IItemMode<ArcanaMode>, IFireProtec
 	private final Supplier<ItemAttributeModifiers> defaultModifiers;
 
 	public Arcana(Properties props) {
-		super(props.component(PEDataComponentTypes.ACTIVE, false)
-				.component(PEDataComponentTypes.ARCANA_MODE, ArcanaMode.ZERO)
-				.component(PEDataComponentTypes.STORED_EMC, 0L)
+		super(props.component(PEDataComponentTypes.ACTIVE.get(), false)
+				.component(PEDataComponentTypes.ARCANA_MODE.get(), ArcanaMode.ZERO)
+				.component(PEDataComponentTypes.STORED_EMC.get(), 0L)
 		);
 		//Flight used to be an attribute NeoForge provided; without it, InternalAbilities' per-tick check is
 		// what grants flight while this ring is carried
@@ -103,7 +103,7 @@ public class Arcana extends ItemPE implements IItemMode<ArcanaMode>, IFireProtec
 	}
 
 	private void tick(ItemStack stack, Level level, ServerPlayer player) {
-		if (stack.getOrDefault(PEDataComponentTypes.ACTIVE, false)) {
+		if (stack.getOrDefault(PEDataComponentTypes.ACTIVE.get(), false)) {
 			switch (getMode(stack)) {
 				case ZERO -> WorldHelper.freezeInBoundingBox(level, player.getBoundingBox().inflate(5), player, true);
 				case IGNITION -> WorldHelper.igniteNearby(level, player);
@@ -124,7 +124,7 @@ public class Arcana extends ItemPE implements IItemMode<ArcanaMode>, IFireProtec
 	@Override
 	public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flags) {
 		super.appendHoverText(stack, context, tooltip, flags);
-		if (stack.getOrDefault(PEDataComponentTypes.ACTIVE, false)) {
+		if (stack.getOrDefault(PEDataComponentTypes.ACTIVE.get(), false)) {
 			tooltip.add(getToolTip(stack));
 		} else {
 			tooltip.add(PELang.TOOLTIP_ARCANA_INACTIVE.translateColored(ChatFormatting.RED));
@@ -136,7 +136,7 @@ public class Arcana extends ItemPE implements IItemMode<ArcanaMode>, IFireProtec
 	public InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
 		if (!level.isClientSide) {
 			ItemStack stack = player.getItemInHand(hand);
-			stack.update(PEDataComponentTypes.ACTIVE, false, active -> !active);
+			stack.update(PEDataComponentTypes.ACTIVE.get(), false, active -> !active);
 		}
 		return InteractionResultHolder.success(player.getItemInHand(hand));
 	}

@@ -15,8 +15,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class GemLegs extends GemArmorBase {
@@ -25,7 +23,6 @@ public class GemLegs extends GemArmorBase {
 
 	public GemLegs(Properties props) {
 		super(ArmorItem.Type.LEGGINGS, props);
-		NeoForge.EVENT_BUS.addListener(this::onJump);
 	}
 
 	@Override
@@ -34,15 +31,18 @@ public class GemLegs extends GemArmorBase {
 		tooltip.add(PELang.GEM_LORE_LEGS.translate());
 	}
 
-	private final Int2LongMap lastJumpTracker = new Int2LongOpenHashMap();
+	private static final Int2LongMap lastJumpTracker = new Int2LongOpenHashMap();
 
-	private void onJump(LivingEvent.LivingJumpEvent evt) {
-		if (evt.getEntity() instanceof Player player && player.level().isClientSide) {
+	/**
+	 * Called from {@code LivingEntityJumpMixin}, standing in for NeoForge's living jump event.
+	 */
+	public static void onJump(Player player) {
+		if (player.level().isClientSide) {
 			lastJumpTracker.put(player.getId(), player.level().getGameTime());
 		}
 	}
 
-	private boolean jumpedRecently(Player player) {
+	private static boolean jumpedRecently(Player player) {
 		return lastJumpTracker.containsKey(player.getId()) && player.level().getGameTime() - lastJumpTracker.get(player.getId()) < 5;
 	}
 

@@ -99,7 +99,7 @@ public class ShowBagCMD {
 	}
 
 	private static MenuProvider createContainer(ServerPlayer sender, ServerPlayer target, DyeColor color) {
-		IItemHandlerModifiable inv = (IItemHandlerModifiable) Objects.requireNonNull(target.getCapability(PECapabilities.ALCH_BAG_CAPABILITY)).getBag(color);
+		IItemHandlerModifiable inv = (IItemHandlerModifiable) Objects.requireNonNull(PECapabilities.ALCH_BAG_CAPABILITY.find(target, null)).getBag(color);
 		Component name = PELang.SHOWBAG_NAMED.translate(PEItems.getBag(color), target.getDisplayName());
 		return getContainer(sender, name, inv, false, () -> target.isAlive() && !target.hasDisconnected());
 	}

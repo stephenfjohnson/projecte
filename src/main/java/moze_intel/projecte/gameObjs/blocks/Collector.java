@@ -106,7 +106,7 @@ public class Collector extends BlockDirection implements PEEntityBlock<Collector
 		if (charging.isEmpty()) {
 			return MathUtils.scaleToRedstone(collector.getStoredEmc(), collector.getMaximumEmc());
 		}
-		IItemEmcHolder emcHolder = charging.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
+		IItemEmcHolder emcHolder = PECapabilities.EMC_HOLDER_ITEM_CAPABILITY.find(charging, null);
 		if (emcHolder != null) {
 			return MathUtils.scaleToRedstone(emcHolder.getStoredEmc(charging), emcHolder.getMaximumEmc(charging));
 		}

@@ -79,7 +79,7 @@ public class RelayMK1BlockEntity extends EmcBlockEntity implements MenuProvider,
 			@Override
 			public ItemStack extractItem(int slot, int amount, boolean simulate) {
 				ItemStack stack = getStackInSlot(slot);
-				IItemEmcHolder emcHolder = stack.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
+				IItemEmcHolder emcHolder = PECapabilities.EMC_HOLDER_ITEM_CAPABILITY.find(stack, null);
 				if (emcHolder != null && emcHolder.getNeededEmc(stack) > 0) {
 					return ItemStack.EMPTY;
 				}
@@ -120,7 +120,7 @@ public class RelayMK1BlockEntity extends EmcBlockEntity implements MenuProvider,
 		relay.input.compact();
 		ItemStack stack = relay.getBurn();
 		if (!stack.isEmpty()) {
-			IItemEmcHolder emcHolder = stack.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
+			IItemEmcHolder emcHolder = PECapabilities.EMC_HOLDER_ITEM_CAPABILITY.find(stack, null);
 			if (emcHolder != null) {
 				//Try to take emc from the stack in the burn slot and put it in the relay
 				long simulatedVal = relay.forceInsertEmc(emcHolder.extractEmc(stack, relay.chargeRate, EmcAction.SIMULATE), EmcAction.SIMULATE);
@@ -138,7 +138,7 @@ public class RelayMK1BlockEntity extends EmcBlockEntity implements MenuProvider,
 		}
 		if (relay.getStoredEmc() > 0) {
 			ItemStack chargeable = relay.getCharging();
-			IItemEmcHolder emcHolder = chargeable.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
+			IItemEmcHolder emcHolder = PECapabilities.EMC_HOLDER_ITEM_CAPABILITY.find(chargeable, null);
 			if (emcHolder != null) {
 				long actualSent = emcHolder.insertEmc(chargeable, relay.getAvailableCharge(), EmcAction.EXECUTE);
 				relay.forceExtractEmc(actualSent, EmcAction.EXECUTE);
@@ -153,7 +153,7 @@ public class RelayMK1BlockEntity extends EmcBlockEntity implements MenuProvider,
 
 	public double getItemChargeProportion() {
 		ItemStack charging = getCharging();
-		IItemEmcHolder emcHolder = charging.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
+		IItemEmcHolder emcHolder = PECapabilities.EMC_HOLDER_ITEM_CAPABILITY.find(charging, null);
 		if (emcHolder != null) {
 			return (double) emcHolder.getStoredEmc(charging) / emcHolder.getMaximumEmc(charging);
 		}
@@ -165,7 +165,7 @@ public class RelayMK1BlockEntity extends EmcBlockEntity implements MenuProvider,
 		if (burn.isEmpty()) {
 			return 0;
 		}
-		IItemEmcHolder emcHolder = burn.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
+		IItemEmcHolder emcHolder = PECapabilities.EMC_HOLDER_ITEM_CAPABILITY.find(burn, null);
 		if (emcHolder != null) {
 			return (double) emcHolder.getStoredEmc(burn) / emcHolder.getMaximumEmc(burn);
 		}

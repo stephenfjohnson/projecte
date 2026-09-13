@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 public class Zero extends PEToggleItem implements IPedestalItem, IItemCharge, IBarHelper, ICapabilityAware {
 
 	public Zero(Properties props) {
-		super(props.component(PEDataComponentTypes.CHARGE, 0));
+		super(props.component(PEDataComponentTypes.CHARGE.get(), 0));
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class Zero extends PEToggleItem implements IPedestalItem, IItemCharge, IB
 	@Override
 	public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slot, boolean isHeld) {
 		super.inventoryTick(stack, level, entity, slot, isHeld);
-		if (!level.isClientSide && entity instanceof Player player && hotBarOrOffHand(slot) && stack.getOrDefault(PEDataComponentTypes.ACTIVE, false)) {
+		if (!level.isClientSide && entity instanceof Player player && hotBarOrOffHand(slot) && stack.getOrDefault(PEDataComponentTypes.ACTIVE.get(), false)) {
 			WorldHelper.freezeInBoundingBox(level, player.getBoundingBox().inflate(3), player, true);
 		}
 	}
