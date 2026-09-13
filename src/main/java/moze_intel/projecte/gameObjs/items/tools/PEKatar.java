@@ -29,6 +29,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.util.StringRepresentable;
@@ -37,6 +38,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Shearable;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
@@ -49,7 +51,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.common.IShearable;
 import org.jetbrains.annotations.NotNull;
 
 public class PEKatar extends PETool implements IItemMode<KatarMode>, IExtraFunction, IHasConditionalAttributes, IItemAbilityProvider {
@@ -170,18 +171,14 @@ public class PEKatar extends PETool implements IItemMode<KatarMode>, IExtraFunct
 	@NotNull
 	@Override
 	public InteractionResult interactLivingEntity(@NotNull ItemStack stack, @NotNull Player player, @NotNull LivingEntity entity, @NotNull InteractionHand hand) {
-		if (entity instanceof IShearable target) {
-			BlockPos pos = entity.blockPosition();
+		//Vanilla's Shearable drops the results itself, where NeoForge's variant handed them back to the caller
+		if (entity instanceof Shearable target && target.readyForShearing()) {
 			Level level = entity.level();
-			if (target.isShearable(player, stack, level, pos)) {
-				if (!level.isClientSide) {
-					for (ItemStack drop : target.onSheared(player, stack, level, pos)) {
-						target.spawnShearedDrop(level, pos, drop);
-					}
-					entity.gameEvent(GameEvent.SHEAR, player);
-				}
-				return InteractionResult.sidedSuccess(level.isClientSide);
+			if (!level.isClientSide) {
+				target.shear(SoundSource.PLAYERS);
+				entity.gameEvent(GameEvent.SHEAR, player);
 			}
+			return InteractionResult.sidedSuccess(level.isClientSide);
 		}
 		return InteractionResult.PASS;
 	}

@@ -9,7 +9,6 @@ import moze_intel.projecte.api.proxy.ITransmutationProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.fml.util.thread.EffectiveSide;
 import org.jetbrains.annotations.NotNull;
 
 public class TransmutationProxyImpl implements ITransmutationProxy {
@@ -17,7 +16,7 @@ public class TransmutationProxyImpl implements ITransmutationProxy {
 	@NotNull
 	@Override
 	public IKnowledgeProvider getKnowledgeProviderFor(@NotNull UUID playerUUID) {
-		if (EffectiveSide.get().isServer()) {
+		if (PEPlatform.isServerThread()) {
 			Objects.requireNonNull(playerUUID);
 			MinecraftServer server = Objects.requireNonNull(PEPlatform.getCurrentServer(), "Server must be running to query knowledge!");
 			Player player = server.getPlayerList().getPlayer(playerUUID);

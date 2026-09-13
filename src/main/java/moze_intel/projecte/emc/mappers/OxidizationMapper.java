@@ -16,8 +16,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.registries.datamaps.builtin.NeoForgeDataMaps;
-import net.neoforged.neoforge.registries.datamaps.builtin.Oxidizable;
+import net.minecraft.world.level.block.WeatheringCopper;
 
 @EMCMapper
 public class OxidizationMapper implements IEMCMapper<NormalizedSimpleStack, Long> {
@@ -25,18 +24,15 @@ public class OxidizationMapper implements IEMCMapper<NormalizedSimpleStack, Long
 	@Override
 	public void addMappings(IMappingCollector<NormalizedSimpleStack, Long> mapper, ReloadableServerResources serverResources,
 			RegistryAccess registryAccess, ResourceManager resourceManager) {
-		Registry<Block> blocks = registryAccess.registryOrThrow(Registries.BLOCK);
 		int recipeCount = 0;
-		for (Map.Entry<ResourceKey<Block>, Oxidizable> entry : blocks.getDataMap(NeoForgeDataMaps.OXIDIZABLES).entrySet()) {
+		//NeoForge exposed oxidation as a data map; vanilla's own table is the source either way
+		for (Map.Entry<Block, Block> entry : WeatheringCopper.NEXT_BY_BLOCK.get().entrySet()) {
 			//Add conversions both directions due to scraping
-			Block block = blocks.get(entry.getKey());
-			if (block != null) {
-				NSSItem unweathered = NSSItem.createItem(block);
-				NSSItem weathered = NSSItem.createItem(entry.getValue().nextOxidationStage());
-				mapper.addConversion(1, weathered, EMCHelper.intMapOf(unweathered, 1));
-				mapper.addConversion(1, unweathered, EMCHelper.intMapOf(weathered, 1));
-				recipeCount += 2;
-			}
+			NSSItem unweathered = NSSItem.createItem(entry.getKey());
+			NSSItem weathered = NSSItem.createItem(entry.getValue());
+			mapper.addConversion(1, weathered, EMCHelper.intMapOf(unweathered, 1));
+			mapper.addConversion(1, unweathered, EMCHelper.intMapOf(weathered, 1));
+			recipeCount += 2;
 		}
 		PECore.debugLog("{} Statistics:", getName());
 		PECore.debugLog("Found {} Oxidizable Conversions", recipeCount);

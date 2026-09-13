@@ -1,5 +1,6 @@
 package moze_intel.projecte.utils;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import moze_intel.projecte.gameObjs.registries.PESoundEvents;
 import moze_intel.projecte.network.PEPackets;
 import moze_intel.projecte.network.packets.to_client.NovaExplosionSyncPKT;
 import moze_intel.projecte.utils.ItemAbilities;
+import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
@@ -44,6 +46,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackLinkedSet;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
@@ -87,9 +90,6 @@ import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.BlockCapability;
-import net.neoforged.neoforge.common.util.ItemStackMap;
-import net.neoforged.neoforge.event.EventHooks;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -133,7 +133,9 @@ public final class WorldHelper {
 		if (!drops.isEmpty()) {
 			//Note: We need to ensure that the dropped items do not exceed the max stack size so that
 			// there is not an error when the item entities are saved to disk
-			Map<ItemStack, ItemEntity> knownItems = ItemStackMap.createTypeAndTagMap();
+			//NeoForge had a helper for stack-keyed maps; vanilla's own strategy for comparing item and
+			// components is what it was built on
+			Map<ItemStack, ItemEntity> knownItems = new Object2ObjectOpenCustomHashMap<>(ItemStackLinkedSet.TYPE_AND_TAG);
 			for (ItemStack drop : drops) {
 				if (!drop.isEmpty()) {
 					int dropCount = drop.getCount();
@@ -178,7 +180,8 @@ public final class WorldHelper {
 		if (level instanceof ServerLevel serverLevel) {
 			Explosion.BlockInteraction mode = level.getGameRules().getBoolean(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY) ? Explosion.BlockInteraction.DESTROY_WITH_DECAY : Explosion.BlockInteraction.DESTROY;
 			NovaExplosion explosion = new NovaExplosion(level, exploder, x, y, z, power, mode);
-			if (!EventHooks.onExplosionStart(level, explosion)) {
+			//NeoForge let mods veto an explosion here; Fabric has no such event, so it always goes ahead
+			{
 				explosion.explode();
 				List<BlockPos> particlePositions = explosion.finalizeExplosion();
 				NovaExplosionSyncPKT packet = new NovaExplosionSyncPKT(explosion.center(), explosion.radius(), explosion.getExplosionSound(), particlePositions);
@@ -804,7 +807,7 @@ public final class WorldHelper {
 	 */
 	@Nullable
 	@Contract("null, _, _, _ -> null")
-	public static <CAP, CONTEXT> CAP getCapability(@Nullable Level level, BlockCapability<CAP, CONTEXT> cap, BlockPos pos, CONTEXT context) {
+	public static <CAP, CONTEXT> CAP getCapability(@Nullable Level level, BlockApiLookup<CAP, CONTEXT> cap, BlockPos pos, CONTEXT context) {
 		return getCapability(level, cap, pos, null, null, context);
 	}
 
@@ -822,13 +825,13 @@ public final class WorldHelper {
 	 */
 	@Nullable
 	@Contract("null, _, _, _, _, _ -> null")
-	public static <CAP, CONTEXT> CAP getCapability(@Nullable Level level, BlockCapability<CAP, CONTEXT> cap, BlockPos pos, @Nullable BlockState state,
+	public static <CAP, CONTEXT> CAP getCapability(@Nullable Level level, BlockApiLookup<CAP, CONTEXT> cap, BlockPos pos, @Nullable BlockState state,
 			@Nullable BlockEntity blockEntity, CONTEXT context) {
 		if (!isBlockLoaded(level, pos)) {
 			//If the world is null, or it is a world reader and the block is not loaded, return null
 			return null;
 		}
-		return level.getCapability(cap, pos, state, blockEntity, context);
+		return cap.find(level, pos, state, blockEntity, context);
 	}
 
 	/**

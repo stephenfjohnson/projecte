@@ -1,12 +1,13 @@
 package moze_intel.projecte.gameObjs.customRecipes;
 
-import com.mojang.serialization.MapCodec;
 import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.gameObjs.registries.PERecipeConditions;
-import net.neoforged.neoforge.common.conditions.ICondition;
+import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
+import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditionType;
+import net.minecraft.core.HolderLookup;
 import org.jetbrains.annotations.NotNull;
 
-public class TomeEnabledCondition implements ICondition {
+public class TomeEnabledCondition implements ResourceCondition {
 
 	public static final TomeEnabledCondition INSTANCE = new TomeEnabledCondition();
 
@@ -14,13 +15,13 @@ public class TomeEnabledCondition implements ICondition {
 	}
 
 	@Override
-	public boolean test(@NotNull IContext context) {
+	public boolean test(@NotNull HolderLookup.Provider registries) {
 		return ProjectEConfig.common.craftableTome.get();
 	}
 
 	@NotNull
 	@Override
-	public MapCodec<? extends ICondition> codec() {
-		return PERecipeConditions.TOME_ENABLED.value();
+	public ResourceConditionType<?> getType() {
+		return PERecipeConditions.TOME_ENABLED;
 	}
 }

@@ -35,6 +35,14 @@ sourceSets {
             //But exclude the cache of the generated data from what gets built
             exclude '.cache'
         }
+        //TODO - Fabric port: the recipe viewer (JEI) and Jade integrations are not ported yet, so they are
+        // held out of the build while the core mod is brought up. Nothing in the core references them - they
+        // are entered only through JEI's and Jade's own plugin discovery - so excluding them changes nothing
+        // else. Drop these two lines to bring each back in.
+        java {
+            exclude 'moze_intel/projecte/integration/recipe_viewer/**'
+            exclude 'moze_intel/projecte/integration/jade/**'
+        }
         compileClasspath += api.output
         runtimeClasspath += api.output
     }

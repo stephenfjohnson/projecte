@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import moze_intel.projecte.PECore;
+import moze_intel.projecte.PEPlatform;
 import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.inventory.IItemHandler;
@@ -33,7 +34,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.LevelResource;
-import net.neoforged.fml.util.thread.EffectiveSide;
 import org.jetbrains.annotations.NotNull;
 
 public class TransmutationOffline {
@@ -61,7 +61,7 @@ public class TransmutationOffline {
 	}
 
 	private static boolean cacheOfflineData(MinecraftServer server, UUID playerUUID) {
-		if (EffectiveSide.get().isClient()) {
+		if (!PEPlatform.isServerThread()) {
 			throw new IllegalStateException("CRITICAL: Trying to read filesystem on client!!");
 		}
 		Path player = server.getWorldPath(LevelResource.PLAYER_DATA_DIR).resolve(playerUUID.toString() + ".dat");

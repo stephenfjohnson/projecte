@@ -55,7 +55,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.common.MutableDataComponentHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -359,7 +358,7 @@ public class MercurialEye extends ItemMode<MercurialEyeMode> implements IExtraFu
 
 	private static class EyeItemHandler extends ComponentItemHandler {
 
-		public EyeItemHandler(MutableDataComponentHolder parent) {
+		public EyeItemHandler(ItemStack parent) {
 			super(parent, PEDataComponentTypes.EYE_INVENTORY.get(), 2);
 		}
 

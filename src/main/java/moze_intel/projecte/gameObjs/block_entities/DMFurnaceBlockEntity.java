@@ -23,6 +23,7 @@ import moze_intel.projecte.inventory.ItemHandlerHelper;
 import moze_intel.projecte.inventory.wrapper.CombinedInvWrapper;
 import moze_intel.projecte.utils.WorldHelper;
 import moze_intel.projecte.utils.text.PELang;
+import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
@@ -53,7 +54,6 @@ import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.Hopper;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
@@ -109,9 +109,9 @@ public class DMFurnaceBlockEntity extends EmcBlockEntity implements MenuProvider
 	private final RecipeManager.CachedCheck<SingleRecipeInput, SmeltingRecipe> quickCheck;
 
 	@Nullable
-	private BlockCapabilityCache<IItemHandler, @Nullable Direction> pullTarget;
+	private BlockApiCache<IItemHandler, Direction> pullTarget;
 	@Nullable
-	private BlockCapabilityCache<IItemHandler, @Nullable Direction> pushTarget;
+	private BlockApiCache<IItemHandler, Direction> pushTarget;
 
 	public int litTime;
 	public int litDuration;
@@ -151,8 +151,8 @@ public class DMFurnaceBlockEntity extends EmcBlockEntity implements MenuProvider
 	public void setLevel(@NotNull Level level) {
 		super.setLevel(level);
 		if (level instanceof ServerLevel serverLevel) {
-			pullTarget = BlockCapabilityCache.create(ItemHandler.BLOCK, serverLevel, worldPosition.above(), Direction.DOWN);
-			pushTarget = BlockCapabilityCache.create(ItemHandler.BLOCK, serverLevel, worldPosition.below(), Direction.UP);
+			pullTarget = BlockApiCache.create(ItemHandler.BLOCK, serverLevel, worldPosition.above());
+			pushTarget = BlockApiCache.create(ItemHandler.BLOCK, serverLevel, worldPosition.below());
 		}
 	}
 
@@ -304,7 +304,7 @@ public class DMFurnaceBlockEntity extends EmcBlockEntity implements MenuProvider
 		if (pullTarget == null || isHopper(level, pos.above())) {
 			return;
 		}
-		IItemHandler handler = pullTarget.getCapability();
+		IItemHandler handler = pullTarget.find(Direction.DOWN);
 		if (handler != null) {
 			for (int i = 0, slots = handler.getSlots(); i < slots; i++) {
 				ItemStack extractTest = handler.extractItem(i, Integer.MAX_VALUE, true);
@@ -320,7 +320,7 @@ public class DMFurnaceBlockEntity extends EmcBlockEntity implements MenuProvider
 		if (pushTarget == null || outputInventory.isEmpty() || isHopper(level, pos.below())) {
 			return;
 		}
-		IItemHandler targetInv = pushTarget.getCapability();
+		IItemHandler targetInv = pushTarget.find(Direction.UP);
 		if (targetInv != null) {
 			for (int i = 0, slots = outputInventory.getSlots(); i < slots; i++) {
 				ItemStack extractTest = outputInventory.extractItem(i, Integer.MAX_VALUE, true);

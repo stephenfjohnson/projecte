@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMaps;
@@ -11,27 +12,32 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.SequencedSet;
 import java.util.function.Function;
 import moze_intel.projecte.PECore;
+import moze_intel.projecte.PEPlatform;
+import moze_intel.projecte.api.codec.WithConditions;
 import moze_intel.projecte.api.world_transmutation.IWorldTransmutation;
 import moze_intel.projecte.api.world_transmutation.IWorldTransmutationFunction;
 import moze_intel.projecte.api.world_transmutation.SimpleWorldTransmutation;
 import moze_intel.projecte.api.world_transmutation.WorldTransmutation;
 import moze_intel.projecte.api.world_transmutation.WorldTransmutationFile;
 import moze_intel.projecte.network.packets.to_client.SyncWorldTransmutations;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.conditions.WithConditions;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,6 +58,19 @@ public class WorldTransmutationManager extends SimpleJsonResourceReloadListener 
 		super(GSON, "pe_world_transmutations");
 	}
 
+	/**
+	 * Registries to check load conditions against.
+	 * <p>
+	 * Vanilla hands a reload listener no registry access, and NeoForge's conditional ops - which carried it - has
+	 * no Fabric counterpart. The running server is used when there is one, falling back to the built-in
+	 * registries, which is enough for the conditions that ask which mods are present or whether a built-in
+	 * registry holds something.
+	 */
+	private static HolderLookup.Provider conditionRegistries() {
+		MinecraftServer server = PEPlatform.getCurrentServer();
+		return server == null ? RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY) : server.registryAccess();
+	}
+
 	public static SyncWorldTransmutations getSyncPacket() {
 		return new SyncWorldTransmutations(INSTANCE.getWorldTransmutations());
 	}
@@ -64,18 +83,19 @@ public class WorldTransmutationManager extends SimpleJsonResourceReloadListener 
 
 	@Override
 	protected void apply(@NotNull Map<ResourceLocation, JsonElement> object, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profiler) {
-		//Ensure we are interacting with the condition context
-		RegistryOps<JsonElement> registryOps = makeConditionalOps();
+		//The transmutation codecs only reference built-in registries, so plain json ops will do; the load
+		// conditions are the part that wants registry access, and are evaluated below.
+		HolderLookup.Provider registries = conditionRegistries();
 		Reference2ObjectMap<Block, SequencedSet<IWorldTransmutation>> builder = new Reference2ObjectLinkedOpenHashMap<>();
 
 		// Find all data/<domain>/pe_world_transmutations/foo/bar.json
 		for (Entry<ResourceLocation, JsonElement> entry : object.entrySet()) {
 			ResourceLocation file = entry.getKey();//<domain>:foo/bar
-			DataResult<Optional<WithConditions<WorldTransmutationFile>>> result = WorldTransmutationFile.CONDITIONAL_CODEC.parse(registryOps, entry.getValue());
+			DataResult<WithConditions<WorldTransmutationFile>> result = WorldTransmutationFile.CONDITIONAL_CODEC.parse(JsonOps.INSTANCE, entry.getValue());
 			if (result.isSuccess()) {
-				Optional<WithConditions<WorldTransmutationFile>> decoded = result.getOrThrow();
-				if (decoded.isPresent()) {
-					for (IWorldTransmutation transmutation : decoded.get().carrier().transmutations()) {
+				WithConditions<WorldTransmutationFile> decoded = result.getOrThrow();
+				if (decoded.conditionsMet(registries)) {
+					for (IWorldTransmutation transmutation : decoded.carrier().transmutations()) {
 						SequencedSet<IWorldTransmutation> transmutations = builder.computeIfAbsent(transmutation.origin().value(), SET_BUILDER);
 						if (transmutations.add(transmutation)) {
 							PECore.debugLog("World Transmutation File: '{}' registered {}", file, transmutation);

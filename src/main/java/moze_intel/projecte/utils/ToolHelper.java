@@ -48,6 +48,7 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.Shearable;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -70,8 +71,6 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
-import net.neoforged.neoforge.common.IShearable;
-import net.neoforged.neoforge.event.EventHooks;
 import org.jetbrains.annotations.Nullable;
 
 public class ToolHelper {
@@ -87,7 +86,7 @@ public class ToolHelper {
 	public static final Set<ItemAbility> DEFAULT_PE_MORNING_STAR_ACTIONS = of(MORNING_STAR_DIG);
 
 	//Note: These all also do the check that super did before of making sure the entity is not spectating
-	private static final Predicate<Entity> SHEARABLE = entity -> !entity.isSpectator() && entity instanceof IShearable;
+	private static final Predicate<Entity> SHEARABLE = entity -> !entity.isSpectator() && entity instanceof Shearable;
 	private static final Predicate<Entity> SLAY_MOB = entity -> !entity.isSpectator() && entity instanceof Enemy;
 	private static final Predicate<Entity> SLAY_ALL = entity -> !entity.isSpectator() && (entity instanceof Enemy || entity instanceof LivingEntity);
 
@@ -466,7 +465,7 @@ public class ToolHelper {
 				if (e != null) {
 					e.setPos(ent.getX(), ent.getY(), ent.getZ());
 					if (e instanceof Mob mob) {
-						EventHooks.finalizeMobSpawn(mob, (ServerLevel) level, level.getCurrentDifficultyAt(entityPosition), MobSpawnType.EVENT, null);
+						mob.finalizeSpawn((ServerLevel) level, level.getCurrentDifficultyAt(entityPosition), MobSpawnType.EVENT, null);
 					}
 					if (e instanceof Sheep sheep) {
 						sheep.setColor(DyeColor.byId(level.random.nextInt(16)));

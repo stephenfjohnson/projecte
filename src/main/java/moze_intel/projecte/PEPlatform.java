@@ -57,6 +57,17 @@ public final class PEPlatform {
 		return FabricLoader.getInstance().isDevelopmentEnvironment();
 	}
 
+	/**
+	 * Whether the calling thread is the server thread.
+	 * <p>
+	 * Stands in for NeoForge's EffectiveSide, which reported which logical side the current thread belonged to.
+	 * Fabric has nothing equivalent, so this asks the running server directly.
+	 */
+	public static boolean isServerThread() {
+		MinecraftServer server = currentServer;
+		return server != null && server.isSameThread();
+	}
+
 	public static boolean isModLoaded(String modid) {
 		return FabricLoader.getInstance().isModLoaded(modid);
 	}

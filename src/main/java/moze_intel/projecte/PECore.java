@@ -137,7 +137,7 @@ public class PECore implements ModInitializer {
 		PEEntityTypes.ENTITY_TYPES.register();
 		PEItems.ITEMS.register();
 		PENormalizedSimpleStacks.NSS_SERIALIZERS.register();
-		PERecipeConditions.CONDITION_CODECS.register();
+		PERecipeConditions.register();
 		PERecipeSerializers.RECIPE_SERIALIZERS.register();
 		PESoundEvents.SOUND_EVENTS.register();
 		//Creative tabs go last, as they name the items they display

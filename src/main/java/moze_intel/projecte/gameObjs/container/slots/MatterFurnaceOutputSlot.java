@@ -5,7 +5,6 @@ import moze_intel.projecte.gameObjs.block_entities.DMFurnaceBlockEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.event.EventHooks;
 import org.jetbrains.annotations.NotNull;
 
 //[VanillaCopy] Adapted from FurnaceResultSlot
@@ -55,6 +54,7 @@ public class MatterFurnaceOutputSlot extends InventoryContainerSlot {
 		}
 
 		removeCount = 0;
-		EventHooks.firePlayerSmeltedEvent(player, stack);
+		//NeoForge fired an event here so other mods could react to a player smelting something. Fabric has no
+		// counterpart, and nothing in ProjectE listened for it.
 	}
 }

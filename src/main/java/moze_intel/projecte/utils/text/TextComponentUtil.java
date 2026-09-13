@@ -3,6 +3,7 @@ package moze_intel.projecte.utils.text;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import moze_intel.projecte.api.fluid.FluidStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -17,7 +18,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
  * @apiNote From Mekanism
@@ -50,7 +50,7 @@ public class TextComponentUtil {
 				case Block block -> current = block.getName().copy();
 				case Item item -> current = item.getDescription().copy();
 				case ItemStack stack -> current = stack.getHoverName().copy();
-				case FluidStack stack -> current = stack.getHoverName().copy();
+				case FluidStack stack -> current = Component.translatable(stack.getFluid().defaultBlockState().getBlock().getDescriptionId()).copy();
 				case Fluid fluid -> current = fluid.getFluidType().getDescription().copy();
 				case EntityType<?> entityType -> current = entityType.getDescription().copy();
 				case Level level -> current = level.getDescription().copy();

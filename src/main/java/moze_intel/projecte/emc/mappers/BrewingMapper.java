@@ -6,6 +6,7 @@ import java.util.Set;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.PEPlatform;
 import moze_intel.projecte.api.ItemInfo;
+import moze_intel.projecte.api.fluid.FluidStack;
 import moze_intel.projecte.api.mapper.EMCMapper;
 import moze_intel.projecte.api.mapper.IEMCMapper;
 import moze_intel.projecte.api.mapper.collector.IMappingCollector;
@@ -29,9 +30,6 @@ import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.neoforged.neoforge.common.brewing.BrewingRecipe;
-import net.neoforged.neoforge.common.brewing.IBrewingRecipe;
-import net.neoforged.neoforge.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
 
 @EMCMapper
@@ -52,7 +50,7 @@ public class BrewingMapper implements IEMCMapper<NormalizedSimpleStack, Long> {
 		//Add conversion for empty bottle + water to water bottle
 		mapper.addConversion(1, NSSItem.createItem(PotionContents.createItemStack(Items.POTION, Potions.WATER)), EMCHelper.intMapOf(
 				NSSItem.createItem(Items.GLASS_BOTTLE), 1,
-				NSSFluid.createTag(FluidTags.WATER), FluidType.BUCKET_VOLUME / 3
+				NSSFluid.createTag(FluidTags.WATER), FluidStack.BUCKET_VOLUME / 3
 		));
 
 		int recipeCount = 0;
@@ -77,34 +75,8 @@ public class BrewingMapper implements IEMCMapper<NormalizedSimpleStack, Long> {
 			}
 		}
 
-		Set<Class<?>> canNotMap = new HashSet<>();
-		for (IBrewingRecipe recipe : potionBrewing.getRecipes()) {
-			if (recipe instanceof BrewingRecipe brewingRecipe) {
-				ItemStack[] validInputs = getMatchingStacks(brewingRecipe.getInput());
-				ItemStack[] validReagents = getMatchingStacks(brewingRecipe.getIngredient());
-				if (validInputs == null || validReagents == null) {
-					//Skip brewing recipes that we are not able to process such as ones using tags
-					// as ingredients, as tags don't exist when the brewing recipe is being defined
-					continue;
-				}
-				ItemStack output = brewingRecipe.getOutput();
-				NormalizedSimpleStack nssOut = NSSItem.createItem(output);
-				for (ItemStack validInput : validInputs) {
-					NormalizedSimpleStack nssInput = NSSItem.createItem(validInput);
-					for (ItemStack validReagent : validReagents) {
-						//Add the conversion, 3 input + x reagent = 3 y output as strictly speaking the only one of the three parts
-						// in the recipe that are required to be one in stack size is the input
-						mapper.addConversion(3 * output.getCount(), nssOut, EMCHelper.intMapOf(
-								nssInput, 3,
-								NSSItem.createItem(validReagent), validReagent.getCount()
-						));
-						recipeCount++;
-					}
-				}
-			} else {
-				canNotMap.add(recipe.getClass());
-			}
-		}
+		//NeoForge also had a registry of extra brewing recipes that mods could add to, which Fabric has no
+		// counterpart for, so vanilla's mixes above are the whole picture here.
 
 		PECore.debugLog("{} Statistics:", getName());
 		PECore.debugLog("Found {} Brewing Recipes", recipeCount);
