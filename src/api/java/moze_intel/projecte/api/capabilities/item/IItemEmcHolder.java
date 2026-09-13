@@ -2,7 +2,6 @@ package moze_intel.projecte.api.capabilities.item;
 
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage.EmcAction;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.capabilities.ItemCapability;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
@@ -11,7 +10,7 @@ import org.jetbrains.annotations.Range;
  * <p>
  * This is exposed through the Capability system.
  * <p>
- * Acquire an instance of this using {@link ItemStack#getCapability(ItemCapability)}.
+ * Acquire an instance of this using {@code PECapabilities.EMC_HOLDER_ITEM_CAPABILITY.find(stack, null)}.
  *
  * @author williewillus
  */

@@ -59,7 +59,7 @@ public final class NSSItem extends AbstractDataComponentHolderNSSTag<Item> {
 	 */
 	@NotNull
 	public static NSSItem createItem(@NotNull Holder<Item> itemHolder, @NotNull DataComponentPatch componentsPatch) {
-		ResourceKey<Item> key = itemHolder.getKey();
+		ResourceKey<Item> key = itemHolder.unwrapKey().orElse(null);
 		if (key == null) {
 			if (!itemHolder.isBound()) {
 				throw new IllegalArgumentException("Can't make an NSSItem with an unbound direct holder");

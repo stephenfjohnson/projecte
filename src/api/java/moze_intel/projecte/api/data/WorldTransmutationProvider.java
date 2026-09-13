@@ -8,19 +8,19 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import javax.annotation.ParametersAreNonnullByDefault;
+import moze_intel.projecte.api.codec.WithConditions;
 import moze_intel.projecte.api.world_transmutation.WorldTransmutationFile;
+import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.PackOutput;
 import net.minecraft.data.PackOutput.PathProvider;
 import net.minecraft.data.PackOutput.Target;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.conditions.ICondition;
-import net.neoforged.neoforge.common.conditions.WithConditions;
 
 /**
  * Base Data Generator Provider class for use in creating world transmutations json data files that ProjectE will read from the data pack.
@@ -76,7 +76,7 @@ public abstract class WorldTransmutationProvider implements DataProvider {
 	 *
 	 * @return Builder
 	 */
-	protected WorldTransmutationBuilder createTransmutationBuilder(ResourceLocation id, ICondition... conditions) {
+	protected WorldTransmutationBuilder createTransmutationBuilder(ResourceLocation id, ResourceCondition... conditions) {
 		Objects.requireNonNull(id, "World Transmutation Builder ID cannot be null.");
 		if (worldTransmutations.containsKey(id)) {
 			throw new RuntimeException("World transmutation file '" + id + "' has already been registered.");
@@ -86,10 +86,10 @@ public abstract class WorldTransmutationProvider implements DataProvider {
 		return builder;
 	}
 
-	private record ConditionalBuilder(WorldTransmutationBuilder builder, ICondition... conditions) {
+	private record ConditionalBuilder(WorldTransmutationBuilder builder, ResourceCondition... conditions) {
 
-		public Optional<WithConditions<WorldTransmutationFile>> build() {
-			return Optional.of(new WithConditions<>(builder.build(), conditions));
+		public WithConditions<WorldTransmutationFile> build() {
+			return new WithConditions<>(builder.build(), conditions);
 		}
 	}
 }

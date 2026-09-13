@@ -2,10 +2,10 @@ package moze_intel.projecte.api;
 
 import com.mojang.serialization.MapCodec;
 import moze_intel.projecte.api.nss.NormalizedSimpleStack;
+import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.registries.RegistryBuilder;
 
 public class ProjectERegistries {
 
@@ -26,7 +26,7 @@ public class ProjectERegistries {
 	 *
 	 * @see #NSS_SERIALIZER_NAME
 	 */
-	public static final Registry<MapCodec<? extends NormalizedSimpleStack>> NSS_SERIALIZER = new RegistryBuilder<>(NSS_SERIALIZER_NAME)
-			.defaultKey(rl("item"))//Default to item serialization
-			.create();
+	//Defaults to item serialization
+	public static final Registry<MapCodec<? extends NormalizedSimpleStack>> NSS_SERIALIZER =
+			FabricRegistryBuilder.createDefaulted(NSS_SERIALIZER_NAME, rl("item")).buildAndRegister();
 }

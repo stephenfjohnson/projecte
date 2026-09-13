@@ -1,17 +1,27 @@
 package moze_intel.projecte.api.event;
 
 import moze_intel.projecte.api.ItemInfo;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * This event is fired on the server when a player is attempting to learn a new item
  * <p>
- * This event is fired on {@link net.neoforged.neoforge.common.NeoForge#EVENT_BUS}
+ * Listen for it by registering with {@link #EVENT}. Cancelling it stops the action.
  */
-public class PlayerAttemptLearnEvent extends Event implements ICancellableEvent {
+public class PlayerAttemptLearnEvent extends CancellableEvent {
+
+	public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
+		for (Callback callback : callbacks) {
+			callback.onAttemptLearn(event);
+			if (event.isCanceled()) {
+				//A listener vetoed it, so do not give the rest a say
+				return;
+			}
+		}
+	});
 
 	private final Player player;
 	private final ItemInfo sourceInfo;
@@ -47,5 +57,21 @@ public class PlayerAttemptLearnEvent extends Event implements ICancellableEvent 
 	@NotNull
 	public ItemInfo getReducedInfo() {
 		return reducedInfo;
+	}
+
+	/**
+	 * Fires this event to every registered listener, stopping early if one cancels it.
+	 *
+	 * @return This event, so that the caller can check {@link #isCanceled()}.
+	 */
+	public PlayerAttemptLearnEvent fire() {
+		EVENT.invoker().onAttemptLearn(this);
+		return this;
+	}
+
+	@FunctionalInterface
+	public interface Callback {
+
+		void onAttemptLearn(PlayerAttemptLearnEvent event);
 	}
 }

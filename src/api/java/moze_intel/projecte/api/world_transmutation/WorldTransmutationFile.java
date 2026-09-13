@@ -3,14 +3,15 @@ package moze_intel.projecte.api.world_transmutation;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import moze_intel.projecte.api.codec.IPECodecHelper;
+import moze_intel.projecte.api.codec.PEExtraCodecs;
+import moze_intel.projecte.api.codec.WithConditions;
 import net.minecraft.util.ExtraCodecs;
-import net.neoforged.neoforge.common.conditions.ConditionalOps;
-import net.neoforged.neoforge.common.conditions.WithConditions;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -31,13 +32,16 @@ public record WorldTransmutationFile(@Nullable String comment, List<IWorldTransm
 	/**
 	 * Codec for serializing and deserializing World Transmutation Files.
 	 */
-	public static final Codec<WorldTransmutationFile> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+	public static final MapCodec<WorldTransmutationFile> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 			ExtraCodecs.NON_EMPTY_STRING.optionalFieldOf("comment").forGetter(file -> Optional.ofNullable(file.comment())),
 			LIST_CODEC.optionalFieldOf("transmutations").forGetter(file -> IPECodecHelper.INSTANCE.ifNotEmpty(file.transmutations()))
 	).apply(instance, (comment, transmutations) ->
 			new WorldTransmutationFile(comment.orElse(null), transmutations.orElseGet(Collections::emptyList))));
+	public static final Codec<WorldTransmutationFile> CODEC = MAP_CODEC.codec();
 	/**
-	 * Codec for serializing and deserializing World Transmutation Files that contain conditions that are checked before loading.
+	 * Codec for World Transmutation Files that may carry load conditions. The conditions come back attached to
+	 * the decoded file; whoever loads it is responsible for checking them with
+	 * {@link WithConditions#conditionsMet(net.minecraft.core.HolderLookup.Provider)}.
 	 */
-	public static final Codec<Optional<WithConditions<WorldTransmutationFile>>> CONDITIONAL_CODEC = ConditionalOps.createConditionalCodecWithConditions(CODEC);
+	public static final Codec<WithConditions<WorldTransmutationFile>> CONDITIONAL_CODEC = PEExtraCodecs.withConditions(MAP_CODEC);
 }

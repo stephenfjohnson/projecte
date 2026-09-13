@@ -2,6 +2,7 @@ package moze_intel.projecte.api.nss;
 
 import com.mojang.serialization.MapCodec;
 import java.util.Optional;
+import moze_intel.projecte.api.fluid.FluidStack;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentPatch;
@@ -11,7 +12,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -65,7 +65,7 @@ public final class NSSFluid extends AbstractDataComponentHolderNSSTag<Fluid> {
 	 */
 	@NotNull
 	public static NSSFluid createFluid(@NotNull Holder<Fluid> fluidHolder, @NotNull DataComponentPatch componentsPatch) {
-		ResourceKey<Fluid> key = fluidHolder.getKey();
+		ResourceKey<Fluid> key = fluidHolder.unwrapKey().orElse(null);
 		if (key == null) {
 			if (!fluidHolder.isBound()) {
 				throw new IllegalArgumentException("Can't make an NSSFluid with an unbound direct holder");

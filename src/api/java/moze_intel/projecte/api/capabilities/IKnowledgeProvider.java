@@ -7,19 +7,18 @@ import java.math.BigInteger;
 import java.util.Set;
 import java.util.function.IntFunction;
 import moze_intel.projecte.api.ItemInfo;
+import moze_intel.projecte.api.inventory.IItemHandler;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.capabilities.EntityCapability;
-import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * This interface defines the contract for some object that exposes transmutation knowledge through the Capability system.
  * <p>
- * Acquire an instance of this using {@link net.minecraft.world.entity.Entity#getCapability(EntityCapability)}.
+ * Acquire an instance of this using {@code PECapabilities.KNOWLEDGE_CAPABILITY.find(entity, null)}.
  */
 public interface IKnowledgeProvider {
 

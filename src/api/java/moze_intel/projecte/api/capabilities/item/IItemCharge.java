@@ -7,7 +7,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.capabilities.ItemCapability;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * This is exposed through the Capability system.
  * <p>
- * Acquire an instance of this using {@link ItemStack#getCapability(ItemCapability)}.
+ * Acquire an instance of this using {@code PECapabilities.CHARGE_ITEM_CAPABILITY.find(stack, null)}.
  */
 public interface IItemCharge {
 
@@ -41,7 +40,7 @@ public interface IItemCharge {
 	 * @return The charge on the stack
 	 */
 	default int getCharge(@NotNull ItemStack stack) {
-		return Mth.clamp(stack.getOrDefault(PEDataComponents.CHARGE, 0), 0, getNumCharges(stack));
+		return Mth.clamp(stack.getOrDefault(PEDataComponents.CHARGE.get(), 0), 0, getNumCharges(stack));
 	}
 
 	/**
@@ -59,15 +58,15 @@ public interface IItemCharge {
 
 		if (player.isSecondaryUseActive()) {
 			if (currentCharge > 0) {
-				player.level().playSound(null, player.getX(), player.getY(), player.getZ(), PESounds.UNCHARGE.value(), SoundSource.PLAYERS, 1.0F,
+				player.level().playSound(null, player.getX(), player.getY(), player.getZ(), PESounds.UNCHARGE.get(), SoundSource.PLAYERS, 1.0F,
 						0.5F + ((0.5F / (float) numCharges) * currentCharge));
-				stack.set(PEDataComponents.CHARGE, currentCharge - 1);
+				stack.set(PEDataComponents.CHARGE.get(), currentCharge - 1);
 				return true;
 			}
 		} else if (currentCharge < numCharges) {
-			player.level().playSound(null, player.getX(), player.getY(), player.getZ(), PESounds.CHARGE.value(), SoundSource.PLAYERS, 1.0F,
+			player.level().playSound(null, player.getX(), player.getY(), player.getZ(), PESounds.CHARGE.get(), SoundSource.PLAYERS, 1.0F,
 					0.5F + ((0.5F / (float) numCharges) * currentCharge));
-			stack.set(PEDataComponents.CHARGE, currentCharge + 1);
+			stack.set(PEDataComponents.CHARGE.get(), currentCharge + 1);
 			return true;
 		}
 		return false;

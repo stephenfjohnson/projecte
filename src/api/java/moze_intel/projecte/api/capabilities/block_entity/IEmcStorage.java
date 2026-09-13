@@ -1,7 +1,5 @@
 package moze_intel.projecte.api.capabilities.block_entity;
 
-import net.minecraft.core.BlockPos;
-import net.neoforged.neoforge.capabilities.BlockCapability;
 import org.jetbrains.annotations.Range;
 
 /**
@@ -12,14 +10,15 @@ import org.jetbrains.annotations.Range;
  * <p>
  * This is exposed through the Capability system.
  * <p>
- * Acquire an instance of this using {@link net.minecraft.world.level.Level#getCapability(BlockCapability, BlockPos, Object)}.
+ * Acquire an instance of this using {@code PECapabilities.EMC_STORAGE_CAPABILITY.find(level, pos, side)}.
  *
  * @author williewillus
  */
 public interface IEmcStorage {
 
 	/**
-	 * Like {@link net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction} except for EMC in general
+	 * Whether an EMC operation should actually be carried out or only reported, in the same spirit as a fluid transfer
+	 * action
 	 */
 	enum EmcAction {
 		EXECUTE,

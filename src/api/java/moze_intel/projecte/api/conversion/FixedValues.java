@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.codec.IPECodecHelper;
+import moze_intel.projecte.api.codec.PEExtraCodecs;
 import moze_intel.projecte.api.nss.NormalizedSimpleStack;
-import net.neoforged.neoforge.common.util.NeoForgeExtraCodecs;
 
 /**
  * @param setValueBefore Map of {@link NormalizedSimpleStack} to the value to set before applying conversions.
@@ -27,7 +27,7 @@ public record FixedValues(Object2LongSortedMap<NormalizedSimpleStack> setValueBe
 
 	private static final Codec<Object2LongSortedMap<NormalizedSimpleStack>> VALUE_CODEC = IPECodecHelper.INSTANCE.modifiableMap(IPECodecHelper.INSTANCE.lenientKeyUnboundedMap(
 			IPECodecHelper.INSTANCE.nssMapCodec(),
-			NeoForgeExtraCodecs.withAlternative(
+			PEExtraCodecs.withAlternative(
 					IPECodecHelper.INSTANCE.positiveLong(),
 					Codec.stringResolver(
 							val -> val == ProjectEAPI.FREE_ARITHMETIC_VALUE ? "free" : null,

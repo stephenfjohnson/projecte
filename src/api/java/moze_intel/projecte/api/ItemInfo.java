@@ -202,7 +202,7 @@ public final class ItemInfo {
 	public int hashCode() {
 		if (!hasCachedHash) {
 			hasCachedHash = true;
-			ResourceKey<Item> resourceKey = item.getKey();
+			ResourceKey<Item> resourceKey = item.unwrapKey().orElse(null);
 			int code = resourceKey == null ? 0 : resourceKey.hashCode();
 			cachedHashCode = 31 * code + componentsPatch.hashCode();
 		}

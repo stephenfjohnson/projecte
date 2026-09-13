@@ -9,14 +9,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import moze_intel.projecte.api.codec.IPECodecHelper;
+import moze_intel.projecte.api.codec.PEExtraCodecs;
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
 import net.minecraft.core.HolderSet.Named;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.neoforged.neoforge.common.util.NeoForgeExtraCodecs;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
 
@@ -186,7 +186,7 @@ public abstract class AbstractNSSTag<TYPE> implements NSSTag {
 	protected static <TYPE, NSS extends AbstractNSSTag<TYPE>> MapCodec<NSS> createCodec(Registry<TYPE> registry, boolean allowDefault,
 			NSSTagConstructor<TYPE, NSS> nssConstructor) {
 		//Note: We return a MapCodec so that dispatch codecs can inline this
-		return NeoForgeExtraCodecs.withAlternative(
+		return PEExtraCodecs.withAlternative(
 				createTagCodec(nssConstructor),
 				RecordCodecBuilder.mapCodec(instance -> instance.group(
 						idComponent(registry, allowDefault)

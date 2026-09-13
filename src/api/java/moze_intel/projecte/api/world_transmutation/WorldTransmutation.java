@@ -6,13 +6,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import java.util.Objects;
 import java.util.Optional;
+import moze_intel.projecte.api.codec.PEExtraCodecs;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.util.NeoForgeExtraCodecs;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,7 +26,7 @@ public record WorldTransmutation(@NotNull BlockState originState, @NotNull Block
 	static final String RESULT_KEY = "result";
 	static final String ALT_RESULT_KEY = "alt_result";
 
-	private static final Codec<BlockState> STATE_CODEC = NeoForgeExtraCodecs.withAlternative(BuiltInRegistries.BLOCK.byNameCodec().flatXmap(
+	private static final Codec<BlockState> STATE_CODEC = PEExtraCodecs.withAlternative(BuiltInRegistries.BLOCK.byNameCodec().flatXmap(
 			block -> DataResult.success(block.defaultBlockState()),
 			state -> {
 				if (state.getValues().isEmpty()) {
