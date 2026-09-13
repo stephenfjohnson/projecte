@@ -135,7 +135,7 @@ public class EvertideAmulet extends ItemPE implements IProjectileShooter, IPedes
 	@Override
 	public void attachCapabilities(RegisterCapabilitiesEvent event) {
 		event.registerItem(FluidHandler.ITEM, (stack, context) -> new InfiniteFluidHandler(stack), this);
-		IntegrationHelper.registerCuriosCapability(event, this);
+		IntegrationHelper.registerAccessoryCapability(this);
 	}
 
 	private record InfiniteFluidHandler(ItemStack stack) implements IFluidHandlerItem {

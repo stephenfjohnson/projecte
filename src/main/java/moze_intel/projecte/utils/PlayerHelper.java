@@ -32,8 +32,8 @@ import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.BlockSnapshot;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.BlockEvent.EntityMultiPlaceEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.items.IItemHandler;
 
 /**
@@ -126,7 +126,7 @@ public final class PlayerHelper {
 		if (!offhand.isEmpty() && checker.test(player, offhand)) {
 			return true;
 		}
-		IItemHandler curios = player.getCapability(IntegrationHelper.CURIO_ITEM_HANDLER);
+		IItemHandler curios = player.getCapability(IntegrationHelper.ACCESSORY_ITEM_HANDLER);
 		if (curios != null) {
 			for (int i = 0, slots = curios.getSlots(); i < slots; i++) {
 				ItemStack stack = curios.getStackInSlot(i);

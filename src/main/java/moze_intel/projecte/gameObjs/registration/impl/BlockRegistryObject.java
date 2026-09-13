@@ -1,6 +1,7 @@
 package moze_intel.projecte.gameObjs.registration.impl;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import moze_intel.projecte.gameObjs.registration.DeferredHolder;
 import moze_intel.projecte.gameObjs.registration.DoubleWrappedRegistryObject;
 import moze_intel.projecte.utils.text.IHasTranslationKey;
 import net.minecraft.world.item.Item;
@@ -8,7 +9,6 @@ import net.minecraft.world.item.StandingAndWallBlockItem;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 

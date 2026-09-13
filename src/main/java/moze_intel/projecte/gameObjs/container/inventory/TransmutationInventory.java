@@ -9,8 +9,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Predicate;
 import moze_intel.projecte.api.ItemInfo;
-import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider.TargetUpdateType;
+import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage.EmcAction;
 import moze_intel.projecte.api.capabilities.item.IItemEmcHolder;
@@ -20,8 +20,8 @@ import moze_intel.projecte.gameObjs.PETags;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import moze_intel.projecte.utils.MathUtils;
 import moze_intel.projecte.utils.PlayerHelper;
-import moze_intel.projecte.utils.text.SearchQueryParser;
 import moze_intel.projecte.utils.text.SearchQueryParser.ISearchQuery;
+import moze_intel.projecte.utils.text.SearchQueryParser;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -88,7 +88,7 @@ public class TransmutationInventory extends CombinedInvWrapper {
 	public void handleKnowledge(ItemInfo info) {
 		ItemInfo cleanedInfo = IEMCProxy.INSTANCE.getPersistentInfo(info);
 		//Pass both stacks to the Attempt Learn Event in case a mod cares about the data component/damage difference when comparing
-		if (!provider.hasKnowledge(cleanedInfo) && !NeoForge.EVENT_BUS.post(new PlayerAttemptLearnEvent(player, info, cleanedInfo)).isCanceled()) {
+		if (!provider.hasKnowledge(cleanedInfo) && !new PlayerAttemptLearnEvent(player, info, cleanedInfo).fire().isCanceled()) {
 			if (provider.addKnowledge(cleanedInfo)) {
 				//Only sync the knowledge changed if the provider successfully added it
 				provider.syncKnowledgeChange((ServerPlayer) player, cleanedInfo, true);

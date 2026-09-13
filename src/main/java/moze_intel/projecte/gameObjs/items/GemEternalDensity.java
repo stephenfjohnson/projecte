@@ -238,7 +238,7 @@ public class GemEternalDensity extends ItemPE implements IAlchBagItem, IAlchChes
 
 	@Override
 	public void attachCapabilities(RegisterCapabilitiesEvent event) {
-		IntegrationHelper.registerCuriosCapability(event, this);
+		IntegrationHelper.registerAccessoryCapability(this);
 	}
 
 	private record ContainerProvider(InteractionHand hand, int selected) implements MenuProvider {

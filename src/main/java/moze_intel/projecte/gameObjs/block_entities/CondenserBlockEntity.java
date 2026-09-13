@@ -203,7 +203,7 @@ public class CondenserBlockEntity extends EmcChestBlockEntity {
 			if (!stack.isEmpty()) {
 				ItemInfo sourceInfo = ItemInfo.fromStack(stack);
 				ItemInfo reducedInfo = IEMCProxy.INSTANCE.getPersistentInfo(sourceInfo);
-				if (!NeoForge.EVENT_BUS.post(new PlayerAttemptCondenserSetEvent(player, sourceInfo, reducedInfo)).isCanceled()) {
+				if (!new PlayerAttemptCondenserSetEvent(player, sourceInfo, reducedInfo).fire().isCanceled()) {
 					lockInfo = reducedInfo;
 					checkLockAndUpdate(true);
 					markDirty(level, pos, false);

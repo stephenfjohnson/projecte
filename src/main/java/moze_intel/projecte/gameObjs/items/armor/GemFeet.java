@@ -4,6 +4,7 @@ import com.google.common.base.Suppliers;
 import java.util.List;
 import java.util.function.Supplier;
 import moze_intel.projecte.PECore;
+import moze_intel.projecte.PEPlatform;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
 import moze_intel.projecte.utils.ClientKeyHelper;
 import moze_intel.projecte.utils.PEKeybind;
@@ -13,8 +14,8 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
@@ -24,7 +25,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 
 public class GemFeet extends GemArmorBase {
@@ -68,7 +68,7 @@ public class GemFeet extends GemArmorBase {
 	}
 
 	private static boolean isJumpPressed(Player player) {
-		if (FMLEnvironment.dist.isClient() && player instanceof LocalPlayer clientPlayer) {
+		if (PEPlatform.isClient() && player instanceof LocalPlayer clientPlayer) {
 			return clientPlayer.input.jumping;
 		}
 		return false;

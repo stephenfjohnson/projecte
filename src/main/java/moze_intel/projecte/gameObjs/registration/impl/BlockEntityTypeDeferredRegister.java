@@ -7,19 +7,17 @@ import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import moze_intel.projecte.capability.ICapabilityProvider;
+import moze_intel.projecte.gameObjs.registration.DeferredHolder;
 import moze_intel.projecte.gameObjs.registration.PEDeferredRegister;
 import moze_intel.projecte.gameObjs.registration.impl.BlockEntityTypeRegistryObject.CapabilityData;
+import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.BlockEntityType.BlockEntitySupplier;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.capabilities.BlockCapability;
-import net.neoforged.neoforge.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,17 +37,15 @@ public class BlockEntityTypeDeferredRegister extends PEDeferredRegister<BlockEnt
 	}
 
 	@Override
-	public void register(@NotNull IEventBus bus) {
-		super.register(bus);
-		bus.addListener(this::registerCapabilities);
-	}
-
-	private void registerCapabilities(RegisterCapabilitiesEvent event) {
+	public void register() {
+		super.register();
+		//Capabilities are registered straight after the block entity types themselves, as Fabric has no
+		// separate registration event to wait for
 		for (DeferredHolder<BlockEntityType<?>, ? extends BlockEntityType<?>> entry : getEntries()) {
 			//Note: All entries should be of this type
 			if (entry instanceof BlockEntityTypeRegistryObject<?> beRO) {
-				beRO.registerCapabilityProviders(event);
-			} else if (!FMLEnvironment.production) {
+				beRO.registerCapabilityProviders();
+			} else if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
 				throw new IllegalStateException("Expected entry to be a BlockEntityTypeRegistryObject");
 			}
 		}
@@ -72,21 +68,21 @@ public class BlockEntityTypeDeferredRegister extends PEDeferredRegister<BlockEnt
 			this.factory = factory;
 		}
 
-		public <CAP, CONTEXT> BlockEntityTypeBuilder<BE> withSimple(BlockCapability<CAP, CONTEXT> capability) {
+		public <CAP, CONTEXT> BlockEntityTypeBuilder<BE> withSimple(BlockApiLookup<CAP, CONTEXT> capability) {
 			return withSimple(capability, () -> true);
 		}
 
 		@SuppressWarnings("unchecked")
-		public <CAP, CONTEXT> BlockEntityTypeBuilder<BE> withSimple(BlockCapability<CAP, CONTEXT> capability, BooleanSupplier shouldApply) {
+		public <CAP, CONTEXT> BlockEntityTypeBuilder<BE> withSimple(BlockApiLookup<CAP, CONTEXT> capability, BooleanSupplier shouldApply) {
 			return with(capability, (ICapabilityProvider<? super BE, CONTEXT, CAP>) SIMPLE_PROVIDER, shouldApply);
 		}
 
-		public <CAP, CONTEXT> BlockEntityTypeBuilder<BE> with(BlockCapability<CAP, CONTEXT> capability,
-				Function<BlockCapability<CAP, CONTEXT>, ICapabilityProvider<? super BE, CONTEXT, CAP>> provider) {
+		public <CAP, CONTEXT> BlockEntityTypeBuilder<BE> with(BlockApiLookup<CAP, CONTEXT> capability,
+				Function<BlockApiLookup<CAP, CONTEXT>, ICapabilityProvider<? super BE, CONTEXT, CAP>> provider) {
 			return with(capability, provider.apply(capability));
 		}
 
-		public <CAP, CONTEXT> BlockEntityTypeBuilder<BE> with(BlockCapability<CAP, CONTEXT> capability, ICapabilityProvider<? super BE, CONTEXT, CAP> provider) {
+		public <CAP, CONTEXT> BlockEntityTypeBuilder<BE> with(BlockApiLookup<CAP, CONTEXT> capability, ICapabilityProvider<? super BE, CONTEXT, CAP> provider) {
 			return with(capability, provider, () -> true);
 		}
 
@@ -94,20 +90,20 @@ public class BlockEntityTypeDeferredRegister extends PEDeferredRegister<BlockEnt
 		 * @param shouldApply Determines whether the provider actually be attached to this block entity type. Useful for cases when we want to conditionally apply it
 		 *                    based on loaded mods or a block's attributes.
 		 */
-		public <CAP, CONTEXT> BlockEntityTypeBuilder<BE> with(BlockCapability<CAP, CONTEXT> capability, ICapabilityProvider<? super BE, CONTEXT, CAP> provider,
+		public <CAP, CONTEXT> BlockEntityTypeBuilder<BE> with(BlockApiLookup<CAP, CONTEXT> capability, ICapabilityProvider<? super BE, CONTEXT, CAP> provider,
 				BooleanSupplier shouldApply) {
 			capabilityProviders.add(new CapabilityData<>(capability, provider, shouldApply));
 			return this;
 		}
 
-		public BlockEntityTypeBuilder<BE> without(BlockCapability<?, ?>... capabilities) {
-			for (BlockCapability<?, ?> capability : capabilities) {
+		public BlockEntityTypeBuilder<BE> without(BlockApiLookup<?, ?>... capabilities) {
+			for (BlockApiLookup<?, ?> capability : capabilities) {
 				capabilityProviders.removeIf(data -> data.capability() == capability);
 			}
 			return this;
 		}
 
-		public BlockEntityTypeBuilder<BE> without(Collection<? extends BlockCapability<?, ?>> capabilities) {
+		public BlockEntityTypeBuilder<BE> without(Collection<? extends BlockApiLookup<?, ?>> capabilities) {
 			capabilityProviders.removeIf(data -> capabilities.contains(data.capability()));
 			return this;
 		}

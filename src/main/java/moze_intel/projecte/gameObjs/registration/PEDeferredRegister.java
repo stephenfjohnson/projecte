@@ -5,13 +5,16 @@ import java.util.function.Supplier;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 
 public class PEDeferredRegister<T> extends DeferredRegister<T> {
 
 	@NotNull
 	private final Function<ResourceKey<T>, ? extends PEDeferredHolder<T, ?>> holderCreator;
+
+	public static <T> PEDeferredRegister<T> create(@NotNull ResourceKey<? extends Registry<T>> registryKey, @NotNull String namespace) {
+		return new PEDeferredRegister<>(registryKey, namespace);
+	}
 
 	public PEDeferredRegister(@NotNull ResourceKey<? extends Registry<T>> registryKey, @NotNull String namespace) {
 		this(registryKey, namespace, PEDeferredHolder::new);

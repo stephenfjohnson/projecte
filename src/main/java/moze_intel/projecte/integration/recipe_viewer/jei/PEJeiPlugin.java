@@ -31,7 +31,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-import net.neoforged.fml.ModList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -85,7 +84,8 @@ public class PEJeiPlugin implements IModPlugin {
 
 	private static boolean shouldLoad() {
 		//Skip handling if both EMI and JEI are loaded as otherwise some things behave strangely
-		return !ModList.get().isLoaded(IntegrationHelper.EMI_MODID);
+		//EMI support was dropped in the Fabric port, so the JEI plugin is always active
+		return true;
 	}
 
 	public static void registerItemSubtypes(ISubtypeRegistration registry, Collection<? extends Holder<? extends ItemLike>> itemProviders) {

@@ -81,7 +81,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.capabilities.Capabilities.FluidHandler;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.ItemAbilities;
@@ -116,7 +115,7 @@ public class PECore {
 	public static ModContainer MOD_CONTAINER;
 
 	public static void debugLog(String msg, Object... args) {
-		if (!FMLEnvironment.production || ProjectEConfig.common.debugLogging.get()) {
+		if (PEPlatform.isDevelopment() || ProjectEConfig.common.debugLogging.get()) {
 			LOGGER.info(msg, args);
 		} else {
 			LOGGER.debug(msg, args);

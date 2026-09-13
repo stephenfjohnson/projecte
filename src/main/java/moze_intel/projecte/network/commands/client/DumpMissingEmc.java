@@ -6,6 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import java.util.HashSet;
 import java.util.Set;
 import moze_intel.projecte.PECore;
+import moze_intel.projecte.PEPlatform;
 import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.config.MappingConfig;
@@ -35,7 +36,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.Tags;
 
 public class DumpMissingEmc {
@@ -62,7 +62,7 @@ public class DumpMissingEmc {
 			default -> false;
 		}) {
 			return true;
-		} else if (!FMLEnvironment.production && SKIP_TOP &&
+		} else if (PEPlatform.isDevelopment() && SKIP_TOP &&
 				   holder.unwrapKey().map(key -> key.location().getNamespace().equals(IntegrationHelper.TOP_MODID)).orElse(false)) {
 			//Skip TOP items in dev
 			return true;

@@ -84,6 +84,6 @@ public class BodyStone extends PEToggleItem implements IPedestalItem, ICapabilit
 
 	@Override
 	public void attachCapabilities(RegisterCapabilitiesEvent event) {
-		IntegrationHelper.registerCuriosCapability(event, this);
+		IntegrationHelper.registerAccessoryCapability(this);
 	}
 }

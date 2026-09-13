@@ -112,6 +112,6 @@ public class Ignition extends PEToggleItem implements IPedestalItem, IFireProtec
 
 	@Override
 	public void attachCapabilities(RegisterCapabilitiesEvent event) {
-		IntegrationHelper.registerCuriosCapability(event, this);
+		IntegrationHelper.registerAccessoryCapability(this);
 	}
 }

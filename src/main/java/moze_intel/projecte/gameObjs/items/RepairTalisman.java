@@ -105,12 +105,12 @@ public class RepairTalisman extends ItemPE implements IAlchBagItem, IAlchChestIt
 
 	@Override
 	public void attachCapabilities(RegisterCapabilitiesEvent event) {
-		IntegrationHelper.registerCuriosCapability(event, this);
+		IntegrationHelper.registerAccessoryCapability(this);
 	}
 
 	private static void repairAllItems(Player player) {
 		repairAllItems(player.getCapability(ItemHandler.ENTITY), player, CAN_REPAIR_PLAYER_ITEM);
-		repairAllItems(player.getCapability(IntegrationHelper.CURIO_ITEM_HANDLER), player, CAN_REPAIR_PLAYER_ITEM);
+		repairAllItems(player.getCapability(IntegrationHelper.ACCESSORY_ITEM_HANDLER), player, CAN_REPAIR_PLAYER_ITEM);
 	}
 
 	private static <DATA> boolean repairAllItems(@Nullable IItemHandler inv, DATA data, BiPredicate<ItemStack, DATA> canRepairStack) {

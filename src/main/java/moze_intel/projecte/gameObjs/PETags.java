@@ -70,7 +70,7 @@ public class PETags {
 		}
 
 		private static TagKey<Item> curiosTag(String name) {
-			return ItemTags.create(ResourceLocation.fromNamespaceAndPath(IntegrationHelper.CURIO_MODID, name));
+			return ItemTags.create(ResourceLocation.fromNamespaceAndPath(IntegrationHelper.ACCESSORY_MODID, name));
 		}
 
 		private static TagKey<Item> commonTag(String name) {

@@ -17,8 +17,6 @@ import moze_intel.projecte.gameObjs.registration.PEDeferredRegister;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class ItemDeferredRegister extends PEDeferredRegister<Item> {
@@ -28,40 +26,42 @@ public class ItemDeferredRegister extends PEDeferredRegister<Item> {
 	}
 
 	@Override
-	public void register(@NotNull IEventBus bus) {
-		super.register(bus);
-		bus.addListener(this::registerCapabilities);
+	public void register() {
+		super.register();
+		//Capabilities are registered straight after the items themselves, as Fabric has no separate
+		// registration event to wait for
+		registerCapabilities();
 	}
 
-	private void registerCapabilities(RegisterCapabilitiesEvent event) {
+	private void registerCapabilities() {
 		for (Holder<Item> entry : getEntries()) {
 			Item item = entry.value();
 			if (item instanceof IAlchBagItem) {
-				event.registerItem(PECapabilities.ALCH_BAG_ITEM_CAPABILITY, (stack, context) -> (IAlchBagItem) stack.getItem(), item);
+				PECapabilities.ALCH_BAG_ITEM_CAPABILITY.registerForItems((stack, context) -> (IAlchBagItem) stack.getItem(), item);
 			}
 			if (item instanceof IAlchChestItem) {
-				event.registerItem(PECapabilities.ALCH_CHEST_ITEM_CAPABILITY, (stack, context) -> (IAlchChestItem) stack.getItem(), item);
+				PECapabilities.ALCH_CHEST_ITEM_CAPABILITY.registerForItems((stack, context) -> (IAlchChestItem) stack.getItem(), item);
 			}
 			if (item instanceof IExtraFunction) {
-				event.registerItem(PECapabilities.EXTRA_FUNCTION_ITEM_CAPABILITY, (stack, context) -> (IExtraFunction) stack.getItem(), item);
+				PECapabilities.EXTRA_FUNCTION_ITEM_CAPABILITY.registerForItems((stack, context) -> (IExtraFunction) stack.getItem(), item);
 			}
 			if (item instanceof IItemCharge) {
-				event.registerItem(PECapabilities.CHARGE_ITEM_CAPABILITY, (stack, context) -> (IItemCharge) stack.getItem(), item);
+				PECapabilities.CHARGE_ITEM_CAPABILITY.registerForItems((stack, context) -> (IItemCharge) stack.getItem(), item);
 			}
 			if (item instanceof IItemEmcHolder) {
-				event.registerItem(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY, (stack, context) -> (IItemEmcHolder) stack.getItem(), item);
+				PECapabilities.EMC_HOLDER_ITEM_CAPABILITY.registerForItems((stack, context) -> (IItemEmcHolder) stack.getItem(), item);
 			}
 			if (item instanceof IModeChanger<?>) {
-				event.registerItem(PECapabilities.MODE_CHANGER_ITEM_CAPABILITY, (stack, context) -> (IModeChanger<?>) stack.getItem(), item);
+				PECapabilities.MODE_CHANGER_ITEM_CAPABILITY.registerForItems((stack, context) -> (IModeChanger<?>) stack.getItem(), item);
 			}
 			if (item instanceof IPedestalItem) {
-				event.registerItem(PECapabilities.PEDESTAL_ITEM_CAPABILITY, (stack, context) -> (IPedestalItem) stack.getItem(), item);
+				PECapabilities.PEDESTAL_ITEM_CAPABILITY.registerForItems((stack, context) -> (IPedestalItem) stack.getItem(), item);
 			}
 			if (item instanceof IProjectileShooter) {
-				event.registerItem(PECapabilities.PROJECTILE_SHOOTER_ITEM_CAPABILITY, (stack, context) -> (IProjectileShooter) stack.getItem(), item);
+				PECapabilities.PROJECTILE_SHOOTER_ITEM_CAPABILITY.registerForItems((stack, context) -> (IProjectileShooter) stack.getItem(), item);
 			}
 			if (item instanceof ICapabilityAware capabilityAware) {
-				capabilityAware.attachCapabilities(event);
+				capabilityAware.attachCapabilities();
 			}
 		}
 	}

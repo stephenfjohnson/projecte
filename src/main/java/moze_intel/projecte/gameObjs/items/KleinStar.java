@@ -1,5 +1,6 @@
 package moze_intel.projecte.gameObjs.items;
 
+import moze_intel.projecte.PEPlatform;
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage.EmcAction;
 import moze_intel.projecte.api.capabilities.item.IItemEmcHolder;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
@@ -9,7 +10,6 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
@@ -51,7 +51,7 @@ public class KleinStar extends ItemPE implements IItemEmcHolder, IBarHelper, ICa
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, @NotNull InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
-		if (!level.isClientSide && !FMLEnvironment.production && player.isCreative()) {
+		if (!level.isClientSide && PEPlatform.isDevelopment() && player.isCreative()) {
 			stack.set(PEDataComponentTypes.STORED_EMC, getMaximumEmc(stack));
 			return InteractionResultHolder.success(stack);
 		}
@@ -121,6 +121,6 @@ public class KleinStar extends ItemPE implements IItemEmcHolder, IBarHelper, ICa
 
 	@Override
 	public void attachCapabilities(RegisterCapabilitiesEvent event) {
-		IntegrationHelper.registerCuriosCapability(event, this);
+		IntegrationHelper.registerAccessoryCapability(this);
 	}
 }

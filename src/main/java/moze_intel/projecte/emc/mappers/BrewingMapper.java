@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import moze_intel.projecte.PECore;
+import moze_intel.projecte.PEPlatform;
 import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.mapper.EMCMapper;
 import moze_intel.projecte.api.mapper.IEMCMapper;
@@ -31,7 +32,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.brewing.BrewingRecipe;
 import net.neoforged.neoforge.common.brewing.IBrewingRecipe;
 import net.neoforged.neoforge.fluids.FluidType;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.Nullable;
 
 @EMCMapper
@@ -40,7 +40,7 @@ public class BrewingMapper implements IEMCMapper<NormalizedSimpleStack, Long> {
 	@Override
 	public void addMappings(IMappingCollector<NormalizedSimpleStack, Long> mapper, ReloadableServerResources serverResources,
 			RegistryAccess registryAccess, ResourceManager resourceManager) {
-		MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+		MinecraftServer server = PEPlatform.getCurrentServer();
 		if (server == null) {
 			PECore.LOGGER.error("Failed to get server and potion data when trying to map potions");
 			return;

@@ -75,7 +75,7 @@ public final class EMCHelper {
 		if (player.isCreative() || minFuel == 0) {
 			return minFuel;
 		}
-		IItemHandler curios = player.getCapability(IntegrationHelper.CURIO_ITEM_HANDLER);
+		IItemHandler curios = player.getCapability(IntegrationHelper.ACCESSORY_ITEM_HANDLER);
 		if (curios != null) {
 			for (int i = 0, slots = curios.getSlots(); i < slots; i++) {
 				long actualExtracted = tryExtract(curios.getStackInSlot(i), minFuel);

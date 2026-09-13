@@ -124,6 +124,6 @@ public class Zero extends PEToggleItem implements IPedestalItem, IItemCharge, IB
 
 	@Override
 	public void attachCapabilities(RegisterCapabilitiesEvent event) {
-		IntegrationHelper.registerCuriosCapability(event, this);
+		IntegrationHelper.registerAccessoryCapability(this);
 	}
 }

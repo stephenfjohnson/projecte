@@ -2,6 +2,7 @@ package moze_intel.projecte.gameObjs.registration.impl;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
+import moze_intel.projecte.gameObjs.registration.DeferredHolder;
 import moze_intel.projecte.gameObjs.registration.DoubleDeferredRegister;
 import moze_intel.projecte.gameObjs.registration.impl.BlockRegistryObject.WallOrFloorBlockRegistryObject;
 import net.minecraft.core.Direction;
@@ -11,7 +12,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.StandingAndWallBlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class BlockDeferredRegister extends DoubleDeferredRegister<Block, Item> {
 

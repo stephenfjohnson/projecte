@@ -1,6 +1,7 @@
 package moze_intel.projecte.gameObjs.registration.impl;
 
 import java.util.function.Supplier;
+import moze_intel.projecte.PEPlatform;
 import moze_intel.projecte.gameObjs.registration.INamedEntry;
 import moze_intel.projecte.gameObjs.registration.PEDeferredRegister;
 import moze_intel.projecte.utils.WorldHelper;
@@ -13,7 +14,6 @@ import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.network.IContainerFactory;
 
 public class ContainerTypeDeferredRegister extends PEDeferredRegister<MenuType<?>> {
@@ -42,7 +42,7 @@ public class ContainerTypeDeferredRegister extends PEDeferredRegister<MenuType<?
 	private static <BE extends BlockEntity> BE getBlockEntityFromBuf(FriendlyByteBuf buf, Class<BE> type) {
 		if (buf == null) {
 			throw new IllegalArgumentException("Null packet buffer");
-		} else if (FMLEnvironment.dist.isDedicatedServer()) {
+		} else if (PEPlatform.isDedicatedServer()) {
 			throw new UnsupportedOperationException("This method is only supported on the client.");
 		}
 		BlockPos pos = buf.readBlockPos();

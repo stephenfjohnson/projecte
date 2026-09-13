@@ -172,7 +172,7 @@ public class SWRG extends ItemPE implements IPedestalItem, IProjectileShooter, I
 
 	@Override
 	public void attachCapabilities(RegisterCapabilitiesEvent event) {
-		IntegrationHelper.registerCuriosCapability(event, this);
+		IntegrationHelper.registerAccessoryCapability(this);
 	}
 
 	public enum SWRGMode implements StringRepresentable {//Change the mode of SWRG. Modes:<p> 0 = Ring Off<p> 1 = Flight<p> 2 = Shield<p> 3 = Flight + Shield<p>

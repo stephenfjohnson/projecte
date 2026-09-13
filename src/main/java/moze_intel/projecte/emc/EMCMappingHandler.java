@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import moze_intel.projecte.PECore;
+import moze_intel.projecte.PEPlatform;
 import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;
@@ -40,7 +41,6 @@ import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -126,7 +126,7 @@ public final class EMCMappingHandler {
 		//Start by doing our implementations
 		FuelMapper.loadMap();
 		loadIndex++;
-		MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+		MinecraftServer server = PEPlatform.getCurrentServer();
 		if (server != null) {
 			for (ServerPlayer player : server.getPlayerList().getPlayers()) {
 				IKnowledgeProvider knowledge = player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY);
@@ -142,7 +142,7 @@ public final class EMCMappingHandler {
 				}
 			}
 		}
-		NeoForge.EVENT_BUS.post(new EMCRemapEvent());
+		new EMCRemapEvent().fire();
 	}
 
 	public static int getLoadIndex() {
