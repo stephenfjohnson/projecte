@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "id": "projecte",
+  "version": "${version}",
+  "name": "ProjectE",
+  "description": "A complete rewrite of EE2 for modern Minecraft versions.",
+  "authors": [
+    "SinKillerJ",
+    "MaPePeR",
+    "williewillus",
+    "Lilylicious",
+    "pupnewfster"
+  ],
+  "contributors": [
+    "x3n0ph0b3 (EE2 creator)",
+    "MidnightLightning (EE2 GUI Textures)",
+    "Magic Banana (Former Texture Artist)"
+  ],
+  "contact": {
+    "homepage": "https://github.com/sinkillerj/ProjectE",
+    "issues": "https://github.com/sinkillerj/ProjectE/issues",
+    "sources": "https://github.com/sinkillerj/ProjectE"
+  },
+  "license": "MIT",
+  "icon": "logo.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "moze_intel.projecte.PECore"
+    ],
+    "client": [
+      "moze_intel.projecte.client.PEClient"
+    ]
+  },
+  "mixins": [
+    "projecte.mixins.json",
+    {
+      "config": "projecte.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "accessWidener": "projecte.accesswidener",
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "${fabric_version}",
+    "minecraft": "${minecraft_version}",
+    "java": ">=${java_version}",
+    "forgeconfigapiport": "*"
+  },
+  "breaks": {
+    "mekanism": "<=10.7.8"
+  }
+}

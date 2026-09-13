@@ -37,3 +37,6 @@ $RECYCLE.BIN/
 
 # Mac crap
 .DS_Store
+
+# Fabric Loom
+.gradle/loom-cache/
