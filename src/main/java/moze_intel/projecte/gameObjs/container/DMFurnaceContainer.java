@@ -2,6 +2,7 @@ package moze_intel.projecte.gameObjs.container;
 
 import java.util.function.IntConsumer;
 import java.util.function.IntSupplier;
+import moze_intel.projecte.api.inventory.IItemHandler;
 import moze_intel.projecte.gameObjs.block_entities.DMFurnaceBlockEntity;
 import moze_intel.projecte.gameObjs.container.slots.MatterFurnaceOutputSlot;
 import moze_intel.projecte.gameObjs.container.slots.SlotPredicates;
@@ -12,7 +13,6 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.DataSlot;
-import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class DMFurnaceContainer extends PEContainer {

@@ -12,7 +12,9 @@ import java.util.Iterator;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage.EmcAction;
 import moze_intel.projecte.api.capabilities.item.IItemEmcHolder;
+import moze_intel.projecte.api.inventory.IItemHandler;
 import moze_intel.projecte.api.proxy.IEMCProxy;
+import moze_intel.projecte.capability.Capabilities.ItemHandler;
 import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.emc.FuelMapper;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
@@ -25,8 +27,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
-import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 

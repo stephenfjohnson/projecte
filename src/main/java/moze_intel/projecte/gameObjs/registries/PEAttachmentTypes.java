@@ -3,14 +3,14 @@ package moze_intel.projecte.gameObjs.registries;
 import com.mojang.serialization.Codec;
 import it.unimi.dsi.fastutil.ints.Int2ObjectFunction;
 import moze_intel.projecte.PECore;
+import moze_intel.projecte.api.inventory.IItemHandler;
+import moze_intel.projecte.api.inventory.IItemHandlerModifiable;
 import moze_intel.projecte.gameObjs.registration.PEDeferredHolder;
 import moze_intel.projecte.gameObjs.registration.PEDeferredRegister;
 import moze_intel.projecte.impl.capability.AlchBagImpl.AlchemicalBagAttachment;
 import moze_intel.projecte.impl.capability.KnowledgeImpl.KnowledgeAttachment;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 public class PEAttachmentTypes {

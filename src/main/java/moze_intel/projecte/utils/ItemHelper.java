@@ -2,6 +2,9 @@ package moze_intel.projecte.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import moze_intel.projecte.api.inventory.IItemHandler;
+import moze_intel.projecte.api.inventory.IItemHandlerModifiable;
+import moze_intel.projecte.inventory.ItemHandlerHelper;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -9,9 +12,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

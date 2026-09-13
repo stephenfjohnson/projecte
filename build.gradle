@@ -142,6 +142,10 @@ dependencies {
 
     //NeoForge exposed JSR305 transitively; ProjectE uses @ParametersAreNonnullByDefault from it
     compileOnly("com.google.code.findbugs:jsr305:3.0.2")
+
+    //NeoForge bundled commons-math3, which the EMC arithmetic uses for BigFraction. Fabric does not
+    // provide it, so nest it inside the mod jar.
+    implementation(include("org.apache.commons:commons-math3:${commons_math_version}"))
 }
 
 processResources {

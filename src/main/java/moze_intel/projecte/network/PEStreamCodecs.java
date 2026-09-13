@@ -3,13 +3,13 @@ package moze_intel.projecte.network;
 import io.netty.buffer.ByteBuf;
 import java.math.BigInteger;
 import java.util.function.IntFunction;
+import moze_intel.projecte.inventory.ItemStackHandler;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
 public final class PEStreamCodecs {

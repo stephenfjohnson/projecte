@@ -1,12 +1,12 @@
 package moze_intel.projecte.gameObjs.container;
 
+import moze_intel.projecte.api.inventory.IItemHandler;
 import moze_intel.projecte.gameObjs.block_entities.AlchBlockEntityChest;
 import moze_intel.projecte.gameObjs.container.slots.InventoryContainerSlot;
 import moze_intel.projecte.gameObjs.registries.PEContainerTypes;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class AlchChestContainer extends EmcChestBlockEntityContainer<AlchBlockEntityChest> {

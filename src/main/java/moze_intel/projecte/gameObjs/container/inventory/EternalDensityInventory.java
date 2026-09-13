@@ -3,9 +3,9 @@ package moze_intel.projecte.gameObjs.container.inventory;
 import java.util.Set;
 import moze_intel.projecte.components.GemData;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
+import moze_intel.projecte.inventory.ItemStackHandler;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackLinkedSet;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class EternalDensityInventory extends ItemStackHandler {

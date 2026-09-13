@@ -1,5 +1,6 @@
 package moze_intel.projecte.gameObjs.container;
 
+import moze_intel.projecte.api.inventory.IItemHandler;
 import moze_intel.projecte.gameObjs.block_entities.CollectorMK1BlockEntity;
 import moze_intel.projecte.gameObjs.container.slots.ISlotGhost;
 import moze_intel.projecte.gameObjs.container.slots.SlotGhost;
@@ -13,7 +14,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
-import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class CollectorMK1Container extends PEContainer {

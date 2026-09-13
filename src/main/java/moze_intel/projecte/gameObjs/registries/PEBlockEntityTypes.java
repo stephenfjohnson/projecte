@@ -2,6 +2,7 @@ package moze_intel.projecte.gameObjs.registries;
 
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.api.capabilities.PECapabilities;
+import moze_intel.projecte.capability.Capabilities.ItemHandler;
 import moze_intel.projecte.gameObjs.block_entities.AlchBlockEntityChest;
 import moze_intel.projecte.gameObjs.block_entities.CollectorMK1BlockEntity;
 import moze_intel.projecte.gameObjs.block_entities.CollectorMK2BlockEntity;
@@ -18,7 +19,6 @@ import moze_intel.projecte.gameObjs.block_entities.RelayMK2BlockEntity;
 import moze_intel.projecte.gameObjs.block_entities.RelayMK3BlockEntity;
 import moze_intel.projecte.gameObjs.registration.impl.BlockEntityTypeDeferredRegister;
 import moze_intel.projecte.gameObjs.registration.impl.BlockEntityTypeRegistryObject;
-import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
 
 public class PEBlockEntityTypes {
 

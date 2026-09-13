@@ -1,8 +1,8 @@
 package moze_intel.projecte.gameObjs.container.slots;
 
 import java.util.function.Predicate;
+import moze_intel.projecte.api.inventory.IItemHandler;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 // Partial copy of SlotItemHandler with a validator

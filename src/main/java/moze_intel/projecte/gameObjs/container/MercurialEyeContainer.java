@@ -1,6 +1,8 @@
 package moze_intel.projecte.gameObjs.container;
 
 import java.util.Objects;
+import moze_intel.projecte.api.inventory.IItemHandler;
+import moze_intel.projecte.capability.Capabilities.ItemHandler;
 import moze_intel.projecte.gameObjs.container.slots.ComponentSlotGhost;
 import moze_intel.projecte.gameObjs.container.slots.ISlotGhost;
 import moze_intel.projecte.gameObjs.container.slots.InventoryContainerCopySlot;
@@ -12,8 +14,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
-import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class MercurialEyeContainer extends PEHandContainer {

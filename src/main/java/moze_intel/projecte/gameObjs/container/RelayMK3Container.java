@@ -1,11 +1,11 @@
 package moze_intel.projecte.gameObjs.container;
 
+import moze_intel.projecte.api.inventory.IItemHandler;
 import moze_intel.projecte.gameObjs.block_entities.RelayMK3BlockEntity;
 import moze_intel.projecte.gameObjs.container.slots.SlotPredicates;
 import moze_intel.projecte.gameObjs.container.slots.ValidatedSlot;
 import moze_intel.projecte.gameObjs.registries.PEContainerTypes;
 import net.minecraft.world.entity.player.Inventory;
-import net.neoforged.neoforge.items.IItemHandler;
 
 public class RelayMK3Container extends RelayMK1Container {
 

@@ -9,8 +9,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.MapCodec.ResultFunction;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.MapLike;
 import com.mojang.serialization.RecordBuilder;
 import java.io.BufferedReader;
@@ -34,12 +34,12 @@ import moze_intel.projecte.api.ProjectERegistries;
 import moze_intel.projecte.api.codec.IPECodecHelper;
 import moze_intel.projecte.api.codec.MapProcessor;
 import moze_intel.projecte.api.nss.NormalizedSimpleStack;
+import moze_intel.projecte.inventory.ItemStackHandler;
 import net.minecraft.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
 public class PECodecHelper implements IPECodecHelper {

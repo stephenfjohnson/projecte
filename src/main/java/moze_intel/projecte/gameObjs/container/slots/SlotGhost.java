@@ -1,10 +1,10 @@
 package moze_intel.projecte.gameObjs.container.slots;
 
 import java.util.function.Predicate;
+import moze_intel.projecte.api.inventory.IItemHandler;
+import moze_intel.projecte.inventory.SlotItemHandler;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class SlotGhost extends SlotItemHandler implements ISlotGhost {

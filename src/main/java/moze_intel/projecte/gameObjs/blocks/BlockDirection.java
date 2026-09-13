@@ -1,5 +1,7 @@
 package moze_intel.projecte.gameObjs.blocks;
 
+import moze_intel.projecte.api.inventory.IItemHandler;
+import moze_intel.projecte.capability.Capabilities.ItemHandler;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import moze_intel.projecte.utils.WorldHelper;
 import net.minecraft.core.BlockPos;
@@ -14,8 +16,6 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
-import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class BlockDirection extends Block {

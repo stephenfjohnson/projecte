@@ -16,9 +16,11 @@ import java.util.UUID;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
+import moze_intel.projecte.api.inventory.IItemHandler;
+import moze_intel.projecte.api.inventory.IItemHandlerModifiable;
 import moze_intel.projecte.gameObjs.registries.PEAttachmentTypes;
-import moze_intel.projecte.impl.capability.KnowledgeImpl;
 import moze_intel.projecte.impl.capability.KnowledgeImpl.KnowledgeAttachment;
+import moze_intel.projecte.impl.capability.KnowledgeImpl;
 import moze_intel.projecte.utils.ItemHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
@@ -32,8 +34,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.LevelResource;
 import net.neoforged.fml.util.thread.EffectiveSide;
 import net.neoforged.neoforge.attachment.AttachmentHolder;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 
 public class TransmutationOffline {
