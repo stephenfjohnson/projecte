@@ -10,6 +10,7 @@ import moze_intel.projecte.api.capabilities.item.IModeChanger;
 import moze_intel.projecte.api.capabilities.item.IProjectileShooter;
 import moze_intel.projecte.api.inventory.IItemHandlerModifiable;
 import moze_intel.projecte.api.item.ITransmutationTablet;
+import moze_intel.projecte.attachment.PEAttachments;
 import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.gameObjs.container.TransmutationContainer;
 import moze_intel.projecte.gameObjs.items.armor.GemArmorBase;
@@ -88,8 +89,8 @@ public record KeyPressPKT(PEKeybind key) implements IPEPacket {
 					if (tryPerformCapability(player, stack, hand, PECapabilities.CHARGE_ITEM_CAPABILITY, IItemCharge::changeCharge)) {
 						return;
 					} else if (hand == InteractionHand.MAIN_HAND && isSafe(stack) && GemArmorBase.hasAnyPiece(player)) {
-						player.setData(PEAttachmentTypes.GEM_ARMOR_STATE, !player.getData(PEAttachmentTypes.GEM_ARMOR_STATE));
-						ILangEntry langEntry = player.getData(PEAttachmentTypes.GEM_ARMOR_STATE) ? PELang.GEM_ACTIVATE : PELang.GEM_DEACTIVATE;
+						PEAttachments.set(player, PEAttachmentTypes.GEM_ARMOR_STATE, !PEAttachments.get(player, PEAttachmentTypes.GEM_ARMOR_STATE));
+						ILangEntry langEntry = PEAttachments.get(player, PEAttachmentTypes.GEM_ARMOR_STATE) ? PELang.GEM_ACTIVATE : PELang.GEM_DEACTIVATE;
 						player.sendSystemMessage(langEntry.translate());
 						return;
 					}
@@ -97,7 +98,7 @@ public record KeyPressPKT(PEKeybind key) implements IPEPacket {
 				case EXTRA_FUNCTION -> {
 					if (tryPerformCapability(player, stack, hand, PECapabilities.EXTRA_FUNCTION_ITEM_CAPABILITY, IExtraFunction::doExtraFunction)) {
 						return;
-					} else if (hand == InteractionHand.MAIN_HAND && isSafe(stack) && player.getData(PEAttachmentTypes.GEM_ARMOR_STATE)) {
+					} else if (hand == InteractionHand.MAIN_HAND && isSafe(stack) && PEAttachments.get(player, PEAttachmentTypes.GEM_ARMOR_STATE)) {
 						ItemStack chestplate = player.getItemBySlot(EquipmentSlot.CHEST);
 						if (!chestplate.isEmpty() && chestplate.is(PEItems.GEM_CHESTPLATE) &&
 							PlayerHelper.checkCooldown(player, PEItems.GEM_CHESTPLATE.get(), ProjectEConfig.server.cooldown.player.gemChest)) {
@@ -111,7 +112,7 @@ public record KeyPressPKT(PEKeybind key) implements IPEPacket {
 						&& tryPerformCapability(player, stack, hand, PECapabilities.PROJECTILE_SHOOTER_ITEM_CAPABILITY, IProjectileShooter::shootProjectile)) {
 						PlayerHelper.swingItem(player, hand);
 					}
-					if (hand == InteractionHand.MAIN_HAND && isSafe(stack) && player.getData(PEAttachmentTypes.GEM_ARMOR_STATE)) {
+					if (hand == InteractionHand.MAIN_HAND && isSafe(stack) && PEAttachments.get(player, PEAttachmentTypes.GEM_ARMOR_STATE)) {
 						ItemStack helmet = player.getItemBySlot(EquipmentSlot.HEAD);
 						if (!helmet.isEmpty() && helmet.is(PEItems.GEM_HELMET)) {
 							GemHelmet.doZap(player);

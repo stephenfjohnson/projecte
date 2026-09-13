@@ -7,6 +7,7 @@ import java.util.Set;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.api.capabilities.IAlchBagProvider;
 import moze_intel.projecte.api.inventory.IItemHandler;
+import moze_intel.projecte.attachment.PEAttachments;
 import moze_intel.projecte.gameObjs.registries.PEAttachmentTypes;
 import moze_intel.projecte.impl.codec.PECodecHelper;
 import moze_intel.projecte.inventory.ItemStackHandler;
@@ -21,7 +22,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
-import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +34,7 @@ public final class AlchBagImpl implements IAlchBagProvider {
 	}
 
 	private AlchemicalBagAttachment attachment() {
-		return this.player.getData(PEAttachmentTypes.ALCHEMICAL_BAGS);
+		return this.PEAttachments.get(player, PEAttachmentTypes.ALCHEMICAL_BAGS);
 	}
 
 	@NotNull
@@ -78,7 +78,7 @@ public final class AlchBagImpl implements IAlchBagProvider {
 
 		private final Map<DyeColor, ItemStackHandler> inventories;
 
-		public AlchemicalBagAttachment(@Nullable IAttachmentHolder unused) {
+		public AlchemicalBagAttachment(@Nullable Player unused) {
 			this(new EnumMap<>(DyeColor.class));
 		}
 
@@ -87,7 +87,7 @@ public final class AlchBagImpl implements IAlchBagProvider {
 		}
 
 		@Nullable
-		public AlchemicalBagAttachment copy(IAttachmentHolder holder, HolderLookup.Provider registries) {
+		public AlchemicalBagAttachment copy(Player holder, HolderLookup.Provider registries) {
 			AlchemicalBagAttachment copy = new AlchemicalBagAttachment(holder);
 			for (Map.Entry<DyeColor, ItemStackHandler> entry : inventories.entrySet()) {
 				copy.inventories.put(entry.getKey(), PEAttachmentTypes.copyHandler(entry.getValue(), ItemStackHandler::new));

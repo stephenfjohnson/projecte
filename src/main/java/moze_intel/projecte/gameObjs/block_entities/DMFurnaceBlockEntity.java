@@ -23,6 +23,7 @@ import moze_intel.projecte.inventory.ItemHandlerHelper;
 import moze_intel.projecte.inventory.wrapper.CombinedInvWrapper;
 import moze_intel.projecte.utils.WorldHelper;
 import moze_intel.projecte.utils.text.PELang;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -53,7 +54,6 @@ import net.minecraft.world.level.block.entity.Hopper;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
-import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
@@ -176,9 +176,9 @@ public class DMFurnaceBlockEntity extends EmcBlockEntity implements MenuProvider
 	}
 
 	protected float getDoubleChance(ItemStack input) {
-		if (input.is(Tags.Items.ORES)) {
+		if (input.is(ConventionalItemTags.ORES)) {
 			return getOreDoubleChance();
-		} else if (input.is(Tags.Items.RAW_MATERIALS)) {
+		} else if (input.is(ConventionalItemTags.RAW_MATERIALS)) {
 			//Base rate for raw ore doubling chance is: 1 -> 1.333 which means we multiply our ore double chance by 2/3
 			return getOreDoubleChance() * 2 / 3;
 		}

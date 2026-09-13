@@ -17,6 +17,7 @@ import moze_intel.projecte.gameObjs.PETags;
 import moze_intel.projecte.gameObjs.items.Tome;
 import moze_intel.projecte.integration.IntegrationHelper;
 import moze_intel.projecte.utils.text.PELang;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -36,7 +37,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.common.Tags;
 
 public class DumpMissingEmc {
 
@@ -68,13 +68,13 @@ public class DumpMissingEmc {
 			return true;
 		}
 		if (MappingConfig.isEnabled(OreBlacklistMapper.INSTANCE)) {
-			if (holder.is(Tags.Items.ORES) || holder.value() == Items.GILDED_BLACKSTONE) {
+			if (holder.is(ConventionalItemTags.ORES) || holder.value() == Items.GILDED_BLACKSTONE) {
 				return true;
 			}
 		}
 		if (MappingConfig.isEnabled(RawMaterialsBlacklistMapper.INSTANCE)) {
-			if (holder.is(Tags.Items.RAW_MATERIALS) || holder.is(Tags.Items.STORAGE_BLOCKS_RAW_COPPER) ||
-				holder.is(Tags.Items.STORAGE_BLOCKS_RAW_IRON) || holder.is(Tags.Items.STORAGE_BLOCKS_RAW_GOLD)) {
+			if (holder.is(ConventionalItemTags.RAW_MATERIALS) || holder.is(ConventionalItemTags.STORAGE_BLOCKS_RAW_COPPER) ||
+				holder.is(ConventionalItemTags.STORAGE_BLOCKS_RAW_IRON) || holder.is(ConventionalItemTags.STORAGE_BLOCKS_RAW_GOLD)) {
 				return true;
 			}
 		}

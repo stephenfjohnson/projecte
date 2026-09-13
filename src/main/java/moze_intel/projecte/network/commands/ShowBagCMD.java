@@ -18,6 +18,7 @@ import java.util.function.BooleanSupplier;
 import moze_intel.projecte.PEPermissions;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.inventory.IItemHandlerModifiable;
+import moze_intel.projecte.attachment.PEAttachments;
 import moze_intel.projecte.gameObjs.container.AlchBagContainer;
 import moze_intel.projecte.gameObjs.registries.PEAttachmentTypes;
 import moze_intel.projecte.gameObjs.registries.PEItems;
@@ -44,7 +45,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.storage.LevelResource;
-import net.neoforged.neoforge.attachment.AttachmentHolder;
 import net.neoforged.neoforge.server.command.EnumArgument;
 import org.jetbrains.annotations.NotNull;
 
@@ -125,8 +125,8 @@ public class ShowBagCMD {
 		if (Files.exists(player) && Files.isRegularFile(player)) {
 			try (InputStream in = Files.newInputStream(player)) {
 				CompoundTag playerDat = NbtIo.readCompressed(in, NbtAccounter.unlimitedHeap());
-				if (playerDat.contains(AttachmentHolder.ATTACHMENTS_NBT_KEY, Tag.TAG_COMPOUND)) {
-					CompoundTag attachmentData = playerDat.getCompound(AttachmentHolder.ATTACHMENTS_NBT_KEY);
+				if (playerDat.contains(PEAttachments.ATTACHMENTS_NBT_KEY, Tag.TAG_COMPOUND)) {
+					CompoundTag attachmentData = playerDat.getCompound(PEAttachments.ATTACHMENTS_NBT_KEY);
 					CompoundTag bagData = attachmentData.getCompound(PEAttachmentTypes.ALCHEMICAL_BAGS.getId().toString());
 					RegistryOps<Tag> serializationContext = server.registryAccess().createSerializationContext(NbtOps.INSTANCE);
 					DataResult<AlchemicalBagAttachment> result = AlchemicalBagAttachment.CODEC.parse(serializationContext, bagData);

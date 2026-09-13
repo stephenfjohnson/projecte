@@ -18,6 +18,7 @@ import moze_intel.projecte.utils.ItemHelper;
 import moze_intel.projecte.utils.ToolHelper;
 import moze_intel.projecte.utils.text.IHasTranslationKey;
 import moze_intel.projecte.utils.text.PELang;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
@@ -39,7 +40,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 public class PEPickaxe extends PickaxeItem implements IItemCharge, IItemMode<PickaxeMode>, IBarHelper {
@@ -141,7 +141,7 @@ public class PEPickaxe extends PickaxeItem implements IItemCharge, IItemMode<Pic
 			return InteractionResult.PASS;
 		}
 		BlockPos pos = context.getClickedPos();
-		if (context.getLevel().getBlockState(pos).is(Tags.Blocks.ORES)) {
+		if (context.getLevel().getBlockState(pos).is(ConventionalBlockTags.ORES)) {
 			return ToolHelper.tryVeinMine(player, context.getItemInHand(), pos, context.getClickedFace());
 		}
 		return InteractionResult.PASS;

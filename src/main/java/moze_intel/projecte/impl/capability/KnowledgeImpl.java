@@ -21,6 +21,7 @@ import moze_intel.projecte.api.codec.IPECodecHelper;
 import moze_intel.projecte.api.event.PlayerKnowledgeChangeEvent;
 import moze_intel.projecte.api.inventory.IItemHandlerModifiable;
 import moze_intel.projecte.api.proxy.IEMCProxy;
+import moze_intel.projecte.attachment.PEAttachments;
 import moze_intel.projecte.emc.EMCMappingHandler;
 import moze_intel.projecte.gameObjs.registries.PEAttachmentTypes;
 import moze_intel.projecte.gameObjs.registries.PEItems;
@@ -39,7 +40,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,7 +64,7 @@ public class KnowledgeImpl implements IKnowledgeProvider {
 	protected KnowledgeAttachment attachment() {
 		//Force overriding if player is null
 		Objects.requireNonNull(this.player);
-		return this.player.getData(PEAttachmentTypes.KNOWLEDGE);
+		return this.PEAttachments.get(player, PEAttachmentTypes.KNOWLEDGE);
 	}
 
 	protected void fireChangedEvent() {
@@ -334,7 +334,7 @@ public class KnowledgeImpl implements IKnowledgeProvider {
 		}
 
 		@Nullable
-		public KnowledgeAttachment copy(IAttachmentHolder holder, HolderLookup.Provider registries) {
+		public KnowledgeAttachment copy(Player holder, HolderLookup.Provider registries) {
 			//Note: ItemInfo and BigInteger are both immutable, so we can just add them directly
 			return new KnowledgeAttachment(new HashSet<>(knowledge), PEAttachmentTypes.copyHandler(inputLocks, ItemStackHandler::new), emc, fullKnowledge);
 		}

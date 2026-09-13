@@ -5,13 +5,13 @@ import moze_intel.projecte.api.components.DataComponentProcessor;
 import moze_intel.projecte.api.components.IDataComponentProcessor;
 import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.config.PEConfigTranslations;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.BannerBlock;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
-import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
@@ -44,7 +44,7 @@ public class DecoratedShieldProcessor implements IDataComponentProcessor {
 	@Override
 	@Range(from = 0, to = Long.MAX_VALUE)
 	public final long recalculateEMC(@NotNull ItemInfo info, @Range(from = 1, to = Long.MAX_VALUE) long currentEMC) throws ArithmeticException {
-		if (info.getItem().is(Tags.Items.TOOLS_SHIELD)) {
+		if (info.getItem().is(ConventionalItemTags.SHIELD_TOOLS)) {
 			DyeColor baseColor = info.getOrNull(DataComponents.BASE_COLOR);
 			if (baseColor != null) {
 				ItemStack banner = new ItemStack(BannerBlock.byColor(baseColor));
@@ -66,7 +66,7 @@ public class DecoratedShieldProcessor implements IDataComponentProcessor {
 
 	@Override
 	public final void collectPersistentComponents(@NotNull ItemInfo info, @NotNull DataComponentPatch.Builder builder) {
-		if (info.getItem().is(Tags.Items.TOOLS_SHIELD)) {
+		if (info.getItem().is(ConventionalItemTags.SHIELD_TOOLS)) {
 			DyeColor baseColor = info.getOrNull(DataComponents.BASE_COLOR);
 			if (baseColor != null) {
 				builder.set(DataComponents.BASE_COLOR, baseColor);

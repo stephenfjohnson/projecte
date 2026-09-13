@@ -23,6 +23,7 @@ import moze_intel.projecte.gameObjs.registries.PEDamageTypes;
 import moze_intel.projecte.gameObjs.registries.PESoundEvents;
 import moze_intel.projecte.utils.ItemAbilities;
 import moze_intel.projecte.utils.ItemAbility;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
@@ -67,7 +68,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.neoforged.neoforge.common.IShearable;
-import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 import org.jetbrains.annotations.Nullable;
@@ -511,7 +511,7 @@ public class ToolHelper {
 		}
 		Level level = player.level();
 		ItemStack stack = player.getItemInHand(hand);
-		BiPredicate<BlockState, ItemStack> stateChecker = (state, itemStack) -> state.is(Tags.Blocks.ORES) && itemStack.isCorrectToolForDrops(state);
+		BiPredicate<BlockState, ItemStack> stateChecker = (state, itemStack) -> state.is(ConventionalBlockTags.ORES) && itemStack.isCorrectToolForDrops(state);
 		AABB area = player.getBoundingBox().inflate(getCharge(stack) + 3);
 		return harvestVein(level, player, player.blockPosition(), stack, area, stack, stateChecker, WorldHelper::createLootDrop);
 	}

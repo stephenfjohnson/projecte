@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "moze_intel.projecte.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "PlayerAttachmentsMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -2,6 +2,7 @@ package moze_intel.projecte.network.packets.to_client.alch_bag;
 
 import java.util.Map;
 import moze_intel.projecte.PECore;
+import moze_intel.projecte.attachment.PEAttachments;
 import moze_intel.projecte.gameObjs.registries.PEAttachmentTypes;
 import moze_intel.projecte.impl.capability.AlchBagImpl.AlchemicalBagAttachment;
 import moze_intel.projecte.inventory.ItemStackHandler;
@@ -35,7 +36,7 @@ public record SyncBagsDataPKT(Map<DyeColor, ItemStackHandler> handlers) implemen
 		//Note: This must stay LocalPlayer to not cause classloading issues
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (player != null) {
-			player.getData(PEAttachmentTypes.ALCHEMICAL_BAGS).updateBags(handlers);
+			PEAttachments.get(player, PEAttachmentTypes.ALCHEMICAL_BAGS).updateBags(handlers);
 		}
 		PECore.debugLog("** RECEIVED BAGS CLIENTSIDE **");
 	}

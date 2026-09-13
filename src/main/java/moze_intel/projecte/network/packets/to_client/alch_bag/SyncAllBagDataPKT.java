@@ -1,6 +1,7 @@
 package moze_intel.projecte.network.packets.to_client.alch_bag;
 
 import moze_intel.projecte.PECore;
+import moze_intel.projecte.attachment.PEAttachments;
 import moze_intel.projecte.gameObjs.registries.PEAttachmentTypes;
 import moze_intel.projecte.impl.capability.AlchBagImpl.AlchemicalBagAttachment;
 import moze_intel.projecte.network.PEPacketContext;
@@ -32,7 +33,7 @@ public record SyncAllBagDataPKT(AlchemicalBagAttachment data) implements IPEPack
 		//Note: This must stay LocalPlayer to not cause classloading issues
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (player != null) {
-			player.setData(PEAttachmentTypes.ALCHEMICAL_BAGS, data);
+			PEAttachments.set(player, PEAttachmentTypes.ALCHEMICAL_BAGS, data);
 		}
 		PECore.debugLog("** RECEIVED BAGS CLIENTSIDE **");
 	}
