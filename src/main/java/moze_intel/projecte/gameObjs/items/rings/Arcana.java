@@ -22,8 +22,8 @@ import moze_intel.projecte.gameObjs.items.ItemPE;
 import moze_intel.projecte.gameObjs.items.rings.Arcana.ArcanaMode;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
 import moze_intel.projecte.gameObjs.registries.PESoundEvents;
+import moze_intel.projecte.integration.IExposesAccessoryAttributes;
 import moze_intel.projecte.integration.IntegrationHelper;
-import moze_intel.projecte.integration.curios.IExposesCurioAttributes;
 import moze_intel.projecte.utils.ItemAbilities;
 import moze_intel.projecte.utils.ItemAbility;
 import moze_intel.projecte.utils.PlayerHelper;
@@ -61,10 +61,9 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.common.NeoForgeMod;
 import org.jetbrains.annotations.NotNull;
 
-public class Arcana extends ItemPE implements IItemMode<ArcanaMode>, IFireProtector, IExtraFunction, IProjectileShooter, ICapabilityAware, IExposesCurioAttributes,
+public class Arcana extends ItemPE implements IItemMode<ArcanaMode>, IFireProtector, IExtraFunction, IProjectileShooter, ICapabilityAware, IExposesAccessoryAttributes,
 		IItemAbilityProvider {
 
 	private static final AttributeModifier FLIGHT = new AttributeModifier(PECore.rl("arcana_flight"), 1, Operation.ADD_VALUE);
@@ -75,9 +74,9 @@ public class Arcana extends ItemPE implements IItemMode<ArcanaMode>, IFireProtec
 				.component(PEDataComponentTypes.ARCANA_MODE, ArcanaMode.ZERO)
 				.component(PEDataComponentTypes.STORED_EMC, 0L)
 		);
-		this.defaultModifiers = Suppliers.memoize(() -> ItemAttributeModifiers.builder()
-				.add(NeoForgeMod.CREATIVE_FLIGHT, FLIGHT, EquipmentSlotGroup.ANY)
-				.build());
+		//Flight used to be an attribute NeoForge provided; without it, InternalAbilities' per-tick check is
+		// what grants flight while this ring is carried
+		this.defaultModifiers = Suppliers.memoize(() -> ItemAttributeModifiers.builder().build());
 	}
 
 	@NotNull
@@ -89,7 +88,7 @@ public class Arcana extends ItemPE implements IItemMode<ArcanaMode>, IFireProtec
 
 	@Override
 	public void addAttributes(Multimap<Holder<Attribute>, AttributeModifier> attributes) {
-		attributes.put(NeoForgeMod.CREATIVE_FLIGHT, FLIGHT);
+		//Nothing to add: flight is not an attribute on Fabric, see InternalAbilities
 	}
 
 	@Override

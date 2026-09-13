@@ -6,7 +6,6 @@ import moze_intel.projecte.api.block_entity.IDMPedestal;
 import moze_intel.projecte.api.capabilities.item.IPedestalItem;
 import moze_intel.projecte.api.capabilities.item.IProjectileShooter;
 import moze_intel.projecte.api.fluid.FluidStack;
-import moze_intel.projecte.capability.Capabilities.FluidHandler;
 import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.gameObjs.entity.EntityLavaProjectile;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
@@ -34,7 +33,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.ServerLevelData;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class VolcaniteAmulet extends ItemPE implements IProjectileShooter, IPedestalItem, IFireProtector, ICapabilityAware {

@@ -22,8 +22,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.entity.EntityTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class VoidRing extends GemEternalDensity implements IPedestalItem, IExtraFunction {

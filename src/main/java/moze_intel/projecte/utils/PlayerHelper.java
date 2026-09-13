@@ -9,6 +9,7 @@ import moze_intel.projecte.api.inventory.IItemHandler;
 import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import moze_intel.projecte.integration.IntegrationHelper;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -30,11 +31,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
-import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.util.BlockSnapshot;
-import net.neoforged.neoforge.event.level.BlockEvent.EntityMultiPlaceEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
 
 /**
  * Helper class for player-related methods. Notice: Please try to keep methods tidy and alphabetically ordered. Thanks!
@@ -44,9 +40,14 @@ public final class PlayerHelper {
 	public final static ObjectiveCriteria SCOREBOARD_EMC = new ReadOnlyScoreCriteria(PECore.MODID + ":emc_score");
 
 	/**
-	 * Tries placing a block and fires an event for it.
+	 * Tries placing a block.
 	 *
 	 * @return Whether the block was successfully placed
+	 *
+	 * @implNote NeoForge captured a snapshot of every block a placement touched and fired an event so another mod
+	 * - a claim or protection mod, say - could veto it and have the snapshot rolled back. Both the capture and the
+	 * event are NeoForge additions to vanilla with no Fabric counterpart, so nothing can veto a placement here and
+	 * the permission checks above are the only gate.
 	 */
 	public static boolean checkedPlaceBlock(Player player, Level level, BlockPos pos, BlockState state) {
 		return hasEditPermission(player, level, pos) && partiallyCheckedPlaceBlock(player, level, pos, state);
@@ -57,42 +58,17 @@ public final class PlayerHelper {
 		if (state.getBlock() instanceof SignBlock && level.getBlockEntity(pos) instanceof SignBlockEntity sign) {
 			oldSign = sign;
 		}
-		level.captureBlockSnapshots = true;
-		level.setBlockAndUpdate(pos, state);
-		level.captureBlockSnapshots = false;
-
-		@SuppressWarnings("unchecked")
-		List<BlockSnapshot> blockSnapshots = (List<BlockSnapshot>) level.capturedBlockSnapshots.clone();
-		level.capturedBlockSnapshots.clear();
-
-		boolean eventResult = false;
-		if (blockSnapshots.size() > 1) {
-			eventResult = NeoForge.EVENT_BUS.post(new EntityMultiPlaceEvent(blockSnapshots, Blocks.AIR.defaultBlockState(), player)).isCanceled();
-		} else if (blockSnapshots.size() == 1) {
-			eventResult = NeoForge.EVENT_BUS.post(new BlockEvent.EntityPlaceEvent(blockSnapshots.getFirst(), Blocks.AIR.defaultBlockState(), player)).isCanceled();
+		BlockState oldState = level.getBlockState(pos);
+		if (!level.setBlockAndUpdate(pos, state)) {
+			return false;
 		}
-
-		if (eventResult) {
-			level.restoringBlockSnapshots = true;
-			for (BlockSnapshot snapshot : blockSnapshots.reversed()) {
-				snapshot.restore(snapshot.getFlags() | Block.UPDATE_CLIENTS);
-			}
-			level.restoringBlockSnapshots = false;
-		} else {
-			//Place all the blocks into the world and sync them to the client
-			for (BlockSnapshot snap : blockSnapshots) {
-				BlockState oldBlock = snap.getState();
-				BlockPos snapPos = snap.getPos();
-				BlockState newBlock = level.getBlockState(snapPos);
-				newBlock.onPlace(level, snapPos, oldBlock, false);
-				level.markAndNotifyBlock(snapPos, level.getChunkAt(snapPos), oldBlock, newBlock, snap.getFlags(), Block.UPDATE_LIMIT);
-				if (oldSign != null && snapPos.equals(pos) && newBlock.hasBlockEntity()) {
-					WorldHelper.copySignData(level, pos, oldSign);
-				}
-			}
+		BlockState placed = level.getBlockState(pos);
+		placed.onPlace(level, pos, oldState, false);
+		level.markAndNotifyBlock(pos, level.getChunkAt(pos), oldState, placed, Block.UPDATE_ALL, Block.UPDATE_LIMIT);
+		if (oldSign != null && placed.hasBlockEntity()) {
+			WorldHelper.copySignData(level, pos, oldSign);
 		}
-		level.capturedBlockSnapshots.clear();
-		return !eventResult;
+		return true;
 	}
 
 	public static boolean checkedReplaceBlock(ServerPlayer player, Level level, BlockPos pos, BlockState state) {
@@ -155,7 +131,7 @@ public final class PlayerHelper {
 	}
 
 	public static boolean checkBreakPermission(ServerPlayer player, Level level, BlockPos pos) {
-		return !CommonHooks.fireBlockBreak(level, player.gameMode.getGameModeForPlayer(), player, pos, level.getBlockState(pos)).isCanceled();
+		return PlayerBlockBreakEvents.BEFORE.invoker().beforeBlockBreak(level, player, pos, level.getBlockState(pos), level.getBlockEntity(pos));
 	}
 
 	public static boolean hasEditPermission(Player player, Level level, BlockPos pos) {

@@ -30,6 +30,42 @@
     ],
     "client": [
       "moze_intel.projecte.client.PEClient"
+    ],
+    "projecte:emc_mappers": [
+      "moze_intel.projecte.emc.mappers.BrewingMapper",
+      "moze_intel.projecte.emc.mappers.CustomEMCMapper",
+      "moze_intel.projecte.emc.mappers.OreBlacklistMapper",
+      "moze_intel.projecte.emc.mappers.OxidizationMapper",
+      "moze_intel.projecte.emc.mappers.RawMaterialsBlacklistMapper",
+      "moze_intel.projecte.emc.mappers.WaxableMapper",
+      "moze_intel.projecte.emc.mappers.customConversions.CustomConversionMapper",
+      "moze_intel.projecte.emc.mappers.recipe.CraftingMapper"
+    ],
+    "projecte:recipe_type_mappers": [
+      "moze_intel.projecte.emc.mappers.recipe.FallbackRecipeTypeMapper",
+      "moze_intel.projecte.emc.mappers.recipe.SmithingRecipeMapper",
+      "moze_intel.projecte.emc.mappers.recipe.VanillaRecipeTypeMapper",
+      "moze_intel.projecte.emc.mappers.recipe.special.ShulkerRecoloringMapper",
+      "moze_intel.projecte.emc.mappers.recipe.special.SpecialRecipeMarkHandledMapper",
+      "moze_intel.projecte.emc.mappers.recipe.special.SuspiciousStewMapper",
+      "moze_intel.projecte.emc.mappers.recipe.special.TippedArrowMapper"
+    ],
+    "projecte:data_component_processors": [
+      "moze_intel.projecte.emc.components.processor.ArmorTrimProcessor",
+      "moze_intel.projecte.emc.components.processor.BannerProcessor",
+      "moze_intel.projecte.emc.components.processor.BundleProcessor",
+      "moze_intel.projecte.emc.components.processor.ContainerProcessor",
+      "moze_intel.projecte.emc.components.processor.DamageProcessor",
+      "moze_intel.projecte.emc.components.processor.DecoratedPotProcessor",
+      "moze_intel.projecte.emc.components.processor.DecoratedShieldProcessor",
+      "moze_intel.projecte.emc.components.processor.EnchantmentProcessor",
+      "moze_intel.projecte.emc.components.processor.FireworkProcessor",
+      "moze_intel.projecte.emc.components.processor.FireworkStarProcessor",
+      "moze_intel.projecte.emc.components.processor.MapScaleProcessor",
+      "moze_intel.projecte.emc.components.processor.MercurialEyeProcessor",
+      "moze_intel.projecte.emc.components.processor.StoredEMCProcessor",
+      "moze_intel.projecte.emc.components.processor.WritableBookProcessor",
+      "moze_intel.projecte.emc.components.processor.WrittenBookProcessor"
     ]
   },
   "mixins": [

@@ -11,13 +11,12 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.FluidState;
-import net.neoforged.neoforge.common.NeoForgeMod;
 
 public class InternalAbilities {
 
@@ -56,7 +55,30 @@ public class InternalAbilities {
 		if (!player.level().isClientSide) {
 			updateAttribute(player, Attributes.MOVEMENT_SPEED, WATER_SPEED_BOOST, applyWaterSpeed);
 			updateAttribute(player, Attributes.MOVEMENT_SPEED, LAVA_SPEED_BOOST, applyLavaSpeed);
-			updateAttribute(player, NeoForgeMod.CREATIVE_FLIGHT, FLIGHT, InternalAbilities::shouldPlayerFly);
+			updateFlight(player);
+		}
+	}
+
+	/**
+	 * Grants or revokes flight.
+	 * <p>
+	 * NeoForge had a creative flight attribute that an item could simply carry. Fabric has no such attribute, so
+	 * the player's own ability is set instead, which means flight comes solely from this per-tick check rather
+	 * than partly from the ring's attributes. Creative and spectator players are left alone so this cannot take
+	 * their flight away.
+	 */
+	private static void updateFlight(Player player) {
+		if (player.isCreative() || player.isSpectator()) {
+			return;
+		}
+		boolean shouldFly = shouldPlayerFly(player);
+		if (player.getAbilities().mayfly != shouldFly) {
+			player.getAbilities().mayfly = shouldFly;
+			if (!shouldFly) {
+				//Drop them out of flight, or they would keep flying with the ability gone
+				player.getAbilities().flying = false;
+			}
+			player.onUpdateAbilities();
 		}
 	}
 

@@ -20,8 +20,6 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.LevelData;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class EntityWaterProjectile extends NoGravityThrowableProjectile {

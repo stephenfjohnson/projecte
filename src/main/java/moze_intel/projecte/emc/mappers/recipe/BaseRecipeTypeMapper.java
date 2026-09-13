@@ -9,8 +9,8 @@ import java.util.Collection;
 import java.util.List;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.api.mapper.collector.IMappingCollector;
-import moze_intel.projecte.api.mapper.recipe.INSSFakeGroupManager;
 import moze_intel.projecte.api.mapper.recipe.INSSFakeGroupManager.FakeGroupData;
+import moze_intel.projecte.api.mapper.recipe.INSSFakeGroupManager;
 import moze_intel.projecte.api.mapper.recipe.IRecipeTypeMapper;
 import moze_intel.projecte.api.nss.NSSItem;
 import moze_intel.projecte.api.nss.NormalizedSimpleStack;
@@ -25,8 +25,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.neoforged.neoforge.common.crafting.ICustomIngredient;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 //TODO: Fix recipe mapping for things containing EMC not working properly? (aka full klein stars)

@@ -8,6 +8,7 @@ import moze_intel.projecte.api.capabilities.item.IExtraFunction;
 import moze_intel.projecte.api.capabilities.item.IItemCharge;
 import moze_intel.projecte.api.capabilities.item.IModeChanger;
 import moze_intel.projecte.api.capabilities.item.IProjectileShooter;
+import moze_intel.projecte.api.inventory.IItemHandler;
 import moze_intel.projecte.api.inventory.IItemHandlerModifiable;
 import moze_intel.projecte.api.item.ITransmutationTablet;
 import moze_intel.projecte.attachment.PEAttachments;
@@ -19,7 +20,7 @@ import moze_intel.projecte.gameObjs.items.armor.GemFeet;
 import moze_intel.projecte.gameObjs.items.armor.GemHelmet;
 import moze_intel.projecte.gameObjs.registries.PEAttachmentTypes;
 import moze_intel.projecte.gameObjs.registries.PEItems;
-import moze_intel.projecte.integration.curios.TransmutationTableCurios;
+import moze_intel.projecte.integration.IntegrationHelper;
 import moze_intel.projecte.network.PEPacketContext;
 import moze_intel.projecte.network.packets.IPEPacket;
 import moze_intel.projecte.utils.PEKeybind;
@@ -71,11 +72,12 @@ public record KeyPressPKT(PEKeybind key) implements IPEPacket {
 			return;
 		} else if (key == PEKeybind.TRANSMUTATION_TABLET) {
             if (!(player instanceof ServerPlayer)) return;
-            Optional<IItemHandlerModifiable> curiosInv = TransmutationTableCurios.getCuriosInventory(player);
-            if (curiosInv.isEmpty()) return;
-            IItemHandlerModifiable curios = curiosInv.get();
-            for (int i = 0; i < curios.getSlots(); i++) {
-                ItemStack stack = curios.getStackInSlot(i);
+            //Looks for a tablet worn in an accessory slot. Nothing provides this lookup until the Trinkets
+            // integration is written, so for now this finds nothing and the keybind does nothing.
+            IItemHandler accessories = IntegrationHelper.ACCESSORY_ITEM_HANDLER.find(player, null);
+            if (accessories == null) return;
+            for (int i = 0; i < accessories.getSlots(); i++) {
+                ItemStack stack = accessories.getStackInSlot(i);
                 if (stack.getItem() instanceof ITransmutationTablet tablet) {
                     tablet.openContainer(player);
                     break;

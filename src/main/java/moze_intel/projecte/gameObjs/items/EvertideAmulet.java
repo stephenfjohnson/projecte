@@ -6,7 +6,6 @@ import moze_intel.projecte.api.block_entity.IDMPedestal;
 import moze_intel.projecte.api.capabilities.item.IPedestalItem;
 import moze_intel.projecte.api.capabilities.item.IProjectileShooter;
 import moze_intel.projecte.api.fluid.FluidStack;
-import moze_intel.projecte.capability.Capabilities.FluidHandler;
 import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.gameObjs.entity.EntityWaterProjectile;
 import moze_intel.projecte.gameObjs.registries.PESoundEvents;
@@ -17,6 +16,11 @@ import moze_intel.projecte.utils.PEKeybind;
 import moze_intel.projecte.utils.PlayerHelper;
 import moze_intel.projecte.utils.WorldHelper;
 import moze_intel.projecte.utils.text.PELang;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
+import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
@@ -35,8 +39,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.ServerLevelData;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import org.jetbrains.annotations.NotNull;
 
 public class EvertideAmulet extends ItemPE implements IProjectileShooter, IPedestalItem, ICapabilityAware {
@@ -130,58 +132,51 @@ public class EvertideAmulet extends ItemPE implements IProjectileShooter, IPedes
 
 	@Override
 	public void attachCapabilities() {
-		FluidHandler.ITEM.registerForItems((stack, context) -> new InfiniteFluidHandler(stack), this);
+		FluidStorage.ITEM.registerForItems((stack, context) -> InfiniteWaterStorage.INSTANCE, this);
 		IntegrationHelper.registerAccessoryCapability(this);
 	}
 
-	private record InfiniteFluidHandler(ItemStack stack) implements IFluidHandlerItem {
+	/**
+	 * The amulet as a bottomless source of water, and a drain that accepts any amount of it.
+	 * <p>
+	 * Nothing is stored, so there is no state for a transaction to roll back, which is why this can be a single
+	 * shared instance rather than one per stack.
+	 */
+	private enum InfiniteWaterStorage implements SingleSlotStorage<FluidVariant> {
+		INSTANCE;
 
-		@NotNull
+		private static final FluidVariant WATER = FluidVariant.of(Fluids.WATER);
+
 		@Override
-		public ItemStack getContainer() {
-			return stack;
+		public long insert(FluidVariant resource, long maxAmount, TransactionContext transaction) {
+			StoragePreconditions.notBlankNotNegative(resource, maxAmount);
+			return resource.isOf(Fluids.WATER) ? maxAmount : 0;
 		}
 
 		@Override
-		public int getTanks() {
-			return 1;
-		}
-
-		@NotNull
-		@Override
-		public FluidStack getFluidInTank(int tank) {
-			return tank == 0 ? new FluidStack(Fluids.WATER, Integer.MAX_VALUE) : FluidStack.EMPTY;
+		public long extract(FluidVariant resource, long maxAmount, TransactionContext transaction) {
+			StoragePreconditions.notBlankNotNegative(resource, maxAmount);
+			return resource.isOf(Fluids.WATER) ? maxAmount : 0;
 		}
 
 		@Override
-		public int getTankCapacity(int tank) {
-			return tank == 0 ? Integer.MAX_VALUE : 0;
+		public boolean isResourceBlank() {
+			return false;
 		}
 
 		@Override
-		public boolean isFluidValid(int tank, @NotNull FluidStack stack) {
-			return isWater(stack);
+		public FluidVariant getResource() {
+			return WATER;
 		}
 
 		@Override
-		public int fill(@NotNull FluidStack resource, @NotNull FluidAction action) {
-			return isWater(resource) ? resource.getAmount() : 0;
+		public long getAmount() {
+			return Long.MAX_VALUE;
 		}
 
-		@NotNull
 		@Override
-		public FluidStack drain(@NotNull FluidStack resource, @NotNull FluidAction action) {
-			return isWater(resource) ? resource : FluidStack.EMPTY;
-		}
-
-		private boolean isWater(FluidStack stack) {
-			return stack.is(FluidTags.WATER);
-		}
-
-		@NotNull
-		@Override
-		public FluidStack drain(int maxDrain, @NotNull FluidAction action) {
-			return new FluidStack(Fluids.WATER, maxDrain);
+		public long getCapacity() {
+			return Long.MAX_VALUE;
 		}
 	}
 }

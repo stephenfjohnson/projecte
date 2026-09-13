@@ -2,15 +2,18 @@ package moze_intel.projecte.network.commands;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.serialization.DataResult;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,6 +31,7 @@ import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.UuidArgument;
 import net.minecraft.nbt.CompoundTag;
@@ -46,21 +50,34 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.storage.LevelResource;
-import net.neoforged.neoforge.server.command.EnumArgument;
 import org.jetbrains.annotations.NotNull;
 
 public class ShowBagCMD {
 
 	private static final SimpleCommandExceptionType NOT_FOUND = new SimpleCommandExceptionType(PELang.SHOWBAG_NOT_FOUND.translate());
+	private static final DynamicCommandExceptionType UNKNOWN_COLOR = new DynamicCommandExceptionType(
+			name -> Component.literal("Unknown colour: " + name));
 
 	public static LiteralArgumentBuilder<CommandSourceStack> register(CommandBuildContext context) {
 		return Commands.literal("showbag")
 				.requires(PEPermissions.COMMAND_SHOW_BAG)
-				.then(Commands.argument("color", EnumArgument.enumArgument(DyeColor.class))
+				//NeoForge had an argument type for enums. Rather than register an argument type of our own - which
+				// would have to be known to the client as well - the colour is taken as a word and looked up.
+				.then(Commands.argument("color", StringArgumentType.word())
+						.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(Arrays.stream(DyeColor.values()).map(DyeColor::getName), builder))
 						.then(Commands.argument("target", EntityArgument.player())
-								.executes(ctx -> showBag(ctx, ctx.getArgument("color", DyeColor.class), EntityArgument.getPlayer(ctx, "target"))))
+								.executes(ctx -> showBag(ctx, getColor(ctx), EntityArgument.getPlayer(ctx, "target"))))
 						.then(Commands.argument("uuid", UuidArgument.uuid())
-								.executes(ctx -> showBag(ctx, ctx.getArgument("color", DyeColor.class), UuidArgument.getUuid(ctx, "uuid")))));
+								.executes(ctx -> showBag(ctx, getColor(ctx), UuidArgument.getUuid(ctx, "uuid")))));
+	}
+
+	private static DyeColor getColor(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+		String name = StringArgumentType.getString(ctx, "color");
+		DyeColor color = DyeColor.byName(name, null);
+		if (color == null) {
+			throw UNKNOWN_COLOR.create(name);
+		}
+		return color;
 	}
 
 	private static int showBag(CommandContext<CommandSourceStack> ctx, DyeColor color, ServerPlayer player) throws CommandSyntaxException {
