@@ -1,5 +1,6 @@
 package moze_intel.projecte.gameObjs.items.tools;
 
+import java.util.function.BiConsumer;
 import moze_intel.projecte.gameObjs.IMatterType;
 import moze_intel.projecte.gameObjs.PETags;
 import moze_intel.projecte.gameObjs.items.IHasConditionalAttributes;
@@ -7,13 +8,15 @@ import moze_intel.projecte.gameObjs.items.IItemAbilityProvider;
 import moze_intel.projecte.utils.ItemAbilities;
 import moze_intel.projecte.utils.ItemAbility;
 import moze_intel.projecte.utils.ToolHelper;
+import net.minecraft.core.Holder;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class PEHammer extends PETool implements IHasConditionalAttributes, IItemAbilityProvider {
@@ -39,8 +42,8 @@ public class PEHammer extends PETool implements IHasConditionalAttributes, IItem
 	}
 
 	@Override
-	public void adjustAttributes(ItemAttributeModifierEvent event) {
-		ToolHelper.applyChargeAttributes(event);
+	public void adjustAttributes(ItemStack stack, boolean mainHandQuery, BiConsumer<Holder<Attribute>, AttributeModifier> consumer) {
+		ToolHelper.applyChargeAttributes(stack, mainHandQuery, consumer);
 	}
 
 	@NotNull

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
@@ -28,6 +29,7 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -46,6 +48,7 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -69,7 +72,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.neoforged.neoforge.common.IShearable;
 import net.neoforged.neoforge.event.EventHooks;
-import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 import org.jetbrains.annotations.Nullable;
 
 public class ToolHelper {
@@ -548,10 +550,16 @@ public class ToolHelper {
 		return charge == null ? 0 : charge.getCharge(stack);
 	}
 
-	public static void applyChargeAttributes(ItemAttributeModifierEvent event) {
-		int charge = getCharge(event.getItemStack());
+	/**
+	 * Adds a tool's charge to its attack damage, in the main hand only.
+	 */
+	public static void applyChargeAttributes(ItemStack stack, boolean mainHandQuery, BiConsumer<Holder<Attribute>, AttributeModifier> consumer) {
+		if (!mainHandQuery) {
+			return;
+		}
+		int charge = getCharge(stack);
 		if (charge > 0) {
-			event.addModifier(Attributes.ATTACK_DAMAGE, new AttributeModifier(CHARGE_MODIFIER_ID, charge, Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
+			consumer.accept(Attributes.ATTACK_DAMAGE, new AttributeModifier(CHARGE_MODIFIER_ID, charge, Operation.ADD_VALUE));
 		}
 	}
 

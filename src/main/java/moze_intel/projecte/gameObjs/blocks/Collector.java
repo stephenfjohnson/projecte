@@ -8,6 +8,7 @@ import moze_intel.projecte.capability.Capabilities.ItemHandler;
 import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.gameObjs.EnumCollectorTier;
 import moze_intel.projecte.gameObjs.block_entities.CollectorMK1BlockEntity;
+import moze_intel.projecte.gameObjs.container.PEMenus;
 import moze_intel.projecte.gameObjs.registration.impl.BlockEntityTypeRegistryObject;
 import moze_intel.projecte.gameObjs.registries.PEBlockEntityTypes;
 import moze_intel.projecte.utils.EMCHelper;
@@ -51,7 +52,7 @@ public class Collector extends BlockDirection implements PEEntityBlock<Collector
 		}
 		CollectorMK1BlockEntity collector = WorldHelper.getBlockEntity(CollectorMK1BlockEntity.class, level, pos, true);
 		if (collector != null) {
-			player.openMenu(collector, pos);
+			PEMenus.open(player, collector, pos);
 		}
 		return InteractionResult.CONSUME;
 	}

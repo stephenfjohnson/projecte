@@ -12,6 +12,7 @@ import java.util.function.IntFunction;
 import moze_intel.projecte.api.capabilities.item.IExtraFunction;
 import moze_intel.projecte.api.capabilities.item.IProjectileShooter;
 import moze_intel.projecte.api.world_transmutation.IWorldTransmutationFunction;
+import moze_intel.projecte.gameObjs.container.PEMenus;
 import moze_intel.projecte.gameObjs.container.PhilosStoneContainer;
 import moze_intel.projecte.gameObjs.entity.EntityMobRandomizer;
 import moze_intel.projecte.gameObjs.items.PhilosophersStone.PhilosophersStoneMode;
@@ -146,7 +147,7 @@ public class PhilosophersStone extends ItemMode<PhilosophersStoneMode> implement
 	@Override
 	public boolean doExtraFunction(@NotNull Player player, @NotNull ItemStack stack, InteractionHand hand) {
 		if (!player.level().isClientSide) {
-			player.openMenu(new ContainerProvider(stack));
+			PEMenus.open(player, new ContainerProvider(stack));
 		}
 		return true;
 	}

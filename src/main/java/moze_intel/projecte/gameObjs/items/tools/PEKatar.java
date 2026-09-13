@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.BiConsumer;
 import java.util.function.IntFunction;
 import moze_intel.projecte.api.capabilities.item.IExtraFunction;
 import moze_intel.projecte.config.ProjectEConfig;
@@ -23,6 +24,7 @@ import moze_intel.projecte.utils.ToolHelper;
 import moze_intel.projecte.utils.text.IHasTranslationKey;
 import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -35,6 +37,8 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -46,7 +50,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.common.IShearable;
-import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class PEKatar extends PETool implements IItemMode<KatarMode>, IExtraFunction, IHasConditionalAttributes, IItemAbilityProvider {
@@ -157,8 +160,8 @@ public class PEKatar extends PETool implements IItemMode<KatarMode>, IExtraFunct
 	}
 
 	@Override
-	public void adjustAttributes(ItemAttributeModifierEvent event) {
-		ToolHelper.applyChargeAttributes(event);
+	public void adjustAttributes(ItemStack stack, boolean mainHandQuery, BiConsumer<Holder<Attribute>, AttributeModifier> consumer) {
+		ToolHelper.applyChargeAttributes(stack, mainHandQuery, consumer);
 	}
 
 	/**

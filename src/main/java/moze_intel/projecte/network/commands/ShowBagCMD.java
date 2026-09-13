@@ -20,6 +20,7 @@ import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.inventory.IItemHandlerModifiable;
 import moze_intel.projecte.attachment.PEAttachments;
 import moze_intel.projecte.gameObjs.container.AlchBagContainer;
+import moze_intel.projecte.gameObjs.container.PEMenus;
 import moze_intel.projecte.gameObjs.registries.PEAttachmentTypes;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import moze_intel.projecte.impl.capability.AlchBagImpl.AlchemicalBagAttachment;
@@ -73,7 +74,7 @@ public class ShowBagCMD {
 	}
 
 	private static int showBag(ServerPlayer senderPlayer, MenuProvider container) {
-		senderPlayer.openMenu(container, b -> {
+		PEMenus.open(senderPlayer, container, b -> {
 			b.writeBoolean(false);
 			b.writeBoolean(false);
 		});

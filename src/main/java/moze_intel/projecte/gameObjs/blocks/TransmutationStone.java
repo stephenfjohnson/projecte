@@ -1,6 +1,7 @@
 package moze_intel.projecte.gameObjs.blocks;
 
 import com.mojang.serialization.MapCodec;
+import moze_intel.projecte.gameObjs.container.PEMenus;
 import moze_intel.projecte.gameObjs.container.TransmutationContainer;
 import moze_intel.projecte.gameObjs.registries.PEBlockTypes;
 import moze_intel.projecte.utils.text.PELang;
@@ -85,7 +86,7 @@ public class TransmutationStone extends DirectionalBlock implements SimpleWaterl
 	@Deprecated
 	protected InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult rtr) {
 		if (!level.isClientSide) {
-			player.openMenu(new ContainerProvider(), b -> b.writeBoolean(false));
+			PEMenus.open(player, new ContainerProvider(), b -> b.writeBoolean(false));
 		}
 		return InteractionResult.sidedSuccess(level.isClientSide);
 	}

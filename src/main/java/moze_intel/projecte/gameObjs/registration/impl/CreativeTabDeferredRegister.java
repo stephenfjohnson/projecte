@@ -8,23 +8,25 @@ import moze_intel.projecte.utils.text.ILangEntry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.ItemLike;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class CreativeTabDeferredRegister extends PEDeferredRegister<CreativeModeTab> {
 
-	private final Consumer<BuildCreativeModeTabContentsEvent> addToExistingTabs;
+	private final Runnable addToExistingTabs;
 
-	public CreativeTabDeferredRegister(String modid, Consumer<BuildCreativeModeTabContentsEvent> addToExistingTabs) {
+	/**
+	 * @param addToExistingTabs Hooks ProjectE's entries into vanilla's tabs. Fabric registers that as its own
+	 *                          event rather than passing it a tab-building event, so it is run once here.
+	 */
+	public CreativeTabDeferredRegister(String modid, Runnable addToExistingTabs) {
 		super(Registries.CREATIVE_MODE_TAB, modid);
 		this.addToExistingTabs = addToExistingTabs;
 	}
 
 	@Override
-	public void register(@NotNull IEventBus bus) {
-		super.register(bus);
-		bus.addListener(addToExistingTabs);
+	public void register() {
+		super.register();
+		addToExistingTabs.run();
 	}
 
 	/**

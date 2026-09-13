@@ -5,6 +5,7 @@ import java.util.List;
 import moze_intel.projecte.api.block_entity.IDMPedestal;
 import moze_intel.projecte.api.capabilities.item.IPedestalItem;
 import moze_intel.projecte.api.capabilities.item.IProjectileShooter;
+import moze_intel.projecte.api.fluid.FluidStack;
 import moze_intel.projecte.capability.Capabilities.FluidHandler;
 import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.gameObjs.entity.EntityLavaProjectile;
@@ -33,8 +34,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.ServerLevelData;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,9 +66,7 @@ public class VolcaniteAmulet extends ItemPE implements IProjectileShooter, IPede
 		ItemStack stack = ctx.getItemInHand();
 		if (!level.isClientSide && PlayerHelper.hasEditPermission(player, level, pos) && consumeFuel(player, stack, 32, true)) {
 			Direction sideHit = ctx.getClickedFace();
-			IFluidHandler fluidHandler = WorldHelper.getCapability(level, FluidHandler.BLOCK, pos, sideHit);
-			if (fluidHandler != null) {
-				fluidHandler.fill(new FluidStack(Fluids.LAVA, FluidType.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE);
+			if (WorldHelper.fillTank(level, pos, sideHit, Fluids.LAVA, FluidStack.BUCKET_VOLUME)) {
 				return InteractionResult.CONSUME;
 			}
 			WorldHelper.placeFluid(player, level, pos, sideHit, Fluids.LAVA, false);

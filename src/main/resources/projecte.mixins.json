@@ -4,6 +4,7 @@
   "package": "moze_intel.projecte.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ItemStackAttributesMixin",
     "PlayerAttachmentsMixin"
   ],
   "injectors": {

@@ -6,12 +6,14 @@ import moze_intel.projecte.gameObjs.items.rings.Arcana.ArcanaMode;
 import moze_intel.projecte.gameObjs.registration.PEDeferredHolder;
 import moze_intel.projecte.gameObjs.registration.impl.CreativeTabDeferredRegister;
 import moze_intel.projecte.utils.text.PELang;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 
 public class PECreativeTabs {
 
@@ -154,8 +156,18 @@ public class PECreativeTabs {
 		output.accept(PEItems.GEM_BOOTS);
 	}
 
-	private static void addToExistingTabs(BuildCreativeModeTabContentsEvent event) {
-		ResourceKey<CreativeModeTab> tabKey = event.getTabKey();
+	/**
+	 * Hooks ProjectE's entries into the vanilla tabs they belong in.
+	 * <p>
+	 * NeoForge fired one event per tab being built and handed over its key; Fabric instead has a single event
+	 * covering every tab, so the key is looked up from the tab itself and the rest reads as it did.
+	 */
+	private static void addToExistingTabs() {
+		ItemGroupEvents.MODIFY_ENTRIES_ALL.register((tab, event) ->
+				BuiltInRegistries.CREATIVE_MODE_TAB.getResourceKey(tab).ifPresent(tabKey -> addToTab(tabKey, event)));
+	}
+
+	private static void addToTab(ResourceKey<CreativeModeTab> tabKey, FabricItemGroupEntries event) {
 		if (tabKey == CreativeModeTabs.BUILDING_BLOCKS) {
 			addToExistingTab(event,
 					PEBlocks.ALCHEMICAL_COAL,
@@ -323,7 +335,7 @@ public class PECreativeTabs {
 		}
 	}
 
-	private static void addToExistingTab(BuildCreativeModeTabContentsEvent event, ItemLike... items) {
+	private static void addToExistingTab(FabricItemGroupEntries event, ItemLike... items) {
 		for (ItemLike item : items) {
 			event.accept(item);
 		}

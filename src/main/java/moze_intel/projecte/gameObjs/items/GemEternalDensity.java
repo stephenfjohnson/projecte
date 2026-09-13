@@ -13,6 +13,7 @@ import moze_intel.projecte.capability.Capabilities.ItemHandler;
 import moze_intel.projecte.components.GemData;
 import moze_intel.projecte.gameObjs.container.EternalDensityContainer;
 import moze_intel.projecte.gameObjs.container.PEHandContainer;
+import moze_intel.projecte.gameObjs.container.PEMenus;
 import moze_intel.projecte.gameObjs.items.GemEternalDensity.GemMode;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
 import moze_intel.projecte.gameObjs.registries.PEItems;
@@ -186,7 +187,7 @@ public class GemEternalDensity extends ItemPE implements IAlchBagItem, IAlchChes
 				}
 			} else {
 				int selected = player.getInventory().selected;
-				player.openMenu(new ContainerProvider(hand, selected), buf -> {
+				PEMenus.open(player, new ContainerProvider(hand, selected), buf -> {
 					buf.writeEnum(hand);
 					buf.writeByte(selected);
 				});

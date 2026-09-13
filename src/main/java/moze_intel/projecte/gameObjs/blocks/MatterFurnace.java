@@ -5,6 +5,7 @@ import moze_intel.projecte.api.inventory.IItemHandler;
 import moze_intel.projecte.capability.Capabilities.ItemHandler;
 import moze_intel.projecte.gameObjs.EnumMatterType;
 import moze_intel.projecte.gameObjs.block_entities.DMFurnaceBlockEntity;
+import moze_intel.projecte.gameObjs.container.PEMenus;
 import moze_intel.projecte.gameObjs.registration.impl.BlockEntityTypeRegistryObject;
 import moze_intel.projecte.gameObjs.registries.PEBlockEntityTypes;
 import moze_intel.projecte.gameObjs.registries.PEBlockTypes;
@@ -44,7 +45,7 @@ public class MatterFurnace extends AbstractFurnaceBlock implements IMatterBlock,
 		if (!level.isClientSide) {
 			DMFurnaceBlockEntity furnace = WorldHelper.getBlockEntity(DMFurnaceBlockEntity.class, level, pos, true);
 			if (furnace != null) {
-				player.openMenu(furnace, pos);
+				PEMenus.open(player, furnace, pos);
 			}
 		}
 	}

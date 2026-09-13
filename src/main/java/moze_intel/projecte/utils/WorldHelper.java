@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import moze_intel.projecte.PECore;
+import moze_intel.projecte.api.fluid.FluidStack;
 import moze_intel.projecte.api.inventory.IItemHandler;
 import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.gameObjs.PETags;
@@ -18,6 +19,10 @@ import moze_intel.projecte.gameObjs.registries.PESoundEvents;
 import moze_intel.projecte.network.PEPackets;
 import moze_intel.projecte.network.packets.to_client.NovaExplosionSyncPKT;
 import moze_intel.projecte.utils.ItemAbilities;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
@@ -824,6 +829,34 @@ public final class WorldHelper {
 			return null;
 		}
 		return level.getCapability(cap, pos, state, blockEntity, context);
+	}
+
+	/**
+	 * Tries to pour a bucket's worth of a fluid into a tank at the given position.
+	 * <p>
+	 * Stands in for looking up NeoForge's fluid handler capability and calling fill on it. ProjectE's amulets use
+	 * this to top up an adjacent tank instead of placing a fluid block.
+	 *
+	 * @param side Side of the block the fluid is being offered to.
+	 *
+	 * @return {@code true} if something at that position accepts fluids, in which case the caller should not also
+	 * place a fluid block. This matches the old behaviour, which took the presence of a tank as reason enough not
+	 * to place, whether or not the tank had room.
+	 */
+	public static boolean fillTank(@Nullable Level level, BlockPos pos, @Nullable Direction side, Fluid fluid, int millibuckets) {
+		if (!isBlockLoaded(level, pos)) {
+			return false;
+		}
+		Storage<FluidVariant> storage = FluidStorage.SIDED.find(level, pos, side);
+		if (storage == null) {
+			return false;
+		}
+		try (Transaction transaction = Transaction.openOuter()) {
+			if (storage.insert(FluidVariant.of(fluid), FluidStack.dropletsFromMillibuckets(millibuckets), transaction) > 0) {
+				transaction.commit();
+			}
+		}
+		return true;
 	}
 
 	/**

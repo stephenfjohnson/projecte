@@ -4,6 +4,7 @@ import java.util.List;
 import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.gameObjs.EnumRelayTier;
 import moze_intel.projecte.gameObjs.block_entities.RelayMK1BlockEntity;
+import moze_intel.projecte.gameObjs.container.PEMenus;
 import moze_intel.projecte.gameObjs.registration.impl.BlockEntityTypeRegistryObject;
 import moze_intel.projecte.gameObjs.registries.PEBlockEntityTypes;
 import moze_intel.projecte.utils.EMCHelper;
@@ -46,7 +47,7 @@ public class Relay extends BlockDirection implements PEEntityBlock<RelayMK1Block
 		}
 		RelayMK1BlockEntity relay = WorldHelper.getBlockEntity(RelayMK1BlockEntity.class, level, pos, true);
 		if (relay != null) {
-			player.openMenu(relay, pos);
+			PEMenus.open(player, relay, pos);
 		}
 		return InteractionResult.CONSUME;
 	}

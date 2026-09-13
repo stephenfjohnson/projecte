@@ -6,6 +6,7 @@ import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.inventory.IItemHandler;
 import moze_intel.projecte.api.inventory.IItemHandlerModifiable;
 import moze_intel.projecte.gameObjs.container.AlchBagContainer;
+import moze_intel.projecte.gameObjs.container.PEMenus;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import net.minecraft.core.NonNullList;
@@ -34,7 +35,7 @@ public class AlchemicalBag extends ItemPE {
 	@Override
 	public InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
 		if (!level.isClientSide) {
-			player.openMenu(new ContainerProvider(player.getItemInHand(hand), hand), buf -> {
+			PEMenus.open(player, new ContainerProvider(player.getItemInHand(hand), hand), buf -> {
 				buf.writeEnum(hand);
 				buf.writeByte(player.getInventory().selected);
 				buf.writeBoolean(false);

@@ -2,6 +2,7 @@ package moze_intel.projecte.gameObjs.blocks;
 
 import moze_intel.projecte.capability.Capabilities.ItemHandler;
 import moze_intel.projecte.gameObjs.block_entities.EmcChestBlockEntity;
+import moze_intel.projecte.gameObjs.container.PEMenus;
 import moze_intel.projecte.gameObjs.registration.impl.BlockEntityTypeRegistryObject;
 import moze_intel.projecte.gameObjs.registries.PEBlockEntityTypes;
 import moze_intel.projecte.inventory.ItemHandlerHelper;
@@ -77,7 +78,7 @@ public class AlchemicalChest extends BlockDirection implements SimpleWaterlogged
 		}
 		EmcChestBlockEntity chest = WorldHelper.getBlockEntity(EmcChestBlockEntity.class, level, pos, true);
 		if (chest != null) {
-			player.openMenu(chest, pos);
+			PEMenus.open(player, chest, pos);
 			player.awardStat(Stats.OPEN_CHEST);
 			PiglinAi.angerNearbyPiglins(player, true);
 		}

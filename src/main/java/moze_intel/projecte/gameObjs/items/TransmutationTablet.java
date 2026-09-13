@@ -1,6 +1,7 @@
 package moze_intel.projecte.gameObjs.items;
 
 import moze_intel.projecte.api.item.ITransmutationTablet;
+import moze_intel.projecte.gameObjs.container.PEMenus;
 import moze_intel.projecte.gameObjs.container.TransmutationContainer;
 import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.network.chat.Component;
@@ -32,7 +33,7 @@ public class TransmutationTablet extends ItemPE implements ITransmutationTablet 
 
     @Override
     public void openContainer(Player player, InteractionHand hand, int selected) {
-        player.openMenu(new ContainerProvider(hand), buf -> {
+        PEMenus.open(player, new ContainerProvider(hand), buf -> {
             buf.writeBoolean(true);
             buf.writeEnum(hand);
             buf.writeByte(player.getInventory().selected);
@@ -41,7 +42,7 @@ public class TransmutationTablet extends ItemPE implements ITransmutationTablet 
 
     @Override
     public void openContainer(Player player) {
-        player.openMenu(new ContainerProvider(null), buf -> buf.writeBoolean(false));
+        PEMenus.open(player, new ContainerProvider(null), buf -> buf.writeBoolean(false));
     }
 
     private record ContainerProvider(@Nullable InteractionHand hand) implements MenuProvider {

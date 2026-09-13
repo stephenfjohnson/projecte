@@ -16,6 +16,7 @@ import moze_intel.projecte.api.inventory.IItemHandlerModifiable;
 import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.capability.Capabilities.ItemHandler;
 import moze_intel.projecte.gameObjs.container.MercurialEyeContainer;
+import moze_intel.projecte.gameObjs.container.PEMenus;
 import moze_intel.projecte.gameObjs.container.slots.SlotPredicates;
 import moze_intel.projecte.gameObjs.items.MercurialEye.MercurialEyeMode;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
@@ -71,7 +72,7 @@ public class MercurialEye extends ItemMode<MercurialEyeMode> implements IExtraFu
 	public boolean doExtraFunction(@NotNull Player player, @NotNull ItemStack stack, InteractionHand hand) {
 		int selected = player.getInventory().selected;
 		MenuProvider provider = new SimpleMenuProvider((id, inv, pl) -> new MercurialEyeContainer(id, inv, hand, selected), stack.getHoverName());
-		player.openMenu(provider, b -> {
+		PEMenus.open(player, provider, b -> {
 			b.writeEnum(hand);
 			b.writeByte(selected);
 		});
