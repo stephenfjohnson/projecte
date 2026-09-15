@@ -1,7 +1,7 @@
 {
-  "neoforge:conditions": [
+  "fabric:load_conditions": [
     {
-      "type": "projecte:full_klein_stars"
+      "condition": "projecte:full_klein_stars"
     }
   ],
   "parent": "minecraft:recipes/root",

@@ -1,12 +1,12 @@
 {
-  "neoforge:conditions": [
+  "fabric:load_conditions": [
     {
-      "type": "projecte:tome_enabled"
+      "condition": "projecte:tome_enabled"
     },
     {
-      "type": "neoforge:not",
+      "condition": "fabric:not",
       "value": {
-        "type": "projecte:full_klein_stars"
+        "condition": "projecte:full_klein_stars"
       }
     }
   ],
