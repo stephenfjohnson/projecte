@@ -21,9 +21,11 @@ import moze_intel.projecte.gameObjs.registration.impl.BlockEntityTypeRegistryObj
 import moze_intel.projecte.gameObjs.registries.PEBlockEntityTypes;
 import moze_intel.projecte.inventory.ItemHandlerHelper;
 import moze_intel.projecte.inventory.wrapper.CombinedInvWrapper;
+import moze_intel.projecte.utils.ItemHelper;
 import moze_intel.projecte.utils.WorldHelper;
 import moze_intel.projecte.utils.text.PELang;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
+import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
@@ -264,7 +266,7 @@ public class DMFurnaceBlockEntity extends EmcBlockEntity implements MenuProvider
 					fuelItem.shrink(1);
 					furnace.fuelInv.onContentsChanged(0);
 					if (fuelItem.isEmpty()) {
-						furnace.fuelInv.setStackInSlot(0, copy.getItem().getCraftingRemainingItem(copy));
+						furnace.fuelInv.setStackInSlot(0, ItemHelper.getCraftingRemainder(copy));
 					}
 					furnace.markDirty(level, pos, false);
 				}
@@ -399,7 +401,13 @@ public class DMFurnaceBlockEntity extends EmcBlockEntity implements MenuProvider
 	}
 
 	private int getItemBurnTime(ItemStack stack) {
-		return stack.getBurnTime(RecipeType.SMELTING) * ticksBeforeSmelt / AbstractFurnaceBlockEntity.BURN_TIME_STANDARD * efficiencyBonus;
+		//Note: NeoForge asked the stack; on Fabric the burn times live in Fabric's fuel registry, which is what
+		// vanilla's own furnace fuel map is wired to
+		Integer burnTime = FuelRegistry.INSTANCE.get(stack.getItem());
+		if (burnTime == null) {
+			return 0;
+		}
+		return burnTime * ticksBeforeSmelt / AbstractFurnaceBlockEntity.BURN_TIME_STANDARD * efficiencyBonus;
 	}
 
 	private int getTotalCookTime(RecipeResult recipeResult) {

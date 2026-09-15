@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import moze_intel.projecte.api.inventory.IItemHandler;
 import moze_intel.projecte.api.inventory.IItemHandlerModifiable;
+import moze_intel.projecte.gameObjs.items.IStackCraftingRemainder;
 import moze_intel.projecte.inventory.ItemHandlerHelper;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.InteractionResult;
@@ -50,6 +51,19 @@ public final class ItemHelper {
 			ItemHandlerHelper.insertItemStacked(inventory, s, false);
 		}
 		return temp.isEmpty();
+	}
+
+	public static ItemStack getCraftingRemainder(ItemStack stack) {
+		if (stack.getItem() instanceof IStackCraftingRemainder remainder) {
+			return remainder.getCraftingRemainder(stack);
+		} else if (stack.getItem().hasCraftingRemainingItem()) {
+			return new ItemStack(stack.getItem().getCraftingRemainingItem());
+		}
+		return ItemStack.EMPTY;
+	}
+
+	public static boolean hasCraftingRemainder(ItemStack stack) {
+		return stack.getItem() instanceof IStackCraftingRemainder || stack.getItem().hasCraftingRemainingItem();
 	}
 
 	public static IItemHandlerModifiable immutableCopy(IItemHandler toCopy) {
@@ -99,7 +113,7 @@ public final class ItemHelper {
 	}
 
 	public static boolean isRepairableDamagedItem(ItemStack stack) {
-		return stack.isDamageableItem() && stack.isRepairable() && stack.getDamageValue() > 0;
+		return stack.isDamageableItem() && stack.getDamageValue() > 0;
 	}
 
 	/**

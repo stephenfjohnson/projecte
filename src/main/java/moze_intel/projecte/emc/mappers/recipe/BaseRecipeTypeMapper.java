@@ -15,6 +15,8 @@ import moze_intel.projecte.api.mapper.recipe.IRecipeTypeMapper;
 import moze_intel.projecte.api.nss.NSSItem;
 import moze_intel.projecte.api.nss.NormalizedSimpleStack;
 import moze_intel.projecte.utils.Constants;
+import moze_intel.projecte.utils.ItemHelper;
+import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.MutableComponent;
@@ -151,16 +153,11 @@ public abstract class BaseRecipeTypeMapper implements IRecipeTypeMapper {
 		try {
 			return ingredient.getItems();
 		} catch (Exception e) {
-			ICustomIngredient customIngredient = ingredient.getCustomIngredient();
+			CustomIngredient customIngredient = ingredient.getCustomIngredient();
 			if (customIngredient != null) {//Should basically always be the case
-				ResourceLocation name = NeoForgeRegistries.INGREDIENT_TYPES.getKey(customIngredient.getType());
-				if (name == null) {
-					PECore.LOGGER.error(LogUtils.FATAL_MARKER, "Error mapping recipe {}. Ingredient of type: {} crashed when getting the matching stacks. "
-															   + "Please report this to the ingredient's creator.", recipeID, customIngredient.getClass(), e);
-				} else {
-					PECore.LOGGER.error(LogUtils.FATAL_MARKER, "Error mapping recipe {}. Ingredient of type: {} crashed when getting the matching stacks. "
-															   + "Please report this to the ingredient's creator ({}).", recipeID, name, name.getNamespace(), e);
-				}
+				ResourceLocation name = customIngredient.getSerializer().getIdentifier();
+				PECore.LOGGER.error(LogUtils.FATAL_MARKER, "Error mapping recipe {}. Ingredient of type: {} crashed when getting the matching stacks. "
+														   + "Please report this to the ingredient's creator ({}).", recipeID, name, name.getNamespace(), e);
 			} else {
 				PECore.LOGGER.error(LogUtils.FATAL_MARKER, "Error mapping recipe {}. Crashed when getting the matching stacks.", recipeID, e);
 			}
@@ -178,10 +175,10 @@ public abstract class BaseRecipeTypeMapper implements IRecipeTypeMapper {
 		try {
 			//Note: We include the hasContainerItem check in the try catch, as if a mod is handling tags incorrectly
 			// there is a chance their hasContainerItem is checking something about tags, and
-			hasContainerItem = item.hasCraftingRemainingItem(stack);
+			hasContainerItem = ItemHelper.hasCraftingRemainder(stack);
 			if (hasContainerItem) {
 				//If this item has a container for the stack, we remove the cost of the container itself
-				ingredientMap.mergeInt(NSSItem.createItem(item.getCraftingRemainingItem(stack)), -1, Constants.INT_SUM);
+				ingredientMap.mergeInt(NSSItem.createItem(ItemHelper.getCraftingRemainder(stack)), -1, Constants.INT_SUM);
 			}
 		} catch (Exception e) {
 			ResourceLocation itemName = BuiltInRegistries.ITEM.getKey(item);
