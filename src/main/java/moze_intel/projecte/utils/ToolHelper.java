@@ -438,13 +438,15 @@ public class ToolHelper {
 		List<ItemStack> drops = new ArrayList<>();
 		for (Entity ent : list) {
 			BlockPos entityPosition = ent.blockPosition();
-			IShearable target = (IShearable) ent;
-			if (target.isShearable(player, stack, level, entityPosition)) {
+			Shearable target = (Shearable) ent;
+			if (target.readyForShearing()) {
 				if (level.isClientSide) {
 					return InteractionResult.SUCCESS;
 				}
 				if (ItemPE.consumeFuel(player, stack, emcCost, true)) {
-					List<ItemStack> entDrops = target.onSheared(player, stack, level, entityPosition);
+					//Note: NeoForge handed the drops straight back; vanilla's shearing spawns them, so they are caught
+					// on the way out instead
+					List<ItemStack> entDrops = ShearCollector.collect(ent, () -> target.shear(SoundSource.PLAYERS));
 					ent.gameEvent(GameEvent.SHEAR, player);
 					if (!entDrops.isEmpty()) {
 						//Double all drops (just add them all twice because we compact the list later anyways)
@@ -552,8 +554,8 @@ public class ToolHelper {
 	/**
 	 * Adds a tool's charge to its attack damage, in the main hand only.
 	 */
-	public static void applyChargeAttributes(ItemStack stack, boolean mainHandQuery, BiConsumer<Holder<Attribute>, AttributeModifier> consumer) {
-		if (!mainHandQuery) {
+	public static void applyChargeAttributes(ItemStack stack, EquipmentSlotGroup slotGroup, BiConsumer<Holder<Attribute>, AttributeModifier> consumer) {
+		if (slotGroup != EquipmentSlotGroup.MAINHAND && slotGroup != EquipmentSlotGroup.HAND && slotGroup != EquipmentSlotGroup.ANY) {
 			return;
 		}
 		int charge = getCharge(stack);

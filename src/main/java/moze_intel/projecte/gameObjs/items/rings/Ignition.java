@@ -107,7 +107,7 @@ public class Ignition extends PEToggleItem implements IPedestalItem, IFireProtec
 
 	@Override
 	public boolean canPerformAction(@NotNull ItemStack stack, @NotNull ItemAbility action) {
-		return action == ItemAbilities.FIRESTARTER_LIGHT || super.canPerformAction(stack, action);
+		return action == ItemAbilities.FIRESTARTER_LIGHT;
 	}
 
 	@Override

@@ -2,18 +2,22 @@ package moze_intel.projecte.gameObjs.items.armor;
 
 import com.google.common.base.Suppliers;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.PEPlatform;
+import moze_intel.projecte.client.ClientAccess;
+import moze_intel.projecte.gameObjs.items.IHasConditionalAttributes;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
 import moze_intel.projecte.utils.ClientKeyHelper;
 import moze_intel.projecte.utils.PEKeybind;
 import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -27,24 +31,20 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
-public class GemFeet extends GemArmorBase {
+public class GemFeet extends GemArmorBase implements IHasConditionalAttributes {
 
 	private static final Vec3 VERTICAL_MOVEMENT = new Vec3(0, 0.1, 0);
 	private static final boolean STEP_ASSIST_DEFAULT = false;
 
+	private static final AttributeModifier STEP_ASSIST = new AttributeModifier(PECore.rl("gem_step_assist"), 0.4, Operation.ADD_VALUE);
+
 	private final Supplier<ItemAttributeModifiers> defaultModifiers;
-	private final Supplier<ItemAttributeModifiers> defaultWithStepAssistModifiers;
 
 	public GemFeet(Properties props) {
 		super(ArmorItem.Type.BOOTS, props.component(PEDataComponentTypes.STEP_ASSIST.get(), STEP_ASSIST_DEFAULT));
 		this.defaultModifiers = Suppliers.memoize(() -> super.getDefaultAttributeModifiers().withModifierAdded(
 				Attributes.MOVEMENT_SPEED,
 				new AttributeModifier(PECore.rl("armor"), 1.0, Operation.ADD_MULTIPLIED_TOTAL),
-				EquipmentSlotGroup.FEET
-		));
-		this.defaultWithStepAssistModifiers = Suppliers.memoize(() -> getDefaultAttributeModifiers().withModifierAdded(
-				Attributes.STEP_HEIGHT,
-				new AttributeModifier(PECore.rl("gem_step_assist"), 0.4, Operation.ADD_VALUE),
 				EquipmentSlotGroup.FEET
 		));
 	}
@@ -55,10 +55,12 @@ public class GemFeet extends GemArmorBase {
 		return this.defaultModifiers.get();
 	}
 
-	@NotNull
 	@Override
-	public ItemAttributeModifiers getDefaultAttributeModifiers(@NotNull ItemStack stack) {
-		return isStepAssist(stack) ? this.defaultWithStepAssistModifiers.get() : super.getDefaultAttributeModifiers(stack);
+	public void adjustAttributes(ItemStack stack, EquipmentSlotGroup slotGroup, BiConsumer<Holder<Attribute>, AttributeModifier> consumer) {
+		if (isStepAssist(stack) && (slotGroup == EquipmentSlotGroup.FEET || slotGroup == EquipmentSlotGroup.ARMOR
+									|| slotGroup == EquipmentSlotGroup.ANY)) {
+			consumer.accept(Attributes.STEP_HEIGHT, STEP_ASSIST);
+		}
 	}
 
 	public static void toggleStepAssist(ItemStack boots, Player player) {
@@ -68,10 +70,8 @@ public class GemFeet extends GemArmorBase {
 	}
 
 	private static boolean isJumpPressed(Player player) {
-		if (PEPlatform.isClient() && player instanceof LocalPlayer clientPlayer) {
-			return clientPlayer.input.jumping;
-		}
-		return false;
+		//Note: The client check has to come first: asking ClientAccess anything on a dedicated server would bring it down
+		return PEPlatform.isClient() && ClientAccess.isJumpPressed(player);
 	}
 
 	@Override

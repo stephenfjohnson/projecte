@@ -6,22 +6,17 @@ import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.inventory.IItemHandler;
 import moze_intel.projecte.gameObjs.items.AlchemicalBag;
-import moze_intel.projecte.gameObjs.items.armor.PEArmor.ReductionInfo;
-import moze_intel.projecte.gameObjs.items.armor.PEArmor;
-import moze_intel.projecte.impl.TransmutationOffline;
 import moze_intel.projecte.inventory.ItemHandlerHelper;
 import moze_intel.projecte.utils.PlayerHelper;
 import moze_intel.projecte.utils.text.PELang;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
-import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -94,7 +89,7 @@ public class PlayerEvents {
 	 * @return {@code true} if the bag took some of it, in which case the normal pickup must not also happen.
 	 */
 	public static boolean pickupItem(ItemEntity itemEntity, Player player) {
-		if (itemEntity.level().isClientSide || itemEntity.hasPickUpDelay() || itemEntity.getTarget() != null && !player.getUUID().equals(itemEntity.getTarget())) {
+		if (itemEntity.level().isClientSide || itemEntity.hasPickUpDelay() || itemEntity.target != null && !player.getUUID().equals(itemEntity.target)) {
 			return false;
 		}
 		ItemStack bag = AlchemicalBag.getFirstBagWithSuctionItem(player, player.getInventory().items);

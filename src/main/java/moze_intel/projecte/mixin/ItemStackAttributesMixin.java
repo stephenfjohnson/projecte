@@ -26,20 +26,19 @@ public abstract class ItemStackAttributesMixin {
 
 	@Inject(method = "forEachModifier(Lnet/minecraft/world/entity/EquipmentSlotGroup;Ljava/util/function/BiConsumer;)V", at = @At("TAIL"))
 	private void projecte$conditionalAttributes(EquipmentSlotGroup slotGroup, BiConsumer<Holder<Attribute>, AttributeModifier> consumer, CallbackInfo ci) {
-		projecte$adjust(consumer, slotGroup == EquipmentSlotGroup.MAINHAND || slotGroup == EquipmentSlotGroup.HAND
-									|| slotGroup == EquipmentSlotGroup.ANY);
+		projecte$adjust(consumer, slotGroup);
 	}
 
 	@Inject(method = "forEachModifier(Lnet/minecraft/world/entity/EquipmentSlot;Ljava/util/function/BiConsumer;)V", at = @At("TAIL"))
 	private void projecte$conditionalAttributes(EquipmentSlot slot, BiConsumer<Holder<Attribute>, AttributeModifier> consumer, CallbackInfo ci) {
-		projecte$adjust(consumer, slot == EquipmentSlot.MAINHAND);
+		projecte$adjust(consumer, EquipmentSlotGroup.bySlot(slot));
 	}
 
 	@Unique
-	private void projecte$adjust(BiConsumer<Holder<Attribute>, AttributeModifier> consumer, boolean mainHandQuery) {
+	private void projecte$adjust(BiConsumer<Holder<Attribute>, AttributeModifier> consumer, EquipmentSlotGroup slotGroup) {
 		ItemStack self = (ItemStack) (Object) this;
 		if (self.getItem() instanceof IHasConditionalAttributes item) {
-			item.adjustAttributes(self, mainHandQuery, consumer);
+			item.adjustAttributes(self, slotGroup, consumer);
 		}
 	}
 }

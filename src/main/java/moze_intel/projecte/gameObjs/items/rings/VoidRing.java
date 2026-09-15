@@ -61,18 +61,16 @@ public class VoidRing extends GemEternalDensity implements IPedestalItem, IExtra
 		} else {
 			c = lookingAt.getBlockPos();
 		}
-		EntityTeleportEvent event = new EntityTeleportEvent(player, c.getX(), c.getY(), c.getZ());
-		if (!NeoForge.EVENT_BUS.post(event).isCanceled()) {
-			if (player.isPassenger()) {
-				player.stopRiding();
-			}
-			player.resetFallDistance();
-			player.teleportTo(event.getTargetX(), event.getTargetY(), event.getTargetZ());
-			player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1, 1);
-			cooldowns.addCooldown(this, SharedConstants.TICKS_PER_SECOND / 2);
-			return true;
+		//Note: NeoForge fired an event here that other mods could veto or redirect the teleport with. Fabric has
+		// no counterpart, so the teleport always goes through to where the player is looking
+		if (player.isPassenger()) {
+			player.stopRiding();
 		}
-		return false;
+		player.resetFallDistance();
+		player.teleportTo(c.getX(), c.getY(), c.getZ());
+		player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1, 1);
+		cooldowns.addCooldown(this, SharedConstants.TICKS_PER_SECOND / 2);
+		return true;
 	}
 
 	@Override

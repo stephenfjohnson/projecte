@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import moze_intel.projecte.api.ProjectEAPI;
-import moze_intel.projecte.api.ProjectERegistries;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.fluid.FluidStack;
 import moze_intel.projecte.api.nss.AbstractNSSTag;
@@ -18,10 +17,11 @@ import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.emc.EMCMappingHandler;
 import moze_intel.projecte.emc.FuelMapper;
 import moze_intel.projecte.events.PlayerEvents;
-import moze_intel.projecte.gameObjs.items.IHasConditionalAttributes;
+import moze_intel.projecte.gameObjs.blocks.Pedestal;
+import moze_intel.projecte.gameObjs.blocks.ProjectETNT;
+import moze_intel.projecte.gameObjs.items.IItemUseFirst;
 import moze_intel.projecte.gameObjs.items.rings.ArchangelSmite;
 import moze_intel.projecte.gameObjs.registries.PEArmorMaterials;
-import moze_intel.projecte.gameObjs.registries.PEAttachmentTypes;
 import moze_intel.projecte.gameObjs.registries.PEBlockEntityTypes;
 import moze_intel.projecte.gameObjs.registries.PEBlockTypes;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
@@ -37,7 +37,6 @@ import moze_intel.projecte.gameObjs.registries.PESoundEvents;
 import moze_intel.projecte.impl.TransmutationOffline;
 import moze_intel.projecte.impl.capability.AlchBagImpl;
 import moze_intel.projecte.impl.capability.KnowledgeImpl;
-import moze_intel.projecte.integration.IntegrationHelper;
 import moze_intel.projecte.network.PEPackets;
 import moze_intel.projecte.network.PacketHandler;
 import moze_intel.projecte.network.ThreadCheckUUID;
@@ -48,14 +47,15 @@ import moze_intel.projecte.network.commands.ResetEmcCMD;
 import moze_intel.projecte.network.commands.SetEmcCMD;
 import moze_intel.projecte.network.commands.ShowBagCMD;
 import moze_intel.projecte.network.packets.to_client.SyncEmcPKT;
-import moze_intel.projecte.network.packets.to_client.SyncFuelMapperPKT;
-import moze_intel.projecte.network.packets.to_client.SyncWorldTransmutations;
 import moze_intel.projecte.utils.ItemAbilities;
+import moze_intel.projecte.utils.ToolActions;
 import moze_intel.projecte.utils.WorldHelper;
 import moze_intel.projecte.world_transmutation.WorldTransmutationManager;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -68,23 +68,21 @@ import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.core.dispenser.OptionalDispenseItemBehavior;
 import net.minecraft.core.dispenser.ShearsDispenseItemBehavior;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.TntBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -120,7 +118,8 @@ public class PECore implements ModInitializer {
 
 	@Nullable
 	private EmcUpdateData emcUpdateResourceManager;
-	private final PacketHandler packetHandler;
+	//Note: Set from onInitialize rather than a constructor, as Fabric builds the entrypoint before it is initialised
+	private PacketHandler packetHandler;
 
 	@Override
 	public void onInitialize() {
@@ -155,7 +154,7 @@ public class PECore implements ModInitializer {
 		ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, success) -> {
 			if (success) {
 				//Remember what EMC mapping will need, to be done once the sync that follows begins
-				emcUpdateResourceManager = new EmcUpdateData(server.getServerResources(), server.registryAccess(), resourceManager);
+				emcUpdateResourceManager = new EmcUpdateData(server.resources.managers(), server.registryAccess(), resourceManager);
 			}
 			WorldHelper.clearCachedAgeProperties();
 		});
@@ -166,8 +165,26 @@ public class PECore implements ModInitializer {
 
 		PlayerEvents.register();
 		ArchangelSmite.registerEvents();
+		Pedestal.registerEvents();
+		registerUseFirst();
 
 		commonSetup();
+	}
+
+	/**
+	 * Gives ProjectE's items a look at a block before the block itself gets one.
+	 * <p>
+	 * NeoForge had a per-item hook for this, which the philosopher's stone used to transmute blocks that have their
+	 * own right-click behaviour. Fabric's use-block event runs at the same point.
+	 */
+	private void registerUseFirst() {
+		UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> {
+			ItemStack stack = player.getItemInHand(hand);
+			if (stack.getItem() instanceof IItemUseFirst item) {
+				return item.onItemUseFirst(stack, new UseOnContext(player, hand, hitResult));
+			}
+			return InteractionResult.PASS;
+		});
 	}
 
 	public static PacketHandler packetHandler() {
@@ -181,6 +198,11 @@ public class PECore implements ModInitializer {
 
 	private void commonSetup() {
 		EMCMappingHandler.loadMappers();
+		//Fire spreads into ProjectE's TNT as readily as vanilla's. NeoForge asked the block itself; Fabric keeps
+		// the odds in a registry
+		FlammableBlockRegistry flammable = FlammableBlockRegistry.getDefaultInstance();
+		flammable.add(PEBlocks.NOVA_CATALYST.getBlock(), ProjectETNT.BURN_CHANCE, 0);
+		flammable.add(PEBlocks.NOVA_CATACLYSM.getBlock(), ProjectETNT.BURN_CHANCE, 0);
 		{
 			//Dispenser Behavior
 			registerDispenseBehavior(new ShearsDispenseItemBehavior(), PEItems.DARK_MATTER_SHEARS, PEItems.RED_MATTER_SHEARS, PEItems.RED_MATTER_KATAR);
@@ -212,11 +234,9 @@ public class PECore implements ModInitializer {
 						if (modifiedState != null) {
 							level.setBlockAndUpdate(pos, modifiedState);
 							level.gameEvent(null, GameEvent.BLOCK_CHANGE, pos);
-						} else if (state.isFlammable(level, pos, opposite)) {
-							state.onCaughtFire(level, pos, opposite, null);
-							if (state.getBlock() instanceof TntBlock) {
-								level.removeBlock(pos, false);
-							}
+						} else if (state.getBlock() instanceof TntBlock) {
+							ToolActions.catchFire(state, level, pos, null);
+							level.removeBlock(pos, false);
 						} else {
 							setSuccess(false);
 						}
@@ -270,7 +290,7 @@ public class PECore implements ModInitializer {
 			}
 			emcUpdateResourceManager = null;
 		}
-		if (!player.connection.getConnection().isMemoryConnection()) {
+		if (!player.connection.connection.isMemoryConnection()) {
 			PEPackets.sendTo(player, SyncEmcPKT.serializeEmcData(player.registryAccess()), FuelMapper.getSyncPacket());
 			PEPackets.sendTo(player, WorldTransmutationManager.getSyncPacket());
 		}

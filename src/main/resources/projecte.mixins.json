@@ -4,14 +4,20 @@
   "package": "moze_intel.projecte.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "EnchantmentMixin",
     "EntityInvulnerabilityMixin",
+    "EntityShearDropMixin",
+    "FireBlockMixin",
     "ItemEntityPickupMixin",
     "ItemStackAttributesMixin",
     "LivingEntityArmorMixin",
     "LivingEntityJumpMixin",
     "PlayerAttachmentsMixin",
     "PlayerOfflineCacheMixin",
-    "PlayerTickMixin"
+    "PlayerSweepMixin",
+    "PlayerTickMixin",
+    "RecipeMixin",
+    "TntBlockMixin"
   ],
   "injectors": {
     "defaultRequire": 1

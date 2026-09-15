@@ -10,6 +10,7 @@ import moze_intel.projecte.gameObjs.registration.impl.BlockEntityTypeRegistryObj
 import moze_intel.projecte.gameObjs.registries.PEBlockEntityTypes;
 import moze_intel.projecte.utils.WorldHelper;
 import moze_intel.projecte.utils.text.PELang;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -106,16 +107,21 @@ public class Pedestal extends Block implements SimpleWaterloggedBlock, PEEntityB
 		}
 	}
 
-	@Override
-	public boolean onDestroyedByPlayer(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, boolean willHarvest, @NotNull FluidState fluid) {
-		if (player.isCreative() && dropItem(level, pos)) {
-			//If the player is creative, try to drop the item, and if we succeeded return false to cancel removing the pedestal
-			// Note: we notify the block of an update to make sure that it re-appears visually on the client instead of having there
-			// be a desync
-			level.sendBlockUpdated(pos, state, state, Block.UPDATE_IMMEDIATE);
-			return false;
-		}
-		return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+	/**
+	 * Lets a creative player empty a pedestal by hitting it, rather than breaking it.
+	 * <p>
+	 * NeoForge let the block veto its own removal; on Fabric that veto is Fabric's own block break event.
+	 */
+	public static void registerEvents() {
+		PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, blockEntity) -> {
+			if (state.getBlock() instanceof Pedestal pedestal && player.isCreative() && pedestal.dropItem(level, pos)) {
+				//Notify the block of an update to make sure that it re-appears visually on the client instead of
+				// having there be a desync
+				level.sendBlockUpdated(pos, state, state, Block.UPDATE_IMMEDIATE);
+				return false;
+			}
+			return true;
+		});
 	}
 
 	@NotNull

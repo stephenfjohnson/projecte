@@ -53,11 +53,9 @@ public class EntityWaterProjectile extends NoGravityThrowableProjectile {
 						if (state.getBlock() instanceof LiquidBlock) {
 							//If it is a source block convert it
 							Block block = fluidState.isSource() ? Blocks.OBSIDIAN : Blocks.COBBLESTONE;
-							//Like: ForgeEventFactory#fireFluidPlaceBlockEvent except checks if it was cancelled
-							BlockEvent.FluidPlaceBlockEvent event = new BlockEvent.FluidPlaceBlockEvent(level, pos, pos, block.defaultBlockState());
-							if (!NeoForge.EVENT_BUS.post(event).isCanceled()) {
-								PlayerHelper.checkedPlaceBlock(player, level, pos, event.getNewState());
-							}
+							//Note: NeoForge fired an event here so other mods could change or block what lava turns
+							// into. Fabric has no counterpart, so the vanilla result is placed directly
+							PlayerHelper.checkedPlaceBlock(player, level, pos, block.defaultBlockState());
 						} else {
 							//Otherwise if it is lava logged, "void" the lava as we can't place a block in that spot
 							WorldHelper.drainFluid(player, level, pos, state);

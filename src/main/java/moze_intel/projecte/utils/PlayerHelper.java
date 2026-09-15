@@ -1,7 +1,6 @@
 package moze_intel.projecte.utils;
 
 import java.math.BigInteger;
-import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.IntSupplier;
 import moze_intel.projecte.PECore;
@@ -23,8 +22,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -64,7 +61,8 @@ public final class PlayerHelper {
 		}
 		BlockState placed = level.getBlockState(pos);
 		placed.onPlace(level, pos, oldState, false);
-		level.markAndNotifyBlock(pos, level.getChunkAt(pos), oldState, placed, Block.UPDATE_ALL, Block.UPDATE_LIMIT);
+		//Note: setBlockAndUpdate above already marked the chunk and notified neighbours, which is what NeoForge's
+		// markAndNotifyBlock did a second time here
 		if (oldSign != null && placed.hasBlockEntity()) {
 			WorldHelper.copySignData(level, pos, oldSign);
 		}

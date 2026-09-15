@@ -14,6 +14,7 @@ import moze_intel.projecte.gameObjs.items.IHasConditionalAttributes;
 import moze_intel.projecte.gameObjs.items.IItemAbilityProvider;
 import moze_intel.projecte.gameObjs.items.IItemMode;
 import moze_intel.projecte.gameObjs.items.IModeEnum;
+import moze_intel.projecte.gameObjs.items.ISweepHitBoxProvider;
 import moze_intel.projecte.gameObjs.items.tools.PEKatar.KatarMode;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
 import moze_intel.projecte.utils.ItemAbilities;
@@ -23,7 +24,6 @@ import moze_intel.projecte.utils.PlayerHelper;
 import moze_intel.projecte.utils.ToolHelper;
 import moze_intel.projecte.utils.text.IHasTranslationKey;
 import moze_intel.projecte.utils.text.PELang;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
@@ -36,7 +36,7 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Shearable;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -53,7 +53,8 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 
-public class PEKatar extends PETool implements IItemMode<KatarMode>, IExtraFunction, IHasConditionalAttributes, IItemAbilityProvider {
+public class PEKatar extends PETool implements IItemMode<KatarMode>, IExtraFunction, IHasConditionalAttributes, IItemAbilityProvider,
+		ISweepHitBoxProvider {
 
 	public PEKatar(IMatterType matterType, int numCharges, Properties props) {
 		super(matterType, PETags.Blocks.MINEABLE_WITH_PE_KATAR, numCharges, props.attributes(createAttributes(matterType, 19, -2.4F))
@@ -74,11 +75,10 @@ public class PEKatar extends PETool implements IItemMode<KatarMode>, IExtraFunct
 			   ToolHelper.DEFAULT_PE_KATAR_ACTIONS.contains(toolAction);
 	}
 
-	@NotNull
 	@Override
-	public AABB getSweepHitBox(@NotNull ItemStack stack, @NotNull Player player, @NotNull Entity target) {
+	public AABB getSweepHitBox(ItemStack stack, Player player, AABB targetBounds) {
 		int charge = getCharge(stack);
-		return target.getBoundingBox().inflate(charge, charge / 4D, charge);
+		return targetBounds.inflate(charge, charge / 4D, charge);
 	}
 
 	@Override
@@ -161,8 +161,8 @@ public class PEKatar extends PETool implements IItemMode<KatarMode>, IExtraFunct
 	}
 
 	@Override
-	public void adjustAttributes(ItemStack stack, boolean mainHandQuery, BiConsumer<Holder<Attribute>, AttributeModifier> consumer) {
-		ToolHelper.applyChargeAttributes(stack, mainHandQuery, consumer);
+	public void adjustAttributes(ItemStack stack, EquipmentSlotGroup slotGroup, BiConsumer<Holder<Attribute>, AttributeModifier> consumer) {
+		ToolHelper.applyChargeAttributes(stack, slotGroup, consumer);
 	}
 
 	/**

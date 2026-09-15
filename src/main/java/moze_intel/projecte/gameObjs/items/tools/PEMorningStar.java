@@ -23,6 +23,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -114,8 +115,8 @@ public class PEMorningStar extends PETool implements IItemMode<PickaxeMode>, IHa
 	}
 
 	@Override
-	public void adjustAttributes(ItemStack stack, boolean mainHandQuery, BiConsumer<Holder<Attribute>, AttributeModifier> consumer) {
-		ToolHelper.applyChargeAttributes(stack, mainHandQuery, consumer);
+	public void adjustAttributes(ItemStack stack, EquipmentSlotGroup slotGroup, BiConsumer<Holder<Attribute>, AttributeModifier> consumer) {
+		ToolHelper.applyChargeAttributes(stack, slotGroup, consumer);
 	}
 
 	@Override

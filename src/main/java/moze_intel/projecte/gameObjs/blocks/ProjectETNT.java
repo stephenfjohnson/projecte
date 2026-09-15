@@ -1,7 +1,6 @@
 package moze_intel.projecte.gameObjs.blocks;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
@@ -10,17 +9,23 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.TntBlock;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ProjectETNT extends TntBlock {
+
+	/**
+	 * How readily fire consumes this block, which ProjectE's TNT is as happy to catch as vanilla's.
+	 *
+	 * @implNote NeoForge asked the block; on Fabric the odds live in Fabric's flammable block registry, which
+	 * {@code PECore} fills in with this once the blocks exist.
+	 */
+	public static final int BURN_CHANCE = 100;
 
 	private final TNTEntityCreator tntEntityCreator;
 
@@ -29,13 +34,13 @@ public class ProjectETNT extends TntBlock {
 		this.tntEntityCreator = tntEntityCreator;
 	}
 
-	@Override
-	public int getFlammability(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull Direction face) {
-		return 100;
-	}
-
-	@Override
-	public void onCaughtFire(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @Nullable Direction side, @Nullable LivingEntity igniter) {
+	/**
+	 * Primes this TNT's own entity, whatever set it off.
+	 *
+	 * @implNote NeoForge routed every ignition path through {@code onCaughtFire}; on Fabric, {@code TntBlockMixin} and
+	 * {@code FireBlockMixin} send vanilla's ignition paths here instead of spawning vanilla's primed TNT.
+	 */
+	public void prime(@NotNull Level level, @NotNull BlockPos pos, @Nullable LivingEntity igniter) {
 		if (!level.isClientSide) {
 			createAndAddEntity(level, pos, igniter);
 			level.gameEvent(igniter, GameEvent.PRIME_FUSE, pos);

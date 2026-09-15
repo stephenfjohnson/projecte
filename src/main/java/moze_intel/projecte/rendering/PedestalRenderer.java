@@ -52,12 +52,7 @@ public class PedestalRenderer implements BlockEntityRenderer<DMPedestalBlockEnti
 		}
 	}
 
-	@NotNull
-	@Override
-	public AABB getRenderBoundingBox(@NotNull DMPedestalBlockEntity pedestal) {
-		if (this.context.getEntityRenderer().shouldRenderHitBoxes()) {
-			return pedestal.getEffectBounds();
-		}
-		return BlockEntityRenderer.super.getRenderBoundingBox(pedestal);
-	}
+	//Note: NeoForge drew a block entity's render bounding box as a debug box, which ProjectE widened to the
+	// pedestal's effect range while hit boxes were shown. Fabric has no counterpart for either, so there is nothing
+	// to widen here
 }

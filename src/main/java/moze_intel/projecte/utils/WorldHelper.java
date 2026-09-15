@@ -621,8 +621,11 @@ public final class WorldHelper {
 			TargetInfo targetInfo = frontier.poll();
 			BlockPos pos = targetInfo.pos();
 			BlockState state = targetInfo.state();
-			if (state.onDestroyedByPlayer(level, pos, player, true, level.getFluidState(pos))) {
-				Block block = state.getBlock();
+			Block block = state.getBlock();
+			//Note: NeoForge had one call that let the block veto its own removal; this is what vanilla itself does
+			// when a player breaks a block
+			block.playerWillDestroy(level, pos, state, player);
+			if (level.removeBlock(pos, false)) {
 				block.destroy(level, pos, state);
 				player.awardStat(Stats.BLOCK_MINED.get(block));
 				currentDrops.addAll(Block.getDrops(state, (ServerLevel) level, pos, targetInfo.blockEntity(), player, stack));
@@ -714,13 +717,11 @@ public final class WorldHelper {
 						level.playSound(null, player.getX(), player.getY(), player.getZ(), PESoundEvents.POWER.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 					}
 				}
-			} else if (state.isFlammable(level, pos, side)) {
+			} else if (state.getBlock() instanceof TntBlock) {
 				if (!level.isClientSide && PlayerHelper.hasBreakPermission((ServerPlayer) player, level, pos)) {
 					// Ignite the block
-					state.onCaughtFire(level, pos, side, player);
-					if (state.getBlock() instanceof TntBlock) {
-						level.removeBlock(pos, false);
-					}
+					ToolActions.catchFire(state, level, pos, player);
+					level.removeBlock(pos, false);
 					level.playSound(null, player.getX(), player.getY(), player.getZ(), PESoundEvents.POWER.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
 				}
 			} else {

@@ -2,7 +2,6 @@ package moze_intel.projecte.gameObjs.items.rings;
 
 import java.util.ArrayList;
 import java.util.List;
-import moze_intel.projecte.PECore;
 import moze_intel.projecte.api.block_entity.IDMPedestal;
 import moze_intel.projecte.api.capabilities.item.IPedestalItem;
 import moze_intel.projecte.api.proxy.IEMCProxy;
@@ -14,7 +13,6 @@ import moze_intel.projecte.utils.MathUtils;
 import moze_intel.projecte.utils.PEFakePlayer;
 import moze_intel.projecte.utils.text.PELang;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
-import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -62,14 +60,6 @@ public class ArchangelSmite extends PEToggleItem implements IPedestalItem {
 		for (int i = 0; i < 10; i++) {
 			fireArrow(stack, player.level(), player, 4F);
 		}
-	}
-
-	@Override
-	public boolean onLeftClickEntity(@NotNull ItemStack stack, Player player, @NotNull Entity entity) {
-		if (!player.level().isClientSide) {
-			fireVolley(stack, player);
-		}
-		return super.onLeftClickEntity(stack, player, entity);
 	}
 
 	@Override

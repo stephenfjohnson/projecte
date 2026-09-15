@@ -10,7 +10,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Range;
 
-public class ItemPE extends Item {
+public class ItemPE extends Item implements IReequipAnimation {
 
 	public ItemPE(Properties props) {
 		super(props);

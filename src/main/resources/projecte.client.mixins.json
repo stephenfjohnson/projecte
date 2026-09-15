@@ -4,7 +4,8 @@
   "package": "moze_intel.projecte.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "AbstractClientPlayerFovMixin"
+    "AbstractClientPlayerFovMixin",
+    "ItemInHandRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

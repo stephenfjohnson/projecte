@@ -56,8 +56,10 @@ public class EntityMobRandomizer extends NoGravityThrowableProjectile {
 					data = null;
 				}
 				randomized.finalizeSpawn(level, level.getCurrentDifficultyAt(randomized.blockPosition()), MobSpawnType.CONVERSION, data);
+				//Note: NeoForge tracked whether an entity had made it into the level; vanilla only tells us the
+				// entity is alive, which is false if something rejected the spawn
 				level.tryAddFreshEntityWithPassengers(randomized);
-				if (randomized.isAddedToLevel()) {
+				if (randomized.isAlive()) {
 					randomized.spawnAnim();
 					//Don't remove the old entity until the new one is added in case another mod is cancelling the spawning
 					ent.discard();

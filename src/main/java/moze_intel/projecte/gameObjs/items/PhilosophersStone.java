@@ -57,21 +57,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 
-public class PhilosophersStone extends ItemMode<PhilosophersStoneMode> implements IProjectileShooter, IExtraFunction {
+public class PhilosophersStone extends ItemMode<PhilosophersStoneMode> implements IProjectileShooter, IExtraFunction, IItemUseFirst,
+		IStackCraftingRemainder {
 
 	public PhilosophersStone(Properties props) {
 		super(props.component(PEDataComponentTypes.PHILOSOPHERS_STONE_MODE.get(), PhilosophersStoneMode.CUBE), 4);
-	}
-
-	@Override
-	public boolean hasCraftingRemainingItem(@NotNull ItemStack stack) {
-		return true;
-	}
-
-	@NotNull
-	@Override
-	public ItemStack getCraftingRemainingItem(ItemStack stack) {
-		return stack.copy();
 	}
 
 	public BlockHitResult getHitBlock(Level level, Player player, boolean isSneaking) {
@@ -80,7 +70,7 @@ public class PhilosophersStone extends ItemMode<PhilosophersStoneMode> implement
 
 	@NotNull
 	@Override
-	public InteractionResult onItemUseFirst(@NotNull ItemStack stack, @NotNull UseOnContext ctx) {
+	public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext ctx) {
 		//Note: We use this instead of useOn so that we can support blocks that have right click interactions (for example signs)
 		Level level = ctx.getLevel();
 		Player player = ctx.getPlayer();

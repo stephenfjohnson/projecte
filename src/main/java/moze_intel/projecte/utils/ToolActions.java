@@ -1,9 +1,11 @@
 package moze_intel.projecte.utils;
 
 import java.util.Map;
+import moze_intel.projecte.gameObjs.blocks.ProjectETNT;
 import moze_intel.projecte.gameObjs.items.IItemAbilityProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.HoneycombItem;
 import net.minecraft.world.item.ItemStack;
@@ -17,6 +19,7 @@ import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.CandleBlock;
 import net.minecraft.world.level.block.CandleCakeBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.TntBlock;
 import net.minecraft.world.level.block.WeatheringCopper;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -130,6 +133,24 @@ public final class ToolActions {
 			return stack.is(Items.SHEARS);
 		} else if (ItemAbilities.DEFAULT_SWORD_ACTIONS.contains(ability)) {
 			return stack.is(net.minecraft.tags.ItemTags.SWORDS);
+		}
+		return false;
+	}
+
+	/**
+	 * Sets a block alight the way flint and steel would when fire cannot simply be placed in front of it.
+	 * <p>
+	 * NeoForge asked each block what to do; the only vanilla blocks that answer are the TNTs, which prime themselves.
+	 *
+	 * @return {@code true} if the block responded, so the caller knows the ignition did something.
+	 */
+	public static boolean catchFire(BlockState state, Level level, BlockPos pos, @Nullable LivingEntity igniter) {
+		if (state.getBlock() instanceof ProjectETNT tnt) {
+			tnt.prime(level, pos, igniter);
+			return true;
+		} else if (state.getBlock() instanceof TntBlock) {
+			TntBlock.explode(level, pos);
+			return true;
 		}
 		return false;
 	}

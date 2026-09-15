@@ -51,3 +51,26 @@ accessible	field	net/minecraft/world/item/ShovelItem	FLATTENABLES	Ljava/util/Map
 accessible	method	net/minecraft/client/gui/screens/MenuScreens	register	(Lnet/minecraft/world/inventory/MenuType;Lnet/minecraft/client/gui/screens/MenuScreens$ScreenConstructor;)V
 # Which fluid a liquid block is, for drawing the transmutation preview
 accessible	field	net/minecraft/world/level/block/LiquidBlock	fluid	Lnet/minecraft/world/level/material/FlowingFluid;
+
+# Stack equality that ignores count, for the sets ProjectE dedupes stacks with
+accessible	field	net/minecraft/world/item/ItemStackLinkedSet	TYPE_AND_TAG	Lit/unimi/dsi/fastutil/Hash$Strategy;
+# The mind stone drains orbs and can leave a partial one behind
+accessible	field	net/minecraft/world/entity/ExperienceOrb	value	I
+mutable	field	net/minecraft/world/entity/ExperienceOrb	value	I
+# Building a block's own codec outside of the block class
+accessible	method	net/minecraft/world/level/block/state/BlockBehaviour	propertiesCodec	()Lcom/mojang/serialization/codecs/RecordCodecBuilder;
+
+# The server's reloadable resources, which EMC mapping is handed. NeoForge exposed a getter for these.
+accessible	class	net/minecraft/server/MinecraftServer$ReloadableResources
+accessible	field	net/minecraft/server/MinecraftServer	resources	Lnet/minecraft/server/MinecraftServer$ReloadableResources;
+# Whether a player is on a single player world's in-memory connection, to skip syncing EMC to ourselves
+accessible	field	net/minecraft/server/network/ServerCommonPacketListenerImpl	connection	Lnet/minecraft/network/Connection;
+# An item entity's pickup owner, which the gem of eternal density respects
+accessible	field	net/minecraft/world/entity/item/ItemEntity	target	Ljava/util/UUID;
+# ProjectE's nova entities replace the explosion outright
+extendable	method	net/minecraft/world/entity/item/PrimedTnt	explode	()V
+
+# A block's loot table, so the wall variant of a block can share the floor variant's drops before either exists
+accessible	field	net/minecraft/world/level/block/state/BlockBehaviour$Properties	drops	Lnet/minecraft/resources/ResourceKey;
+# The class a command argument type is described by. NeoForge exposed registering this.
+accessible	field	net/minecraft/commands/synchronization/ArgumentTypeInfos	BY_CLASS	Ljava/util/Map;
