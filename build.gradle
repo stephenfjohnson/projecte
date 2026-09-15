@@ -46,6 +46,12 @@ sourceSets {
         compileClasspath += api.output
         runtimeClasspath += api.output
     }
+    test {
+        //TODO - Fabric port: the unit tests stand up an ephemeral server through NeoForge's test framework, which
+        // has no Fabric counterpart, so they are held out of the build until they are ported. The sources are
+        // untouched under src/test - drop this line to bring them back in.
+        java.srcDirs = []
+    }
 }
 
 configurations { configContainer ->
@@ -93,10 +99,6 @@ loom {
     accessWidenerPath = file('src/main/resources/projecte.accesswidener')
 
     runs {
-        configureEach {
-            //ProjectE's TOP integration is dev-time noise unless explicitly wanted
-            property('projecte.skip_top', 'true')
-        }
         client {
             client()
         }
