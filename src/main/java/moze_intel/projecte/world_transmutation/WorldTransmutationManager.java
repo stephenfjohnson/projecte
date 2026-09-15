@@ -15,7 +15,6 @@ import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.SequencedSet;
 import java.util.function.Function;
 import moze_intel.projecte.PECore;
@@ -27,10 +26,10 @@ import moze_intel.projecte.api.world_transmutation.SimpleWorldTransmutation;
 import moze_intel.projecte.api.world_transmutation.WorldTransmutation;
 import moze_intel.projecte.api.world_transmutation.WorldTransmutationFile;
 import moze_intel.projecte.network.packets.to_client.SyncWorldTransmutations;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -42,7 +41,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class WorldTransmutationManager extends SimpleJsonResourceReloadListener {
+public class WorldTransmutationManager extends SimpleJsonResourceReloadListener implements IdentifiableResourceReloadListener {
 
 	//Copy of gson settings from RecipeManager's gson instance
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
@@ -56,6 +55,11 @@ public class WorldTransmutationManager extends SimpleJsonResourceReloadListener 
 
 	private WorldTransmutationManager() {
 		super(GSON, "pe_world_transmutations");
+	}
+
+	@Override
+	public ResourceLocation getFabricId() {
+		return PECore.rl("world_transmutations");
 	}
 
 	/**

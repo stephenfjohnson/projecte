@@ -6,6 +6,7 @@ import moze_intel.projecte.api.mapper.recipe.RecipeTypeMapper;
 import moze_intel.projecte.api.nss.NSSItem;
 import moze_intel.projecte.api.nss.NormalizedSimpleStack;
 import moze_intel.projecte.config.PEConfigTranslations;
+import moze_intel.projecte.gameObjs.PETags;
 import moze_intel.projecte.utils.Constants;
 import moze_intel.projecte.utils.EMCHelper;
 import net.minecraft.core.RegistryAccess;
@@ -28,7 +29,7 @@ public class ShulkerRecoloringMapper extends SpecialRecipeMapper<ShulkerBoxColor
 		for (DyeColor color : Constants.COLORS) {
 			mapper.addConversion(1, NSSItem.createItem(ShulkerBoxBlock.getBlockByColor(color)), EMCHelper.intMapOf(
 					nssShulker, 1,
-					NSSItem.createTag(color.getTag()), 1
+					NSSItem.createTag(PETags.Items.dyes(color)), 1
 			));
 		}
 		return true;

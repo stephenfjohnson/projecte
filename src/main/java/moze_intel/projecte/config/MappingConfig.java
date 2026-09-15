@@ -24,14 +24,11 @@ public class MappingConfig extends BasePEConfig {
 
 	/**
 	 * If the config has not already been initialized setup a config the with given list of {@link IEMCMapper}s and creates a dummy "server" config so that it will be
-	 * synced by the {@link net.neoforged.fml.config.ConfigTracker} from server to client.
-	 *
-	 * @implNote We register the dummy config as being owned by our mod container, but we don't tell the mod container about the dummy config so that it does not
-	 * overwrite our main server config.
+	 * synced from server to client.
 	 */
 	public static void setup(@NotNull List<IEMCMapper<NormalizedSimpleStack, Long>> mappers, @NotNull List<IDataComponentProcessor> processors) {
 		if (INSTANCE == null) {
-			ProjectEConfig.registerConfig(PECore.MOD_CONTAINER, INSTANCE = new MappingConfig(mappers, processors));
+			ProjectEConfig.registerConfig(INSTANCE = new MappingConfig(mappers, processors));
 		}
 	}
 

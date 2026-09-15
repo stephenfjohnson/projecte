@@ -5,8 +5,8 @@ import moze_intel.projecte.PEPlatform;
 import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.components.DataComponentProcessor;
 import moze_intel.projecte.api.components.IDataComponentProcessor;
+import moze_intel.projecte.client.ClientAccess;
 import moze_intel.projecte.config.PEConfigTranslations;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
@@ -101,16 +101,10 @@ public class MapScaleProcessor implements IDataComponentProcessor {
 			// that means the level doesn't really matter on the server side as it will all be from the overworld anyway
 			return server.overworld();
 		} else if (PEPlatform.isClient()) {
-			return ClientLevelHelper.getLevel();
+			//Note: The client check has to come first: asking ClientAccess anything on a dedicated server would bring it down
+			return ClientAccess.level();
 		}
 		return null;
 	}
 
-	private static class ClientLevelHelper {
-
-		@Nullable
-		public static Level getLevel() {
-			return Minecraft.getInstance().level;
-		}
-	}
 }

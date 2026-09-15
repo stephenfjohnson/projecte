@@ -2,12 +2,12 @@ package moze_intel.projecte.gameObjs.registration.impl;
 
 import java.util.function.Supplier;
 import moze_intel.projecte.PEPlatform;
+import moze_intel.projecte.client.ClientAccess;
 import moze_intel.projecte.gameObjs.container.PEMenuData;
 import moze_intel.projecte.gameObjs.registration.INamedEntry;
 import moze_intel.projecte.gameObjs.registration.PEDeferredRegister;
 import moze_intel.projecte.utils.WorldHelper;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
@@ -62,7 +62,7 @@ public class ContainerTypeDeferredRegister extends PEDeferredRegister<MenuType<?
 			throw new UnsupportedOperationException("This method is only supported on the client.");
 		}
 		BlockPos pos = buf.readBlockPos();
-		BE blockEntity = WorldHelper.getBlockEntity(type, Minecraft.getInstance().level, pos);
+		BE blockEntity = WorldHelper.getBlockEntity(type, ClientAccess.level(), pos);
 		if (blockEntity == null) {
 			throw new IllegalStateException("Client could not locate block entity at " + pos + " for block entity container. "
 											+ "This is likely caused by a mod breaking client side block entity lookup");

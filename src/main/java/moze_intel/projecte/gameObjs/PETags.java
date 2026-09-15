@@ -4,10 +4,9 @@ import moze_intel.projecte.PECore;
 import moze_intel.projecte.integration.IntegrationHelper;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.block.Block;
@@ -65,16 +64,25 @@ public class PETags {
 		public static final TagKey<Item> TOOLS_KATARS = commonTag("tools/katars");
 		public static final TagKey<Item> TOOLS_MORNING_STARS = commonTag("tools/morning_stars");
 
+		/**
+		 * The common tag holding every item that dyes something a given colour.
+		 *
+		 * @implNote NeoForge hung this off {@link DyeColor} itself; the tag is the same one either way.
+		 */
+		public static TagKey<Item> dyes(DyeColor color) {
+			return commonTag("dyes/" + color.getName());
+		}
+
 		private static TagKey<Item> tag(String name) {
-			return ItemTags.create(PECore.rl(name));
+			return TagKey.create(Registries.ITEM, PECore.rl(name));
 		}
 
 		private static TagKey<Item> curiosTag(String name) {
-			return ItemTags.create(ResourceLocation.fromNamespaceAndPath(IntegrationHelper.ACCESSORY_MODID, name));
+			return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(IntegrationHelper.ACCESSORY_MODID, name));
 		}
 
 		private static TagKey<Item> commonTag(String name) {
-			return ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", name));
+			return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", name));
 		}
 	}
 
@@ -122,11 +130,11 @@ public class PETags {
 
 
 		private static TagKey<Block> tag(String name) {
-			return BlockTags.create(PECore.rl(name));
+			return TagKey.create(Registries.BLOCK, PECore.rl(name));
 		}
 
 		private static TagKey<Block> commonTag(String name) {
-			return BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", name));
+			return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("c", name));
 		}
 	}
 

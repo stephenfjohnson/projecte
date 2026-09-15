@@ -5,8 +5,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import moze_intel.projecte.gameObjs.registration.PEDeferredRegister;
 import net.minecraft.commands.CommandBuildContext;
-import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo.Template;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.registries.Registries;
@@ -28,7 +28,12 @@ public class ArgumentTypeInfoDeferredRegister extends PEDeferredRegister<Argumen
 
 	public <TYPE extends ArgumentType<?>> ArgumentTypeInfoRegistryObject<TYPE> register(String name, Class<TYPE> argumentClass,
 			Supplier<ArgumentTypeInfo<TYPE, ? extends ArgumentTypeInfo.Template<TYPE>>> sup) {
-		return (ArgumentTypeInfoRegistryObject<TYPE>) super.<ArgumentTypeInfo<TYPE, ? extends Template<TYPE>>>register(name,
-				() -> ArgumentTypeInfos.registerByClass(argumentClass, sup.get()));
+		return (ArgumentTypeInfoRegistryObject<TYPE>) super.<ArgumentTypeInfo<TYPE, ? extends Template<TYPE>>>register(name, () -> {
+			ArgumentTypeInfo<TYPE, ? extends Template<TYPE>> info = sup.get();
+			//Note: The registry entry itself is added by the deferred register; this is the other half of what
+			// NeoForge's registerByClass did, which vanilla keeps to itself
+			ArgumentTypeInfos.BY_CLASS.put(argumentClass, info);
+			return info;
+		});
 	}
 }

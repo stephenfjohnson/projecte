@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 //Only used on the client
 // [VanillaCopy] Adapted from ChestRenderer
-public class ChestRenderer implements BlockEntityRenderer<EmcChestBlockEntity> {
+public class ChestRenderer<CHEST extends EmcChestBlockEntity> implements BlockEntityRenderer<CHEST> {
 
 	private final ModelPart lid;
 	private final ModelPart bottom;
@@ -38,7 +38,7 @@ public class ChestRenderer implements BlockEntityRenderer<EmcChestBlockEntity> {
 	}
 
 	@Override
-	public void render(@NotNull EmcChestBlockEntity chest, float partialTick, @NotNull PoseStack matrix, @NotNull MultiBufferSource renderer, int light, int overlayLight) {
+	public void render(@NotNull CHEST chest, float partialTick, @NotNull PoseStack matrix, @NotNull MultiBufferSource renderer, int light, int overlayLight) {
 		matrix.pushPose();
 		if (chest.getLevel() != null && !chest.isRemoved()) {
 			BlockState state = chest.getLevel().getBlockState(chest.getBlockPos());

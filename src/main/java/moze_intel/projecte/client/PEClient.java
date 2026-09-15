@@ -15,7 +15,6 @@ import moze_intel.projecte.gameObjs.gui.GUIRelay.GUIRelayMK1;
 import moze_intel.projecte.gameObjs.gui.GUIRelay.GUIRelayMK2;
 import moze_intel.projecte.gameObjs.gui.GUIRelay.GUIRelayMK3;
 import moze_intel.projecte.gameObjs.gui.GUITransmutation;
-import moze_intel.projecte.gameObjs.gui.PEContainerScreen;
 import moze_intel.projecte.gameObjs.registries.PEBlockEntityTypes;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
 import moze_intel.projecte.gameObjs.registries.PEContainerTypes;
@@ -30,7 +29,6 @@ import moze_intel.projecte.rendering.LayerYue;
 import moze_intel.projecte.rendering.PedestalRenderer;
 import moze_intel.projecte.rendering.TransmutationRenderingOverlay;
 import moze_intel.projecte.utils.ClientKeyHelper;
-import moze_intel.projecte.utils.PEKeybind;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -40,17 +38,13 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.fabricmc.fabric.api.event.client.player.ClientPreAttackCallback;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.TippableArrowRenderer;
 import net.minecraft.client.renderer.entity.TntRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.client.renderer.item.ItemPropertyFunction;
-import net.minecraft.client.resources.PlayerSkin;
-import net.minecraft.commands.CommandBuildContext;
-import net.minecraft.commands.Commands;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
 
@@ -137,9 +131,9 @@ public class PEClient implements ClientModInitializer {
 
 	private void registerRenderers() {
 		//Block Entity
-		BlockEntityRendererRegistry.register(PEBlockEntityTypes.ALCHEMICAL_CHEST.get(), context -> new ChestRenderer(context, PECore.rl("textures/block/alchemical_chest.png"), PEBlocks.ALCHEMICAL_CHEST));
-		BlockEntityRendererRegistry.register(PEBlockEntityTypes.CONDENSER.get(), context -> new ChestRenderer(context, PECore.rl("textures/block/condenser_mk1.png"), PEBlocks.CONDENSER));
-		BlockEntityRendererRegistry.register(PEBlockEntityTypes.CONDENSER_MK2.get(), context -> new ChestRenderer(context, PECore.rl("textures/block/condenser_mk2.png"),PEBlocks.CONDENSER_MK2));
+		BlockEntityRendererRegistry.register(PEBlockEntityTypes.ALCHEMICAL_CHEST.get(), context -> new ChestRenderer<>(context, PECore.rl("textures/block/alchemical_chest.png"), PEBlocks.ALCHEMICAL_CHEST));
+		BlockEntityRendererRegistry.register(PEBlockEntityTypes.CONDENSER.get(), context -> new ChestRenderer<>(context, PECore.rl("textures/block/condenser_mk1.png"), PEBlocks.CONDENSER));
+		BlockEntityRendererRegistry.register(PEBlockEntityTypes.CONDENSER_MK2.get(), context -> new ChestRenderer<>(context, PECore.rl("textures/block/condenser_mk2.png"), PEBlocks.CONDENSER_MK2));
 		BlockEntityRendererRegistry.register(PEBlockEntityTypes.DARK_MATTER_PEDESTAL.get(), PedestalRenderer::new);
 
 		//Entities
@@ -163,7 +157,7 @@ public class PEClient implements ClientModInitializer {
 	}
 
 	@SuppressWarnings("deprecation")
-	private static void addPropertyOverrides(ResourceLocation override, ItemPropertyFunction propertyGetter, ItemLike... itemProviders) {
+	private static void addPropertyOverrides(ResourceLocation override, ClampedItemPropertyFunction propertyGetter, ItemLike... itemProviders) {
 		for (ItemLike itemProvider : itemProviders) {
 			ItemProperties.register(itemProvider.asItem(), override, propertyGetter);
 		}

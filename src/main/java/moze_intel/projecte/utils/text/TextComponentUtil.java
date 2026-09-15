@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import moze_intel.projecte.api.fluid.FluidStack;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -12,6 +14,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -50,10 +53,10 @@ public class TextComponentUtil {
 				case Block block -> current = block.getName().copy();
 				case Item item -> current = item.getDescription().copy();
 				case ItemStack stack -> current = stack.getHoverName().copy();
-				case FluidStack stack -> current = Component.translatable(stack.getFluid().defaultBlockState().getBlock().getDescriptionId()).copy();
-				case Fluid fluid -> current = fluid.getFluidType().getDescription().copy();
+				case FluidStack stack -> current = fluidName(stack.getFluid()).copy();
+				case Fluid fluid -> current = fluidName(fluid).copy();
 				case EntityType<?> entityType -> current = entityType.getDescription().copy();
-				case Level level -> current = level.getDescription().copy();
+				case Level level -> current = dimensionName(level).copy();
 				//Fallback to a generic replacement
 				// this handles strings, numbers, and any type we don't necessarily know about
 				default -> current = getString(component.toString());
@@ -123,13 +126,13 @@ public class TextComponentUtil {
 			} else if (component instanceof ItemStack stack) {
 				current = stack.getHoverName().copy();
 			} else if (component instanceof FluidStack stack) {
-				current = stack.getHoverName().copy();
+				current = fluidName(stack.getFluid()).copy();
 			} else if (component instanceof Fluid fluid) {
-				current = fluid.getFluidType().getDescription().copy();
+				current = fluidName(fluid).copy();
 			} else if (component instanceof EntityType<?> entityType) {
 				current = entityType.getDescription().copy();
 			} else if (component instanceof Level level) {
-				current = level.getDescription().copy();
+				current = dimensionName(level).copy();
 			}
 			//Formatting
 			else if (component instanceof TextColor color && cachedStyle.getColor() == null) {
@@ -206,4 +209,25 @@ public class TextComponentUtil {
 			default -> current.getColor() != null;
 		};
 	}
+
+	/**
+	 * Names a fluid the way Fabric does, which lets mods that register an attribute handler name their own fluids.
+	 *
+	 * @implNote NeoForge named fluids through its fluid types, which Fabric has no counterpart for.
+	 */
+	private static Component fluidName(Fluid fluid) {
+		return FluidVariantAttributes.getName(FluidVariant.of(fluid));
+	}
+
+	/**
+	 * Names a dimension from its key, following the {@code dimension.<namespace>.<path>} convention mods use for
+	 * their lang files.
+	 *
+	 * @implNote NeoForge added a description to levels; vanilla has no display name for a dimension at all.
+	 */
+	private static Component dimensionName(Level level) {
+		ResourceLocation dimension = level.dimension().location();
+		return Component.translatable("dimension.%s.%s".formatted(dimension.getNamespace(), dimension.getPath()));
+	}
+
 }

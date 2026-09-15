@@ -170,7 +170,7 @@ public class PEItems {
 	}
 
 	public static AlchemicalBag getBag(DyeColor color) {
-		return getBagReference(color).value();
+		return getBagReference(color).get();
 	}
 
 	public static ItemRegistryObject<AlchemicalBag> getBagReference(DyeColor color) {

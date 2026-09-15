@@ -10,10 +10,13 @@ public interface IHasTranslationKey {
 
 	String getTranslationKey();
 
+	/**
+	 * @implNote NeoForge had a {@code TranslatableEnum} interface that declared {@code getTranslatedName} for its config
+	 * screens to pick up. Fabric has no equivalent, so this just provides the method for ProjectE's own use.
+	 */
 	interface IHasEnumNameTranslationKey extends IHasTranslationKey {
 
 		@NotNull
-		@Override
 		default Component getTranslatedName() {
 			return TextComponentUtil.translate(getTranslationKey());
 		}

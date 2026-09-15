@@ -15,6 +15,8 @@ import moze_intel.projecte.api.capabilities.item.IProjectileShooter;
 import moze_intel.projecte.gameObjs.items.ICapabilityAware;
 import moze_intel.projecte.gameObjs.registration.PEDeferredRegister;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
@@ -107,11 +109,27 @@ public class ItemDeferredRegister extends PEDeferredRegister<Item> {
 
 	private static class NoDurabilityItemProperties extends Item.Properties {
 
+		private boolean toolSet;
+
 		@NotNull
 		@Override
 		public Item.Properties durability(int maxDamage) {
 			//NO-OP super setting durability components
 			return this;
+		}
+
+		@NotNull
+		@Override
+		public <T> Item.Properties component(@NotNull DataComponentType<T> componentType, @NotNull T value) {
+			if (componentType == DataComponents.TOOL) {
+				if (toolSet) {
+					//Keep the mining rules the item set: vanilla's sword constructor replaces the tool component with
+					// its own after the caller has set it, where NeoForge took the rules as a constructor argument
+					return this;
+				}
+				toolSet = true;
+			}
+			return super.component(componentType, value);
 		}
 	}
 }

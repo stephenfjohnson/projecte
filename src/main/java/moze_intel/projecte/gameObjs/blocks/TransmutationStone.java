@@ -51,7 +51,7 @@ public class TransmutationStone extends DirectionalBlock implements SimpleWaterl
 	@NotNull
 	@Override
 	protected MapCodec<? extends DirectionalBlock> codec() {
-		return PEBlockTypes.TRANSMUTATION_TABLE.value();
+		return PEBlockTypes.TRANSMUTATION_TABLE.get();
 	}
 
 	@Override

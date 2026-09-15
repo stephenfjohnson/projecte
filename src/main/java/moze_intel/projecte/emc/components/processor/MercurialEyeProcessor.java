@@ -41,7 +41,7 @@ public class MercurialEyeProcessor extends SimpleContainerProcessor<ItemContaine
 
 	@Override
 	protected ItemContainerContents cleanPersistentComponent(@NotNull ItemContainerContents component) {
-		if (component.getSlots() == 1) {
+		if (component.stream().count() == 1) {
 			return component;
 		}
 		return ItemContainerContents.fromItems(List.of(component.copyOne()));

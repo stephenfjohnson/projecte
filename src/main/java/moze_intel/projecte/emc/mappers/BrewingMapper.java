@@ -80,9 +80,6 @@ public class BrewingMapper implements IEMCMapper<NormalizedSimpleStack, Long> {
 
 		PECore.debugLog("{} Statistics:", getName());
 		PECore.debugLog("Found {} Brewing Recipes", recipeCount);
-		for (Class<?> c : canNotMap) {
-			PECore.debugLog("Could not map Brewing Recipes with Type: {}", c.getName());
-		}
 	}
 
 	@Override

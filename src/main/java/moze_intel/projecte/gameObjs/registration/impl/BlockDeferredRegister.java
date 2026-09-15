@@ -7,6 +7,7 @@ import moze_intel.projecte.gameObjs.registration.DoubleDeferredRegister;
 import moze_intel.projecte.gameObjs.registration.impl.BlockRegistryObject.WallOrFloorBlockRegistryObject;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.StandingAndWallBlockItem;
@@ -31,7 +32,12 @@ public class BlockDeferredRegister extends DoubleDeferredRegister<Block, Item> {
 			Function<BlockBehaviour.Properties, BLOCK> blockSupplier, Function<BlockBehaviour.Properties, WALL_BLOCK> wallBlockSupplier,
 			BlockBehaviour.Properties baseProperties) {
 		DeferredHolder<Block, BLOCK> primaryObject = primaryRegister.register(name, () -> blockSupplier.apply(baseProperties));
-		DeferredHolder<Block, WALL_BLOCK> wallObject = primaryRegister.register("wall_" + name, () -> wallBlockSupplier.apply(baseProperties.lootFrom(primaryObject)));
+		//Note: The wall variant drops what the floor variant does. NeoForge could take the block itself, which does
+		// not exist yet here, so the loot table is named the way vanilla derives it from a block's own id
+		DeferredHolder<Block, WALL_BLOCK> wallObject = primaryRegister.register("wall_" + name, () -> {
+			baseProperties.drops = ResourceKey.create(Registries.LOOT_TABLE, primaryObject.getId().withPrefix("blocks/"));
+			return wallBlockSupplier.apply(baseProperties);
+		});
 		return new WallOrFloorBlockRegistryObject<>(primaryObject, wallObject, secondaryRegister.register(name, () -> new StandingAndWallBlockItem(primaryObject.get(), wallObject.get(),
 				new Item.Properties(), Direction.DOWN)));
 	}

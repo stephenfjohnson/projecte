@@ -63,7 +63,7 @@ public class KnowledgeImpl implements IKnowledgeProvider {
 	protected KnowledgeAttachment attachment() {
 		//Force overriding if player is null
 		Objects.requireNonNull(this.player);
-		return this.PEAttachments.get(player, PEAttachmentTypes.KNOWLEDGE);
+		return PEAttachments.get(player, PEAttachmentTypes.KNOWLEDGE);
 	}
 
 	protected void fireChangedEvent() {

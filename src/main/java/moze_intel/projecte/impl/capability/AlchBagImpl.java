@@ -34,7 +34,7 @@ public final class AlchBagImpl implements IAlchBagProvider {
 	}
 
 	private AlchemicalBagAttachment attachment() {
-		return this.PEAttachments.get(player, PEAttachmentTypes.ALCHEMICAL_BAGS);
+		return PEAttachments.get(player, PEAttachmentTypes.ALCHEMICAL_BAGS);
 	}
 
 	@NotNull

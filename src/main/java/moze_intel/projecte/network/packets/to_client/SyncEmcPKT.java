@@ -39,7 +39,7 @@ public record SyncEmcPKT(Object2LongMap<ItemInfo> data) implements IPEPacket {
 	public static SyncEmcPKT serializeEmcData(RegistryAccess registryAccess) {
 		SyncEmcPKT data = EMCMappingHandler.createPacketData();
 		//Simulate encoding the EMC packet to get an accurate size
-		RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), registryAccess, ConnectionType.NEOFORGE);
+		RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), registryAccess);
 		try {
 			int index = buf.writerIndex();
 			SyncEmcPKT.STREAM_CODEC.encode(buf, data);

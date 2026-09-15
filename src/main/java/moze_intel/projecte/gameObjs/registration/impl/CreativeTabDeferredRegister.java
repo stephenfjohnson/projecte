@@ -1,14 +1,13 @@
 package moze_intel.projecte.gameObjs.registration.impl;
 
-import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 import moze_intel.projecte.gameObjs.registration.PEDeferredHolder;
 import moze_intel.projecte.gameObjs.registration.PEDeferredRegister;
 import moze_intel.projecte.utils.text.ILangEntry;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.ItemLike;
-import org.jetbrains.annotations.NotNull;
 
 public class CreativeTabDeferredRegister extends PEDeferredRegister<CreativeModeTab> {
 
@@ -41,7 +40,9 @@ public class CreativeTabDeferredRegister extends PEDeferredRegister<CreativeMode
 	 */
 	public PEDeferredHolder<CreativeModeTab, CreativeModeTab> register(String name, ILangEntry title, ItemLike icon, UnaryOperator<CreativeModeTab.Builder> operator) {
 		return register(name, () -> {
-			CreativeModeTab.Builder builder = CreativeModeTab.builder()
+			//Note: Fabric's builder is the one that gives a mod's tab a row of its own, where vanilla's takes a
+			// fixed row and column
+			CreativeModeTab.Builder builder = FabricItemGroup.builder()
 					.title(title.translate())
 					.icon(() -> icon.asItem().getDefaultInstance());
 			return operator.apply(builder).build();

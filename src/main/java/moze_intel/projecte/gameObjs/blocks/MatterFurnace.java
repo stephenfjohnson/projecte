@@ -37,7 +37,7 @@ public class MatterFurnace extends AbstractFurnaceBlock implements IMatterBlock,
 	@NotNull
 	@Override
 	protected MapCodec<MatterFurnace> codec() {
-		return PEBlockTypes.MATTER_FURNACE.value();
+		return PEBlockTypes.MATTER_FURNACE.get();
 	}
 
 	@Override
