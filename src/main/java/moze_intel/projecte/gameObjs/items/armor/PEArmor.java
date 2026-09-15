@@ -1,18 +1,15 @@
 package moze_intel.projecte.gameObjs.items.armor;
 
-import java.util.function.Consumer;
+import moze_intel.projecte.gameObjs.items.IUnenchantableItem;
 import net.minecraft.core.Holder;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class PEArmor extends ArmorItem {
+public abstract class PEArmor extends ArmorItem implements IUnenchantableItem {
 
 	protected PEArmor(Holder<ArmorMaterial> material, ArmorItem.Type armorPiece, Properties props) {
 		super(material, armorPiece, props);
@@ -21,26 +18,6 @@ public abstract class PEArmor extends ArmorItem {
 	@Override
 	public boolean isEnchantable(@NotNull ItemStack stack) {
 		return false;
-	}
-
-	@Override
-	public boolean isBookEnchantable(@NotNull ItemStack stack, @NotNull ItemStack book) {
-		return false;
-	}
-
-	@Override
-	public boolean isPrimaryItemFor(@NotNull ItemStack stack, @NotNull Holder<Enchantment> enchantment) {
-		return false;
-	}
-
-	@Override
-	public boolean supportsEnchantment(@NotNull ItemStack stack, @NotNull Holder<Enchantment> enchantment) {
-		return false;
-	}
-
-	@Override
-	public <T extends LivingEntity> int damageItem(@NotNull ItemStack stack, int amount, T entity, @NotNull Consumer<Item> onBroken) {
-		return 0;
 	}
 
 	/**
