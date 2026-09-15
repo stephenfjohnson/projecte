@@ -6,7 +6,7 @@ import moze_intel.projecte.PEPlatform;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.proxy.ITransmutationProxy;
-import net.minecraft.client.Minecraft;
+import moze_intel.projecte.client.ClientAccess;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
@@ -25,8 +25,8 @@ public class TransmutationProxyImpl implements ITransmutationProxy {
 			}
 			return TransmutationOffline.forPlayer(server, playerUUID);
 		} else if (PEPlatform.isClient()) {
-			Objects.requireNonNull(Minecraft.getInstance().player, "Client player doesn't exist!");
-			return Objects.requireNonNull(PECapabilities.KNOWLEDGE_CAPABILITY.find(Minecraft.getInstance().player, null));
+			Player clientPlayer = Objects.requireNonNull(ClientAccess.player(), "Client player doesn't exist!");
+			return Objects.requireNonNull(PECapabilities.KNOWLEDGE_CAPABILITY.find(clientPlayer, null));
 		}
 		throw new IllegalStateException("unreachable");
 	}

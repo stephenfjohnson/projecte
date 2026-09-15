@@ -2,16 +2,16 @@ package moze_intel.projecte.network.packets.to_client.knowledge;
 
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.attachment.PEAttachments;
+import moze_intel.projecte.client.ClientAccess;
 import moze_intel.projecte.gameObjs.container.TransmutationContainer;
 import moze_intel.projecte.gameObjs.registries.PEAttachmentTypes;
 import moze_intel.projecte.impl.capability.KnowledgeImpl.KnowledgeAttachment;
 import moze_intel.projecte.network.PEPacketContext;
 import moze_intel.projecte.network.packets.IPEPacket;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
 public record KnowledgeSyncPKT(KnowledgeAttachment data) implements IPEPacket {
@@ -31,8 +31,8 @@ public record KnowledgeSyncPKT(KnowledgeAttachment data) implements IPEPacket {
 	public void handle(PEPacketContext context) {
 		//We have to use the client's player instance rather than context#player as the first usage of this packet is sent during player login
 		// which is before the player exists on the client so the context does not contain it.
-		//Note: This must stay LocalPlayer to not cause classloading issues
-		LocalPlayer player = Minecraft.getInstance().player;
+		//Note: This goes through ClientAccess so that this class stays loadable on a dedicated server
+		Player player = ClientAccess.player();
 		if (player != null) {
 			PEAttachments.set(player, PEAttachmentTypes.KNOWLEDGE, data);
 			if (player.containerMenu instanceof TransmutationContainer container) {
